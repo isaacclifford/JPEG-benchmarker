@@ -17,7 +17,7 @@ includedir = $(prefix)/include
 binprefix =
 manprefix =
 manext = 1
-/mandir = $(prefix)/man/man$(manext)
+/mandir = $(prefix)/man$(manext)
 
 # The name of your C compiler:
 CC= gcc
