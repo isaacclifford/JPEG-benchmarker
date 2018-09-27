@@ -37,7 +37,9 @@ LOCAL(boolean) output_pass_setup JPP((j_decompress_ptr cinfo));
 GLOBAL(boolean)
 jpeg_start_decompress (j_decompress_ptr cinfo)
 {
+  fprintf(stderr, "IS: %s\n", __func__);
   if (cinfo->global_state == DSTATE_READY) {
+    fprintf(stderr, "IS:    %s. Global state = Ready \n", __func__);
     /* First call: initialize master control, select active modules */
     jinit_master_decompress(cinfo);
     if (cinfo->buffered_image) {
@@ -94,8 +96,12 @@ jpeg_start_decompress (j_decompress_ptr cinfo)
 LOCAL(boolean)
 output_pass_setup (j_decompress_ptr cinfo)
 {
+  fprintf(stderr, "IS: s\n", __func__);
+
   if (cinfo->global_state != DSTATE_PRESCAN) {
     /* First call: do pass setup */
+
+    //IS: Find out how these functions work
     (*cinfo->master->prepare_for_output_pass) (cinfo);
     cinfo->output_scanline = 0;
     cinfo->global_state = DSTATE_PRESCAN;

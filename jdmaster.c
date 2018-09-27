@@ -287,6 +287,8 @@ prepare_range_limit_table (j_decompress_ptr cinfo)
 LOCAL(void)
 master_selection (j_decompress_ptr cinfo)
 {
+
+  fprintf(stderr, "IS: %s\n",__func__);
   my_master_ptr master = (my_master_ptr) cinfo->master;
   boolean use_c_buffer;
   long samplesperrow;
@@ -542,6 +544,7 @@ jpeg_new_colormap (j_decompress_ptr cinfo)
 GLOBAL(void)
 jinit_master_decompress (j_decompress_ptr cinfo)
 {
+  fprintf(stderr, "IS: %s\n", __func__);
   my_master_ptr master;
 
   master = (my_master_ptr)
