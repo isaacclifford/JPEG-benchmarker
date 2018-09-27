@@ -8,6 +8,7 @@ tests/
 *.jpg
 rdjpgcom
 wrjpgcom
+djpeg
 
 #CLION
 CMakeLists.txt 
