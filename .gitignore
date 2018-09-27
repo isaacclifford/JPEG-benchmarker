@@ -1,7 +1,13 @@
 
 #Output files
 *.o
+*.a
 tests/
+*.doc
+*.docx
+*.jpg
+rdjpgcom
+wrjpgcom
 
 #CLION
 CMakeLists.txt 

@@ -73,18 +73,16 @@ INSTALL_DATA= ${INSTALL} -m 644
 
 
 # source files: JPEG library proper
-LIBSOURCES= jcapimin.c jcapistd.c jccoefct.c jccolor.c jcdctmgr.c jchuff.c \
-        jcinit.c jcmainct.c jcmarker.c jcmaster.c jcomapi.c jcparam.c \
-        jcphuff.c jcprepct.c jcsample.c jctrans.c jdapimin.c jdapistd.c \
-        jdatadst.c jdatasrc.c jdcoefct.c jdcolor.c jddctmgr.c jdhuff.c \
+LIBSOURCES= jcomapi.c jdapimin.c jdapistd.c \
+        jdatasrc.c jdcoefct.c jdcolor.c jddctmgr.c jdhuff.c \
         jdinput.c jdmainct.c jdmarker.c jdmaster.c jdmerge.c jdphuff.c \
-        jdpostct.c jdsample.c jdtrans.c jerror.c jfdctflt.c jfdctfst.c \
-        jfdctint.c jidctflt.c jidctfst.c jidctint.c jidctred.c jquant1.c \
+        jdpostct.c jdsample.c jdtrans.c jerror.c \
+        jidctflt.c jidctfst.c jidctint.c jidctred.c jquant1.c \
         jquant2.c jutils.c jmemmgr.c
 # memmgr back ends: compile only one of these into a working library
 SYSDEPSOURCES= jmemansi.c jmemname.c jmemnobs.c jmemdos.c jmemmac.c
 # source files: cjpeg/djpeg/jpegtran applications, also rdjpgcom/wrjpgcom
-APPSOURCES= cjpeg.c djpeg.c jpegtran.c rdjpgcom.c wrjpgcom.c cdjpeg.c \
+APPSOURCES= djpeg.c rdjpgcom.c wrjpgcom.c cdjpeg.c \
         rdcolmap.c rdswitch.c transupp.c rdppm.c wrppm.c rdgif.c wrgif.c \
         rdtarga.c wrtarga.c rdbmp.c wrbmp.c rdrle.c wrrle.c
 SOURCES= $(LIBSOURCES) $(SYSDEPSOURCES) $(APPSOURCES)
@@ -92,12 +90,12 @@ SOURCES= $(LIBSOURCES) $(SYSDEPSOURCES) $(APPSOURCES)
 INCLUDES= jchuff.h jdhuff.h jdct.h jerror.h jinclude.h jmemsys.h jmorecfg.h \
         jpegint.h jpeglib.h jversion.h cdjpeg.h cderror.h transupp.h
 # documentation, test, and support files
-DOCS= README install.doc usage.doc cjpeg.1 djpeg.1 jpegtran.1 rdjpgcom.1 \
+DOCS= README install.doc usage.doc djpeg.1 rdjpgcom.1 \
         wrjpgcom.1 wizard.doc example.c libjpeg.doc structure.doc \
         coderules.doc filelist.doc change.log
 MKFILES= configure makefile.cfg makefile.ansi makefile.unix makefile.bcc \
         makefile.mc6 makefile.dj makefile.wat makefile.vc makelib.ds \
-        makeapps.ds makeproj.mac makcjpeg.st makdjpeg.st makljpeg.st \
+        makeapps.ds makeproj.mac makdjpeg.st makljpeg.st \
         maktjpeg.st makefile.manx makefile.sas makefile.mms makefile.vms \
         makvms.opt
 CONFIGFILES= jconfig.cfg jconfig.bcc jconfig.mc6 jconfig.dj jconfig.wat \
@@ -111,12 +109,7 @@ DISTFILES= $(DOCS) $(MKFILES) $(CONFIGFILES) $(SOURCES) $(INCLUDES) \
         $(CONFIGUREFILES) $(OTHERFILES) $(TESTFILES)
 # library object files common to compression and decompression
 COMOBJECTS= jcomapi.$(O) jutils.$(O) jerror.$(O) jmemmgr.$(O) $(SYSDEPMEM)
-# compression library object files
-CLIBOBJECTS= jcapimin.$(O) jcapistd.$(O) jctrans.$(O) jcparam.$(O) \
-        jdatadst.$(O) jcinit.$(O) jcmaster.$(O) jcmarker.$(O) jcmainct.$(O) \
-        jcprepct.$(O) jccoefct.$(O) jccolor.$(O) jcsample.$(O) jchuff.$(O) \
-        jcphuff.$(O) jcdctmgr.$(O) jfdctfst.$(O) jfdctflt.$(O) \
-        jfdctint.$(O)
+
 # decompression library object files
 DLIBOBJECTS= jdapimin.$(O) jdapistd.$(O) jdtrans.$(O) jdatasrc.$(O) \
         jdmaster.$(O) jdinput.$(O) jdmarker.$(O) jdhuff.$(O) jdphuff.$(O) \
@@ -124,16 +117,16 @@ DLIBOBJECTS= jdapimin.$(O) jdapistd.$(O) jdtrans.$(O) jdatasrc.$(O) \
         jidctfst.$(O) jidctflt.$(O) jidctint.$(O) jidctred.$(O) \
         jdsample.$(O) jdcolor.$(O) jquant1.$(O) jquant2.$(O) jdmerge.$(O)
 # These objectfiles are included in libjpeg.a
-LIBOBJECTS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
+LIBOBJECTS= $(DLIBOBJECTS) $(COMOBJECTS)
 # object files for sample applications (excluding library files)
-COBJECTS= cjpeg.$(O) rdppm.$(O) rdgif.$(O) rdtarga.$(O) rdrle.$(O) \
+COBJECTS= rdppm.$(O) rdgif.$(O) rdtarga.$(O) rdrle.$(O) \
         rdbmp.$(O) rdswitch.$(O) cdjpeg.$(O)
 DOBJECTS= djpeg.$(O) wrppm.$(O) wrgif.$(O) wrtarga.$(O) wrrle.$(O) \
         wrbmp.$(O) rdcolmap.$(O) cdjpeg.$(O)
-TROBJECTS= jpegtran.$(O) rdswitch.$(O) cdjpeg.$(O) transupp.$(O)
+TROBJECTS= rdswitch.$(O) cdjpeg.$(O) transupp.$(O)
 
 
-all:  libjpeg.$(A) cjpeg djpeg jpegtran rdjpgcom wrjpgcom
+all:  libjpeg.$(A) djpeg rdjpgcom wrjpgcom
 
 # Special compilation rules to support ansi2knr and libtool.
 .SUFFIXES: .lo .la
@@ -173,14 +166,8 @@ libjpeg.la:  $(LIBOBJECTS)
 
 # sample programs:
 
-cjpeg: $(COBJECTS) libjpeg.$(A)
-	$(LN) $(LDFLAGS) -o cjpeg $(COBJECTS) libjpeg.$(A) $(LDLIBS)
-
 djpeg: $(DOBJECTS) libjpeg.$(A)
 	$(LN) $(LDFLAGS) -o djpeg $(DOBJECTS) libjpeg.$(A) $(LDLIBS)
-
-jpegtran: $(TROBJECTS) libjpeg.$(A)
-	$(LN) $(LDFLAGS) -o jpegtran $(TROBJECTS) libjpeg.$(A) $(LDLIBS)
 
 rdjpgcom: rdjpgcom.$(O)
 	$(LN) $(LDFLAGS) -o rdjpgcom rdjpgcom.$(O) $(LDLIBS)
@@ -190,15 +177,11 @@ wrjpgcom: wrjpgcom.$(O)
 
 # Installation rules:
 
-install: cjpeg djpeg jpegtran rdjpgcom wrjpgcom 
-	$(INSTALL_PROGRAM) cjpeg $(bindir)/$(binprefix)cjpeg
+install: djpeg rdjpgcom wrjpgcom 
 	$(INSTALL_PROGRAM) djpeg $(bindir)/$(binprefix)djpeg
-	$(INSTALL_PROGRAM) jpegtran $(bindir)/$(binprefix)jpegtran
 	$(INSTALL_PROGRAM) rdjpgcom $(bindir)/$(binprefix)rdjpgcom
 	$(INSTALL_PROGRAM) wrjpgcom $(bindir)/$(binprefix)wrjpgcom
-	$(INSTALL_DATA) $(srcdir)/cjpeg.1 $(mandir)/$(manprefix)cjpeg.$(manext)
 	$(INSTALL_DATA) $(srcdir)/djpeg.1 $(mandir)/$(manprefix)djpeg.$(manext)
-	$(INSTALL_DATA) $(srcdir)/jpegtran.1 $(mandir)/$(manprefix)jpegtran.$(manext)
 	$(INSTALL_DATA) $(srcdir)/rdjpgcom.1 $(mandir)/$(manprefix)rdjpgcom.$(manext)
 	$(INSTALL_DATA) $(srcdir)/wrjpgcom.1 $(mandir)/$(manprefix)wrjpgcom.$(manext)
 
@@ -213,21 +196,18 @@ install-headers: jconfig.h
 
 clean:
 	$(RM) *.o *.lo libjpeg.a libjpeg.la
-	$(RM) cjpeg djpeg jpegtran rdjpgcom wrjpgcom
+	$(RM) djpeg rdjpgcom wrjpgcom
 	$(RM) ansi2knr core testout* config.log config.status
 	$(RM) -r knr .libs _libs
 
 distclean: clean
 	$(RM) Makefile jconfig.h libtool config.cache
 
-test: cjpeg djpeg jpegtran
+test: djpeg 
 	$(RM) testout*
 	./djpeg -dct int -ppm -outfile testout.ppm  $(srcdir)/testorig.jpg
 	./djpeg -dct int -bmp -colors 256 -outfile testout.bmp  $(srcdir)/testorig.jpg
-	./cjpeg -dct int -outfile testout.jpg  $(srcdir)/testimg.ppm
 	./djpeg -dct int -ppm -outfile testoutp.ppm $(srcdir)/testprog.jpg
-	./cjpeg -dct int -progressive -opt -outfile testoutp.jpg $(srcdir)/testimg.ppm
-	./jpegtran -outfile testoutt.jpg $(srcdir)/testprog.jpg
 	cmp $(srcdir)/testimg.ppm testout.ppm
 	cmp $(srcdir)/testimg.bmp testout.bmp
 	cmp $(srcdir)/testimg.jpg testout.jpg
@@ -248,25 +228,9 @@ jconfig.h: jconfig.doc
 .PHONY: all install install-lib install-headers clean distclean test check
 
 
-jcapimin.$(O): jcapimin.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
-jcapistd.$(O): jcapistd.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
-jccoefct.$(O): jccoefct.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
-jccolor.$(O): jccolor.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
-jcdctmgr.$(O): jcdctmgr.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
-jchuff.$(O): jchuff.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jchuff.h
-jcinit.$(O): jcinit.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
-jcmainct.$(O): jcmainct.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
-jcmarker.$(O): jcmarker.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
-jcmaster.$(O): jcmaster.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
 jcomapi.$(O): jcomapi.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
-jcparam.$(O): jcparam.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
-jcphuff.$(O): jcphuff.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jchuff.h
-jcprepct.$(O): jcprepct.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
-jcsample.$(O): jcsample.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
-jctrans.$(O): jctrans.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
 jdapimin.$(O): jdapimin.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
 jdapistd.$(O): jdapistd.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
-jdatadst.$(O): jdatadst.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h
 jdatasrc.$(O): jdatasrc.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h
 jdcoefct.$(O): jdcoefct.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
 jdcolor.$(O): jdcolor.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
@@ -282,9 +246,6 @@ jdpostct.$(O): jdpostct.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h je
 jdsample.$(O): jdsample.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
 jdtrans.$(O): jdtrans.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
 jerror.$(O): jerror.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jversion.h jerror.h
-jfdctflt.$(O): jfdctflt.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
-jfdctfst.$(O): jfdctfst.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
-jfdctint.$(O): jfdctint.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
 jidctflt.$(O): jidctflt.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
 jidctfst.$(O): jidctfst.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
 jidctint.$(O): jidctint.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
@@ -298,9 +259,7 @@ jmemname.$(O): jmemname.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h je
 jmemnobs.$(O): jmemnobs.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jmemsys.h
 jmemdos.$(O): jmemdos.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jmemsys.h
 jmemmac.$(O): jmemmac.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jmemsys.h
-cjpeg.$(O): cjpeg.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h jversion.h
 djpeg.$(O): djpeg.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h jversion.h
-jpegtran.$(O): jpegtran.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h transupp.h jversion.h
 rdjpgcom.$(O): rdjpgcom.c jinclude.h jconfig.h
 wrjpgcom.$(O): wrjpgcom.c jinclude.h jconfig.h
 cdjpeg.$(O): cdjpeg.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h
