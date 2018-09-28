@@ -18,6 +18,8 @@
 #include "jinclude.h"
 #include "jpeglib.h"
 
+#include "jmemmgr.h"
+
 /* Block smoothing is only applicable for progressive JPEG, so: */
 #ifndef D_PROGRESSIVE_SUPPORTED
 #undef BLOCK_SMOOTHING_SUPPORTED
@@ -254,7 +256,7 @@ consume_data (j_decompress_ptr cinfo)
   /* Align the virtual buffers for the components used in this scan. */
   for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
     compptr = cinfo->cur_comp_info[ci];
-    buffer[ci] = (*cinfo->mem->access_virt_barray)
+    buffer[ci] = access_virt_barray
       ((j_common_ptr) cinfo, coef->whole_image[compptr->component_index],
        cinfo->input_iMCU_row * compptr->v_samp_factor,
        (JDIMENSION) compptr->v_samp_factor, TRUE);
@@ -340,7 +342,7 @@ decompress_data (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
     if (! compptr->component_needed)
       continue;
     /* Align the virtual buffer for this component. */
-    buffer = (*cinfo->mem->access_virt_barray)
+    buffer = access_virt_barray
       ((j_common_ptr) cinfo, coef->whole_image[ci],
        cinfo->output_iMCU_row * compptr->v_samp_factor,
        (JDIMENSION) compptr->v_samp_factor, FALSE);
@@ -516,14 +518,14 @@ decompress_smooth_data (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
     /* Align the virtual buffer for this component. */
     if (cinfo->output_iMCU_row > 0) {
       access_rows += compptr->v_samp_factor; /* prior iMCU row too */
-      buffer = (*cinfo->mem->access_virt_barray)
+      buffer = access_virt_barray
 	((j_common_ptr) cinfo, coef->whole_image[ci],
 	 (cinfo->output_iMCU_row - 1) * compptr->v_samp_factor,
 	 (JDIMENSION) access_rows, FALSE);
       buffer += compptr->v_samp_factor;	/* point to current iMCU row */
       first_row = FALSE;
     } else {
-      buffer = (*cinfo->mem->access_virt_barray)
+      buffer = access_virt_barray
 	((j_common_ptr) cinfo, coef->whole_image[ci],
 	 (JDIMENSION) 0, (JDIMENSION) access_rows, FALSE);
       first_row = TRUE;

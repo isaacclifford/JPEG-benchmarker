@@ -14,6 +14,8 @@
 #include "jinclude.h"
 #include "jpeglib.h"
 
+#include "jmemmgr.h"
+
 
 /* Forward declarations */
 LOCAL(void) transencode_master_selection
@@ -291,7 +293,7 @@ compress_output (j_compress_ptr cinfo, JSAMPIMAGE input_buf)
   /* Align the virtual buffers for the components used in this scan. */
   for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
     compptr = cinfo->cur_comp_info[ci];
-    buffer[ci] = (*cinfo->mem->access_virt_barray)
+    buffer[ci] = access_virt_barray
       ((j_common_ptr) cinfo, coef->whole_image[compptr->component_index],
        coef->iMCU_row_num * compptr->v_samp_factor,
        (JDIMENSION) compptr->v_samp_factor, FALSE);

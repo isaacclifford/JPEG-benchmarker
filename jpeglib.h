@@ -783,13 +783,13 @@ struct jpeg_memory_mgr {
 					   JDIMENSION start_row,
 					   JDIMENSION num_rows,
 					   boolean writable));
-  JMETHOD(JBLOCKARRAY, access_virt_barray, (j_common_ptr cinfo,
-					    jvirt_barray_ptr ptr,
-					    JDIMENSION start_row,
-					    JDIMENSION num_rows,
-					    boolean writable));
-  JMETHOD(void, free_pool, (j_common_ptr cinfo, int pool_id));
-  JMETHOD(void, self_destruct, (j_common_ptr cinfo));
+//  JMETHOD(JBLOCKARRAY, access_virt_barray, (j_common_ptr cinfo,
+//					    jvirt_barray_ptr ptr,
+//					    JDIMENSION start_row,
+//					    JDIMENSION num_rows,
+//					    boolean writable));
+//  JMETHOD(void, free_pool, (j_common_ptr cinfo, int pool_id));
+//  JMETHOD(void, self_destruct, (j_common_ptr cinfo));
 
   /* Limit on memory allocation for this JPEG object.  (Note that this is
    * merely advisory, not a guaranteed maximum; it only affects the space

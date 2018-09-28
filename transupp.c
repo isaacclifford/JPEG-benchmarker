@@ -21,6 +21,7 @@
 #include "jpeglib.h"
 #include "transupp.h"		/* My own external interface */
 
+#include "jmemmgr.h"
 
 #if TRANSFORMS_SUPPORTED
 
@@ -86,7 +87,7 @@ do_flip_h (j_decompress_ptr srcinfo, j_compress_ptr dstinfo,
     comp_width = MCU_cols * compptr->h_samp_factor;
     for (blk_y = 0; blk_y < compptr->height_in_blocks;
 	 blk_y += compptr->v_samp_factor) {
-      buffer = (*srcinfo->mem->access_virt_barray)
+      buffer = access_virt_barray
 	((j_common_ptr) srcinfo, src_coef_arrays[ci], blk_y,
 	 (JDIMENSION) compptr->v_samp_factor, TRUE);
       for (offset_y = 0; offset_y < compptr->v_samp_factor; offset_y++) {
@@ -138,18 +139,18 @@ do_flip_v (j_decompress_ptr srcinfo, j_compress_ptr dstinfo,
     comp_height = MCU_rows * compptr->v_samp_factor;
     for (dst_blk_y = 0; dst_blk_y < compptr->height_in_blocks;
 	 dst_blk_y += compptr->v_samp_factor) {
-      dst_buffer = (*srcinfo->mem->access_virt_barray)
+      dst_buffer = access_virt_barray
 	((j_common_ptr) srcinfo, dst_coef_arrays[ci], dst_blk_y,
 	 (JDIMENSION) compptr->v_samp_factor, TRUE);
       if (dst_blk_y < comp_height) {
 	/* Row is within the mirrorable area. */
-	src_buffer = (*srcinfo->mem->access_virt_barray)
+	src_buffer = access_virt_barray
 	  ((j_common_ptr) srcinfo, src_coef_arrays[ci],
 	   comp_height - dst_blk_y - (JDIMENSION) compptr->v_samp_factor,
 	   (JDIMENSION) compptr->v_samp_factor, FALSE);
       } else {
 	/* Bottom-edge blocks will be copied verbatim. */
-	src_buffer = (*srcinfo->mem->access_virt_barray)
+	src_buffer = access_virt_barray
 	  ((j_common_ptr) srcinfo, src_coef_arrays[ci], dst_blk_y,
 	   (JDIMENSION) compptr->v_samp_factor, FALSE);
       }
@@ -203,13 +204,13 @@ do_transpose (j_decompress_ptr srcinfo, j_compress_ptr dstinfo,
     compptr = dstinfo->comp_info + ci;
     for (dst_blk_y = 0; dst_blk_y < compptr->height_in_blocks;
 	 dst_blk_y += compptr->v_samp_factor) {
-      dst_buffer = (*srcinfo->mem->access_virt_barray)
+      dst_buffer = access_virt_barray
 	((j_common_ptr) srcinfo, dst_coef_arrays[ci], dst_blk_y,
 	 (JDIMENSION) compptr->v_samp_factor, TRUE);
       for (offset_y = 0; offset_y < compptr->v_samp_factor; offset_y++) {
 	for (dst_blk_x = 0; dst_blk_x < compptr->width_in_blocks;
 	     dst_blk_x += compptr->h_samp_factor) {
-	  src_buffer = (*srcinfo->mem->access_virt_barray)
+	  src_buffer = access_virt_barray
 	    ((j_common_ptr) srcinfo, src_coef_arrays[ci], dst_blk_x,
 	     (JDIMENSION) compptr->h_samp_factor, FALSE);
 	  for (offset_x = 0; offset_x < compptr->h_samp_factor; offset_x++) {
@@ -253,13 +254,13 @@ do_rot_90 (j_decompress_ptr srcinfo, j_compress_ptr dstinfo,
     comp_width = MCU_cols * compptr->h_samp_factor;
     for (dst_blk_y = 0; dst_blk_y < compptr->height_in_blocks;
 	 dst_blk_y += compptr->v_samp_factor) {
-      dst_buffer = (*srcinfo->mem->access_virt_barray)
+      dst_buffer = access_virt_barray
 	((j_common_ptr) srcinfo, dst_coef_arrays[ci], dst_blk_y,
 	 (JDIMENSION) compptr->v_samp_factor, TRUE);
       for (offset_y = 0; offset_y < compptr->v_samp_factor; offset_y++) {
 	for (dst_blk_x = 0; dst_blk_x < compptr->width_in_blocks;
 	     dst_blk_x += compptr->h_samp_factor) {
-	  src_buffer = (*srcinfo->mem->access_virt_barray)
+	  src_buffer = access_virt_barray
 	    ((j_common_ptr) srcinfo, src_coef_arrays[ci], dst_blk_x,
 	     (JDIMENSION) compptr->h_samp_factor, FALSE);
 	  for (offset_x = 0; offset_x < compptr->h_samp_factor; offset_x++) {
@@ -317,13 +318,13 @@ do_rot_270 (j_decompress_ptr srcinfo, j_compress_ptr dstinfo,
     comp_height = MCU_rows * compptr->v_samp_factor;
     for (dst_blk_y = 0; dst_blk_y < compptr->height_in_blocks;
 	 dst_blk_y += compptr->v_samp_factor) {
-      dst_buffer = (*srcinfo->mem->access_virt_barray)
+      dst_buffer = access_virt_barray
 	((j_common_ptr) srcinfo, dst_coef_arrays[ci], dst_blk_y,
 	 (JDIMENSION) compptr->v_samp_factor, TRUE);
       for (offset_y = 0; offset_y < compptr->v_samp_factor; offset_y++) {
 	for (dst_blk_x = 0; dst_blk_x < compptr->width_in_blocks;
 	     dst_blk_x += compptr->h_samp_factor) {
-	  src_buffer = (*srcinfo->mem->access_virt_barray)
+	  src_buffer = access_virt_barray
 	    ((j_common_ptr) srcinfo, src_coef_arrays[ci], dst_blk_x,
 	     (JDIMENSION) compptr->h_samp_factor, FALSE);
 	  for (offset_x = 0; offset_x < compptr->h_samp_factor; offset_x++) {
@@ -380,18 +381,18 @@ do_rot_180 (j_decompress_ptr srcinfo, j_compress_ptr dstinfo,
     comp_height = MCU_rows * compptr->v_samp_factor;
     for (dst_blk_y = 0; dst_blk_y < compptr->height_in_blocks;
 	 dst_blk_y += compptr->v_samp_factor) {
-      dst_buffer = (*srcinfo->mem->access_virt_barray)
+      dst_buffer = access_virt_barray
 	((j_common_ptr) srcinfo, dst_coef_arrays[ci], dst_blk_y,
 	 (JDIMENSION) compptr->v_samp_factor, TRUE);
       if (dst_blk_y < comp_height) {
 	/* Row is within the vertically mirrorable area. */
-	src_buffer = (*srcinfo->mem->access_virt_barray)
+	src_buffer = access_virt_barray
 	  ((j_common_ptr) srcinfo, src_coef_arrays[ci],
 	   comp_height - dst_blk_y - (JDIMENSION) compptr->v_samp_factor,
 	   (JDIMENSION) compptr->v_samp_factor, FALSE);
       } else {
 	/* Bottom-edge rows are only mirrored horizontally. */
-	src_buffer = (*srcinfo->mem->access_virt_barray)
+	src_buffer = access_virt_barray
 	  ((j_common_ptr) srcinfo, src_coef_arrays[ci], dst_blk_y,
 	   (JDIMENSION) compptr->v_samp_factor, FALSE);
       }
@@ -484,13 +485,13 @@ do_transverse (j_decompress_ptr srcinfo, j_compress_ptr dstinfo,
     comp_height = MCU_rows * compptr->v_samp_factor;
     for (dst_blk_y = 0; dst_blk_y < compptr->height_in_blocks;
 	 dst_blk_y += compptr->v_samp_factor) {
-      dst_buffer = (*srcinfo->mem->access_virt_barray)
+      dst_buffer = access_virt_barray
 	((j_common_ptr) srcinfo, dst_coef_arrays[ci], dst_blk_y,
 	 (JDIMENSION) compptr->v_samp_factor, TRUE);
       for (offset_y = 0; offset_y < compptr->v_samp_factor; offset_y++) {
 	for (dst_blk_x = 0; dst_blk_x < compptr->width_in_blocks;
 	     dst_blk_x += compptr->h_samp_factor) {
-	  src_buffer = (*srcinfo->mem->access_virt_barray)
+	  src_buffer = access_virt_barray
 	    ((j_common_ptr) srcinfo, src_coef_arrays[ci], dst_blk_x,
 	     (JDIMENSION) compptr->h_samp_factor, FALSE);
 	  for (offset_x = 0; offset_x < compptr->h_samp_factor; offset_x++) {

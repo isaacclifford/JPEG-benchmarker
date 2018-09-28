@@ -88,7 +88,8 @@ APPSOURCES= djpeg.c rdjpgcom.c wrjpgcom.c cdjpeg.c \
 SOURCES= $(LIBSOURCES) $(SYSDEPSOURCES) $(APPSOURCES)
 # files included by source files
 INCLUDES= jchuff.h jdhuff.h jdct.h jerror.h jinclude.h jmemsys.h jmorecfg.h \
-        jpegint.h jpeglib.h jversion.h cdjpeg.h cderror.h transupp.h
+        jpegint.h jpeglib.h jversion.h cdjpeg.h cderror.h transupp.h \
+        jmemmgr.h
 # documentation, test, and support files
 DOCS= README install.doc usage.doc djpeg.1 rdjpgcom.1 \
         wrjpgcom.1 wizard.doc example.c libjpeg.doc structure.doc \

@@ -26,9 +26,8 @@
 
 #define JPEG_INTERNALS
 #define AM_MEMORY_MANAGER	/* we define jvirt_Xarray_control structs */
-#include "jinclude.h"
-#include "jpeglib.h"
-#include "jmemsys.h"		/* import the system-dependent declarations */
+
+#include "jmemmgr.h"
 
 #ifndef NO_GETENV
 #ifndef HAVE_STDLIB_H		/* <stdlib.h> should declare getenv() */
@@ -837,7 +836,7 @@ access_virt_sarray (j_common_ptr cinfo, jvirt_sarray_ptr ptr,
 }
 
 
-METHODDEF(JBLOCKARRAY)
+GLOBAL (JBLOCKARRAY)
 access_virt_barray (j_common_ptr cinfo, jvirt_barray_ptr ptr,
 		    JDIMENSION start_row, JDIMENSION num_rows,
 		    boolean writable)
@@ -926,7 +925,7 @@ access_virt_barray (j_common_ptr cinfo, jvirt_barray_ptr ptr,
  * Release all objects belonging to a specified pool.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 free_pool (j_common_ptr cinfo, int pool_id)
 {
   my_mem_ptr mem = (my_mem_ptr) cinfo->mem;
@@ -998,7 +997,7 @@ free_pool (j_common_ptr cinfo, int pool_id)
  * Note that this cannot be called unless cinfo->mem is non-NULL.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 self_destruct (j_common_ptr cinfo)
 {
   int pool;
@@ -1072,9 +1071,9 @@ jinit_memory_mgr (j_common_ptr cinfo)
   mem->pub.request_virt_barray = request_virt_barray;
   mem->pub.realize_virt_arrays = realize_virt_arrays;
   mem->pub.access_virt_sarray = access_virt_sarray;
-  mem->pub.access_virt_barray = access_virt_barray;
-  mem->pub.free_pool = free_pool;
-  mem->pub.self_destruct = self_destruct;
+//  mem->pub.access_virt_barray = access_virt_barray;
+//  mem->pub.free_pool = free_pool;
+//  mem->pub.self_destruct = self_destruct;
 
   /* Make MAX_ALLOC_CHUNK accessible to other modules */
   mem->pub.max_alloc_chunk = MAX_ALLOC_CHUNK;

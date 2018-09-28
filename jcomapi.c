@@ -13,6 +13,9 @@
 #include "jinclude.h"
 #include "jpeglib.h"
 
+//Include for functions: free_space, self_destruct
+#include "jmemmgr.h"
+
 
 /*
  * Abort processing of a JPEG compression or decompression operation,
@@ -38,7 +41,8 @@ jpeg_abort (j_common_ptr cinfo)
    * with some (brain-damaged) malloc libraries.
    */
   for (pool = JPOOL_NUMPOOLS-1; pool > JPOOL_PERMANENT; pool--) {
-    (*cinfo->mem->free_pool) (cinfo, pool);
+    fprintf(stderr, "IS: %s. Pool\n", __func__);
+    free_pool(cinfo, pool);
   }
 
   /* Reset overall state for possible reuse of object */
@@ -71,7 +75,7 @@ jpeg_destroy (j_common_ptr cinfo)
   /* We need only tell the memory manager to release everything. */
   /* NB: mem pointer is NULL if memory mgr failed to initialize. */
   if (cinfo->mem != NULL)
-    (*cinfo->mem->self_destruct) (cinfo);
+    self_destruct(cinfo);
   cinfo->mem = NULL;		/* be safe if jpeg_destroy is called twice */
   cinfo->global_state = 0;	/* mark it destroyed */
 }
