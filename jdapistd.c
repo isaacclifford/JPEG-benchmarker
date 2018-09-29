@@ -96,7 +96,7 @@ jpeg_start_decompress (j_decompress_ptr cinfo)
 LOCAL(boolean)
 output_pass_setup (j_decompress_ptr cinfo)
 {
-  fprintf(stderr, "IS: s\n", __func__);
+  fprintf(stderr, "IS: %s\n", __func__);
 
   if (cinfo->global_state != DSTATE_PRESCAN) {
     /* First call: do pass setup */

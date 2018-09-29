@@ -67,7 +67,7 @@ enable_signal_catcher (j_common_ptr cinfo)
 METHODDEF(void)
 progress_monitor (j_common_ptr cinfo)
 {
-  fprintf(stderr, "IS: %s", __func__);
+  fprintf(stderr, "IS: %s\n", __func__);
   cd_progress_ptr prog = (cd_progress_ptr) cinfo->progress;
   int total_passes = prog->pub.total_passes + prog->total_extra_passes;
   int percent_done = (int) (prog->pub.pass_counter*100L/prog->pub.pass_limit);
@@ -91,7 +91,7 @@ start_progress_monitor (j_common_ptr cinfo, cd_progress_ptr progress)
 {
   /* Enable progress display, unless trace output is on */
   if (cinfo->err->trace_level == 0) {
-    fprintf(stderr, "IS: Progress Monitor Initialization");
+    fprintf(stderr, "IS: Progress Monitor Initialization\n");
     progress->pub.progress_monitor = progress_monitor;
     progress->completed_extra_passes = 0;
     progress->total_extra_passes = 0;

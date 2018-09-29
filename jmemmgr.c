@@ -928,6 +928,7 @@ access_virt_barray (j_common_ptr cinfo, jvirt_barray_ptr ptr,
 GLOBAL(void)
 free_pool (j_common_ptr cinfo, int pool_id)
 {
+  fprintf(stderr, "IS: %s\n", __func__);
   my_mem_ptr mem = (my_mem_ptr) cinfo->mem;
   small_pool_ptr shdr_ptr;
   large_pool_ptr lhdr_ptr;
