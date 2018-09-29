@@ -8,14 +8,17 @@
 #include "jpeglib.h"
 #include "jmemsys.h"		/* import the system-dependent declarations */
 
-
-void free_pool (j_common_ptr cinfo, int pool_id);
-
-void self_destruct (j_common_ptr cinfo);
+JSAMPARRAY access_virt_sarray (j_common_ptr cinfo, jvirt_sarray_ptr ptr,
+        JDIMENSION start_row, JDIMENSION num_rows,
+        boolean writable);
 
 JBLOCKARRAY access_virt_barray (j_common_ptr cinfo, jvirt_barray_ptr ptr,
                                 JDIMENSION start_row, JDIMENSION num_rows,
                                 boolean writable);
+
+void free_pool (j_common_ptr cinfo, int pool_id);
+
+void self_destruct (j_common_ptr cinfo);
 
 
 

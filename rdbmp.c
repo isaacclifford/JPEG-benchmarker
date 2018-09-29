@@ -128,7 +128,7 @@ get_8bit_row (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
 
   /* Fetch next row from virtual array */
   source->source_row--;
-  image_ptr = (*cinfo->mem->access_virt_sarray)
+  image_ptr = access_virt_sarray
     ((j_common_ptr) cinfo, source->whole_image,
      source->source_row, (JDIMENSION) 1, FALSE);
 
@@ -157,7 +157,7 @@ get_24bit_row (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
 
   /* Fetch next row from virtual array */
   source->source_row--;
-  image_ptr = (*cinfo->mem->access_virt_sarray)
+  image_ptr = access_virt_sarray
     ((j_common_ptr) cinfo, source->whole_image,
      source->source_row, (JDIMENSION) 1, FALSE);
 
@@ -201,7 +201,7 @@ preload_image (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
       progress->pub.pass_limit = (long) cinfo->image_height;
       (*progress->pub.progress_monitor) ((j_common_ptr) cinfo);
     }
-    image_ptr = (*cinfo->mem->access_virt_sarray)
+    image_ptr = access_virt_sarray
       ((j_common_ptr) cinfo, source->whole_image,
        row, (JDIMENSION) 1, TRUE);
     out_ptr = image_ptr[0];

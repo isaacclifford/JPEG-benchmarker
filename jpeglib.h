@@ -778,11 +778,11 @@ struct jpeg_memory_mgr {
 						  JDIMENSION numrows,
 						  JDIMENSION maxaccess));
   JMETHOD(void, realize_virt_arrays, (j_common_ptr cinfo));
-  JMETHOD(JSAMPARRAY, access_virt_sarray, (j_common_ptr cinfo,
-					   jvirt_sarray_ptr ptr,
-					   JDIMENSION start_row,
-					   JDIMENSION num_rows,
-					   boolean writable));
+//  JMETHOD(JSAMPARRAY, access_virt_sarray, (j_common_ptr cinfo,
+//					   jvirt_sarray_ptr ptr,
+//					   JDIMENSION start_row,
+//					   JDIMENSION num_rows,
+//					   boolean writable));
 //  JMETHOD(JBLOCKARRAY, access_virt_barray, (j_common_ptr cinfo,
 //					    jvirt_barray_ptr ptr,
 //					    JDIMENSION start_row,

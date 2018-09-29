@@ -18,6 +18,7 @@
  */
 
 #include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
+#include "jmemmgr.h"
 
 #ifdef TARGA_SUPPORTED
 
@@ -281,7 +282,7 @@ get_memory_row (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
   source_row = cinfo->image_height - source->current_row - 1;
 
   /* Fetch that row from virtual array */
-  source->pub.buffer = (*cinfo->mem->access_virt_sarray)
+  source->pub.buffer = access_virt_sarray
     ((j_common_ptr) cinfo, source->whole_image,
      source_row, (JDIMENSION) 1, FALSE);
 
@@ -310,7 +311,7 @@ preload_image (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
       progress->pub.pass_limit = (long) cinfo->image_height;
       (*progress->pub.progress_monitor) ((j_common_ptr) cinfo);
     }
-    source->pub.buffer = (*cinfo->mem->access_virt_sarray)
+    source->pub.buffer = access_virt_sarray
       ((j_common_ptr) cinfo, source->whole_image, row, (JDIMENSION) 1, TRUE);
     (*source->get_pixel_rows) (cinfo, sinfo);
   }

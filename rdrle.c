@@ -20,6 +20,7 @@
  */
 
 #include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
+#include "jmemmgr.h"
 
 #ifdef RLE_SUPPORTED
 
@@ -189,7 +190,7 @@ get_rle_row (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
   rle_source_ptr source = (rle_source_ptr) sinfo;
 
   source->row--;
-  source->pub.buffer = (*cinfo->mem->access_virt_sarray)
+  source->pub.buffer = access_virt_sarray
     ((j_common_ptr) cinfo, source->image, source->row, (JDIMENSION) 1, FALSE);
 
   return 1;
@@ -213,7 +214,7 @@ get_pseudocolor_row (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
   colormap = source->header.cmap;
   dest_row = source->pub.buffer[0];
   source->row--;
-  src_row = * (*cinfo->mem->access_virt_sarray)
+  src_row = * access_virt_sarray
     ((j_common_ptr) cinfo, source->image, source->row, (JDIMENSION) 1, FALSE);
 
   for (col = cinfo->image_width; col > 0; col--) {
@@ -272,7 +273,7 @@ load_image (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
   case GRAYSCALE:
   case PSEUDOCOLOR:
     for (row = 0; row < cinfo->image_height; row++) {
-      rle_row = (rle_pixel **) (*cinfo->mem->access_virt_sarray)
+      rle_row = (rle_pixel **) access_virt_sarray
          ((j_common_ptr) cinfo, source->image, row, (JDIMENSION) 1, TRUE);
       rle_getrow(&source->header, rle_row);
 #ifdef PROGRESS_REPORT
@@ -287,7 +288,7 @@ load_image (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
   case MAPPEDGRAY:
   case TRUECOLOR:
     for (row = 0; row < cinfo->image_height; row++) {
-      scanline = * (*cinfo->mem->access_virt_sarray)
+      scanline = * access_virt_sarray
         ((j_common_ptr) cinfo, source->image, row, (JDIMENSION) 1, TRUE);
       rle_row = source->rle_row;
       rle_getrow(&source->header, rle_row);
@@ -310,7 +311,7 @@ load_image (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
 
   case DIRECTCOLOR:
     for (row = 0; row < cinfo->image_height; row++) {
-      scanline = * (*cinfo->mem->access_virt_sarray)
+      scanline = * access_virt_sarray
         ((j_common_ptr) cinfo, source->image, row, (JDIMENSION) 1, TRUE);
       rle_getrow(&source->header, rle_row);
 

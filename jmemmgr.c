@@ -751,7 +751,7 @@ do_barray_io (j_common_ptr cinfo, jvirt_barray_ptr ptr, boolean writing)
 }
 
 
-METHODDEF(JSAMPARRAY)
+GLOBAL(JSAMPARRAY)
 access_virt_sarray (j_common_ptr cinfo, jvirt_sarray_ptr ptr,
 		    JDIMENSION start_row, JDIMENSION num_rows,
 		    boolean writable)
@@ -1071,7 +1071,7 @@ jinit_memory_mgr (j_common_ptr cinfo)
   mem->pub.request_virt_sarray = request_virt_sarray;
   mem->pub.request_virt_barray = request_virt_barray;
   mem->pub.realize_virt_arrays = realize_virt_arrays;
-  mem->pub.access_virt_sarray = access_virt_sarray;
+//  mem->pub.access_virt_sarray = access_virt_sarray;
 //  mem->pub.access_virt_barray = access_virt_barray;
 //  mem->pub.free_pool = free_pool;
 //  mem->pub.self_destruct = self_destruct;

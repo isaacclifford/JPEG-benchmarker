@@ -18,6 +18,7 @@
  */
 
 #include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
+#include "jmemmgr.h"
 
 #ifdef BMP_SUPPORTED
 
@@ -79,7 +80,7 @@ put_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
   int pad;
 
   /* Access next row in virtual array */
-  image_ptr = (*cinfo->mem->access_virt_sarray)
+  image_ptr = access_virt_sarray
     ((j_common_ptr) cinfo, dest->whole_image,
      dest->cur_output_row, (JDIMENSION) 1, TRUE);
   dest->cur_output_row++;
@@ -114,7 +115,7 @@ put_gray_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
   int pad;
 
   /* Access next row in virtual array */
-  image_ptr = (*cinfo->mem->access_virt_sarray)
+  image_ptr = access_virt_sarray
     ((j_common_ptr) cinfo, dest->whole_image,
      dest->cur_output_row, (JDIMENSION) 1, TRUE);
   dest->cur_output_row++;
@@ -364,7 +365,7 @@ finish_output_bmp (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
       progress->pub.pass_limit = (long) cinfo->output_height;
       (*progress->pub.progress_monitor) ((j_common_ptr) cinfo);
     }
-    image_ptr = (*cinfo->mem->access_virt_sarray)
+    image_ptr = access_virt_sarray
       ((j_common_ptr) cinfo, dest->whole_image, row-1, (JDIMENSION) 1, FALSE);
     data_ptr = image_ptr[0];
     for (col = dest->row_width; col > 0; col--) {

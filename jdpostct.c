@@ -19,6 +19,7 @@
 #define JPEG_INTERNALS
 #include "jinclude.h"
 #include "jpeglib.h"
+#include "jmemmgr.h"
 
 
 /* Private buffer controller object */
@@ -84,7 +85,7 @@ start_pass_dpost (j_decompress_ptr cinfo, J_BUF_MODE pass_mode)
        * allocate a strip buffer.  Use the virtual-array buffer as workspace.
        */
       if (post->buffer == NULL) {
-	post->buffer = (*cinfo->mem->access_virt_sarray)
+	post->buffer = access_virt_sarray
 	  ((j_common_ptr) cinfo, post->whole_image,
 	   (JDIMENSION) 0, post->strip_height, TRUE);
       }
@@ -166,7 +167,7 @@ post_process_prepass (j_decompress_ptr cinfo,
 
   /* Reposition virtual buffer if at start of strip. */
   if (post->next_row == 0) {
-    post->buffer = (*cinfo->mem->access_virt_sarray)
+    post->buffer = access_virt_sarray
 	((j_common_ptr) cinfo, post->whole_image,
 	 post->starting_row, post->strip_height, TRUE);
   }
@@ -210,7 +211,7 @@ post_process_2pass (j_decompress_ptr cinfo,
 
   /* Reposition virtual buffer if at start of strip. */
   if (post->next_row == 0) {
-    post->buffer = (*cinfo->mem->access_virt_sarray)
+    post->buffer = access_virt_sarray
 	((j_common_ptr) cinfo, post->whole_image,
 	 post->starting_row, post->strip_height, FALSE);
   }

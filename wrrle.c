@@ -17,6 +17,7 @@
  */
 
 #include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
+#include "jmemmgr.h"
 
 #ifdef RLE_SUPPORTED
 
@@ -129,7 +130,7 @@ start_output_rle (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
   }
 
   /* Set the output buffer to the first row */
-  dest->pub.buffer = (*cinfo->mem->access_virt_sarray)
+  dest->pub.buffer = access_virt_sarray
     ((j_common_ptr) cinfo, dest->image, (JDIMENSION) 0, (JDIMENSION) 1, TRUE);
   dest->pub.buffer_height = 1;
 
@@ -156,7 +157,7 @@ rle_put_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
   rle_dest_ptr dest = (rle_dest_ptr) dinfo;
 
   if (cinfo->output_scanline < cinfo->output_height) {
-    dest->pub.buffer = (*cinfo->mem->access_virt_sarray)
+    dest->pub.buffer = access_virt_sarray
       ((j_common_ptr) cinfo, dest->image,
        cinfo->output_scanline, (JDIMENSION) 1, TRUE);
   }
@@ -221,7 +222,7 @@ finish_output_rle (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 
   if (cinfo->output_components == 1) {
     for (row = cinfo->output_height-1; row >= 0; row--) {
-      rle_row = (rle_pixel **) (*cinfo->mem->access_virt_sarray)
+      rle_row = (rle_pixel **)access_virt_sarray
         ((j_common_ptr) cinfo, dest->image,
 	 (JDIMENSION) row, (JDIMENSION) 1, FALSE);
       rle_putrow(rle_row, (int) cinfo->output_width, &header);
@@ -235,7 +236,7 @@ finish_output_rle (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
   } else {
     for (row = cinfo->output_height-1; row >= 0; row--) {
       rle_row = (rle_pixel **) dest->rle_row;
-      output_row = * (*cinfo->mem->access_virt_sarray)
+      output_row = *access_virt_sarray
         ((j_common_ptr) cinfo, dest->image,
 	 (JDIMENSION) row, (JDIMENSION) 1, FALSE);
       red = rle_row[0];
