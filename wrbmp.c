@@ -423,7 +423,7 @@ jinit_write_bmp (j_decompress_ptr cinfo, boolean is_os2)
   dest->pad_bytes = (int) (row_width - dest->data_width);
 
   /* Allocate space for inversion array, prepare for write pass */
-  dest->whole_image = (*cinfo->mem->request_virt_sarray)
+  dest->whole_image = request_virt_sarray
     ((j_common_ptr) cinfo, JPOOL_IMAGE, FALSE,
      row_width, cinfo->output_height, (JDIMENSION) 1);
   dest->cur_output_row = 0;

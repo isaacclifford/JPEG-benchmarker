@@ -295,7 +295,7 @@ jinit_write_rle (j_decompress_ptr cinfo)
      cinfo->output_width, (JDIMENSION) cinfo->output_components);
 
   /* Allocate a virtual array to hold the image. */
-  dest->image = (*cinfo->mem->request_virt_sarray)
+  dest->image = request_virt_sarray
     ((j_common_ptr) cinfo, JPOOL_IMAGE, FALSE,
      (JDIMENSION) (cinfo->output_width * cinfo->output_components),
      cinfo->output_height, (JDIMENSION) 1);

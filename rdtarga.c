@@ -422,7 +422,7 @@ start_input_tga (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
 
   if (is_bottom_up) {
     /* Create a virtual array to buffer the upside-down image. */
-    source->whole_image = (*cinfo->mem->request_virt_sarray)
+    source->whole_image = request_virt_sarray
       ((j_common_ptr) cinfo, JPOOL_IMAGE, FALSE,
        (JDIMENSION) width * components, (JDIMENSION) height, (JDIMENSION) 1);
     if (cinfo->progress != NULL) {

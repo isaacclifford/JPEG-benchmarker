@@ -187,7 +187,7 @@ transencode_master_selection (j_compress_ptr cinfo,
   jinit_marker_writer(cinfo);
 
   /* We can now tell the memory manager to allocate virtual arrays. */
-  (*cinfo->mem->realize_virt_arrays) ((j_common_ptr) cinfo);
+  realize_virt_arrays((j_common_ptr) cinfo);
 
   /* Write the datastream header (SOI, JFIF) immediately.
    * Frame and scan headers are postponed till later.

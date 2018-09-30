@@ -438,7 +438,7 @@ alloc_sarray (j_common_ptr cinfo, int pool_id,
  * This is essentially the same as the code for sample arrays, above.
  */
 
-METHODDEF(JBLOCKARRAY)
+GLOBAL(JBLOCKARRAY)
 alloc_barray (j_common_ptr cinfo, int pool_id,
 	      JDIMENSION blocksperrow, JDIMENSION numrows)
 /* Allocate a 2-D coefficient-block array */
@@ -518,7 +518,7 @@ alloc_barray (j_common_ptr cinfo, int pool_id,
  */
 
 
-METHODDEF(jvirt_sarray_ptr)
+GLOBAL(jvirt_sarray_ptr)
 request_virt_sarray (j_common_ptr cinfo, int pool_id, boolean pre_zero,
 		     JDIMENSION samplesperrow, JDIMENSION numrows,
 		     JDIMENSION maxaccess)
@@ -548,7 +548,7 @@ request_virt_sarray (j_common_ptr cinfo, int pool_id, boolean pre_zero,
 }
 
 
-METHODDEF(jvirt_barray_ptr)
+GLOBAL(jvirt_barray_ptr)
 request_virt_barray (j_common_ptr cinfo, int pool_id, boolean pre_zero,
 		     JDIMENSION blocksperrow, JDIMENSION numrows,
 		     JDIMENSION maxaccess)
@@ -578,7 +578,7 @@ request_virt_barray (j_common_ptr cinfo, int pool_id, boolean pre_zero,
 }
 
 
-METHODDEF(void)
+GLOBAL(void)
 realize_virt_arrays (j_common_ptr cinfo)
 /* Allocate the in-memory buffers for any unrealized virtual arrays */
 {
@@ -1067,10 +1067,10 @@ jinit_memory_mgr (j_common_ptr cinfo)
   mem->pub.alloc_small = alloc_small;
   mem->pub.alloc_large = alloc_large;
   mem->pub.alloc_sarray = alloc_sarray;
-  mem->pub.alloc_barray = alloc_barray;
-  mem->pub.request_virt_sarray = request_virt_sarray;
-  mem->pub.request_virt_barray = request_virt_barray;
-  mem->pub.realize_virt_arrays = realize_virt_arrays;
+//  mem->pub.alloc_barray = alloc_barray;
+//  mem->pub.request_virt_sarray = request_virt_sarray;
+//  mem->pub.request_virt_barray = request_virt_barray;
+//  mem->pub.realize_virt_arrays = realize_virt_arrays;
 //  mem->pub.access_virt_sarray = access_virt_sarray;
 //  mem->pub.access_virt_barray = access_virt_barray;
 //  mem->pub.free_pool = free_pool;

@@ -271,7 +271,7 @@ jinit_d_post_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
       /* Two-pass color quantization: need full-image storage. */
       /* We round up the number of rows to a multiple of the strip height. */
 #ifdef QUANT_2PASS_SUPPORTED
-      post->whole_image = (*cinfo->mem->request_virt_sarray)
+      post->whole_image = request_virt_sarray
 	((j_common_ptr) cinfo, JPOOL_IMAGE, FALSE,
 	 cinfo->output_width * cinfo->out_color_components,
 	 (JDIMENSION) jround_up((long) cinfo->output_height,

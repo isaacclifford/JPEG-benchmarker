@@ -22,6 +22,7 @@
  */
 
 #include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
+#include "jmemmgr.h"
 
 #ifdef BMP_SUPPORTED
 
@@ -381,7 +382,7 @@ start_input_bmp (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
   source->row_width = row_width;
 
   /* Allocate space for inversion array, prepare for preload pass */
-  source->whole_image = (*cinfo->mem->request_virt_sarray)
+  source->whole_image = request_virt_sarray
     ((j_common_ptr) cinfo, JPOOL_IMAGE, FALSE,
      row_width, (JDIMENSION) biHeight, (JDIMENSION) 1);
   source->pub.get_pixel_rows = preload_image;

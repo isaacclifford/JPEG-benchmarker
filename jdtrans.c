@@ -13,6 +13,7 @@
 #define JPEG_INTERNALS
 #include "jinclude.h"
 #include "jpeglib.h"
+#include "jmemmgr.h"
 
 
 /* Forward declarations */
@@ -117,7 +118,7 @@ transdecode_master_selection (j_decompress_ptr cinfo)
   jinit_d_coef_controller(cinfo, TRUE);
 
   /* We can now tell the memory manager to allocate virtual arrays. */
-  (*cinfo->mem->realize_virt_arrays) ((j_common_ptr) cinfo);
+  realize_virt_arrays((j_common_ptr) cinfo);
 
   /* Initialize input side of decompressor to consume first scan. */
   (*cinfo->inputctl->start_input_pass) (cinfo);

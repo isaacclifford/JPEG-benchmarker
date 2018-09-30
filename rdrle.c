@@ -162,7 +162,7 @@ start_input_rle (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
   }
 
   /* request a virtual array to hold the image */
-  source->image = (*cinfo->mem->request_virt_sarray)
+  source->image = request_virt_sarray
     ((j_common_ptr) cinfo, JPOOL_IMAGE, FALSE,
      (JDIMENSION) (width * source->header.ncolors),
      (JDIMENSION) height, (JDIMENSION) 1);

@@ -706,7 +706,7 @@ jinit_d_coef_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
       if (cinfo->progressive_mode)
 	access_rows *= 3;
 #endif
-      coef->whole_image[ci] = (*cinfo->mem->request_virt_barray)
+      coef->whole_image[ci] = request_virt_barray
 	((j_common_ptr) cinfo, JPOOL_IMAGE, TRUE,
 	 (JDIMENSION) jround_up((long) compptr->width_in_blocks,
 				(long) compptr->h_samp_factor),

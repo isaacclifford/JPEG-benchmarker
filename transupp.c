@@ -599,7 +599,7 @@ jtransform_request_workspace (j_decompress_ptr srcinfo,
 	SIZEOF(jvirt_barray_ptr) * info->num_components);
     for (ci = 0; ci < info->num_components; ci++) {
       compptr = srcinfo->comp_info + ci;
-      coef_arrays[ci] = (*srcinfo->mem->request_virt_barray)
+      coef_arrays[ci] = request_virt_barray
 	((j_common_ptr) srcinfo, JPOOL_IMAGE, FALSE,
 	 (JDIMENSION) jround_up((long) compptr->width_in_blocks,
 				(long) compptr->h_samp_factor),
@@ -621,7 +621,7 @@ jtransform_request_workspace (j_decompress_ptr srcinfo,
 	SIZEOF(jvirt_barray_ptr) * info->num_components);
     for (ci = 0; ci < info->num_components; ci++) {
       compptr = srcinfo->comp_info + ci;
-      coef_arrays[ci] = (*srcinfo->mem->request_virt_barray)
+      coef_arrays[ci] = request_virt_barray
 	((j_common_ptr) srcinfo, JPOOL_IMAGE, FALSE,
 	 (JDIMENSION) jround_up((long) compptr->height_in_blocks,
 				(long) compptr->v_samp_factor),
