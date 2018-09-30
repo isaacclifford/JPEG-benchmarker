@@ -170,7 +170,7 @@ alloc_funny_pointers (j_decompress_ptr cinfo)
    * We alloc both arrays with one call to save a few cycles.
    */
   main->xbuffer[0] = (JSAMPIMAGE)
-    (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+    alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				cinfo->num_components * 2 * SIZEOF(JSAMPARRAY));
   main->xbuffer[1] = main->xbuffer[0] + cinfo->num_components;
 
@@ -182,7 +182,7 @@ alloc_funny_pointers (j_decompress_ptr cinfo)
      * We alloc both pointer lists with one call to save a few cycles.
      */
     xbuf = (JSAMPARRAY)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+      alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				  2 * (rgroup * (M + 4)) * SIZEOF(JSAMPROW));
     xbuf += rgroup;		/* want one row group at negative offsets */
     main->xbuffer[0][ci] = xbuf;
@@ -481,7 +481,7 @@ jinit_d_main_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
   jpeg_component_info *compptr;
 
   main = (my_main_ptr)
-    (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+    alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_main_controller));
   cinfo->main = (struct jpeg_d_main_controller *) main;
   main->pub.start_pass = start_pass_main;

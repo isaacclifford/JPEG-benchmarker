@@ -755,10 +755,10 @@ typedef struct jvirt_barray_control * jvirt_barray_ptr;
 
 struct jpeg_memory_mgr {
   /* Method pointers */
-  JMETHOD(void *, alloc_small, (j_common_ptr cinfo, int pool_id,
-				size_t sizeofobject));
-  JMETHOD(void FAR *, alloc_large, (j_common_ptr cinfo, int pool_id,
-				     size_t sizeofobject));
+//  JMETHOD(void *, alloc_small, (j_common_ptr cinfo, int pool_id,
+//				size_t sizeofobject));
+//  JMETHOD(void FAR *, alloc_large, (j_common_ptr cinfo, int pool_id,
+//				     size_t sizeofobject));
 //  JMETHOD(JSAMPARRAY, alloc_sarray, (j_common_ptr cinfo, int pool_id,
 //				     JDIMENSION samplesperrow,
 //				     JDIMENSION numrows));

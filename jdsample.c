@@ -406,7 +406,7 @@ jinit_upsampler (j_decompress_ptr cinfo)
   int h_in_group, v_in_group, h_out_group, v_out_group;
 
   upsample = (my_upsample_ptr)
-    (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+    alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_upsampler));
   cinfo->upsample = (struct jpeg_upsampler *) upsample;
   upsample->pub.start_pass = start_pass_upsample;

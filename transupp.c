@@ -595,7 +595,7 @@ jtransform_request_workspace (j_decompress_ptr srcinfo,
      * so that transform routines need not worry about missing edge blocks.
      */
     coef_arrays = (jvirt_barray_ptr *)
-      (*srcinfo->mem->alloc_small) ((j_common_ptr) srcinfo, JPOOL_IMAGE,
+      alloc_small ((j_common_ptr) srcinfo, JPOOL_IMAGE,
 	SIZEOF(jvirt_barray_ptr) * info->num_components);
     for (ci = 0; ci < info->num_components; ci++) {
       compptr = srcinfo->comp_info + ci;
@@ -616,8 +616,7 @@ jtransform_request_workspace (j_decompress_ptr srcinfo,
      * Note that we allocate arrays padded out to the next iMCU boundary,
      * so that transform routines need not worry about missing edge blocks.
      */
-    coef_arrays = (jvirt_barray_ptr *)
-      (*srcinfo->mem->alloc_small) ((j_common_ptr) srcinfo, JPOOL_IMAGE,
+    coef_arrays = (jvirt_barray_ptr *) alloc_small ((j_common_ptr) srcinfo, JPOOL_IMAGE,
 	SIZEOF(jvirt_barray_ptr) * info->num_components);
     for (ci = 0; ci < info->num_components; ci++) {
       compptr = srcinfo->comp_info + ci;

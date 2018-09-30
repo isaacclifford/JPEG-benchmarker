@@ -15,6 +15,7 @@
 #define JPEG_INTERNALS
 #include "jinclude.h"
 #include "jpeglib.h"
+#include "jmemmgr.h"
 
 
 typedef enum {			/* JPEG marker codes */
@@ -272,7 +273,7 @@ get_sof (j_decompress_ptr cinfo, boolean is_prog, boolean is_arith)
     ERREXIT(cinfo, JERR_BAD_LENGTH);
 
   if (cinfo->comp_info == NULL)	/* do only once, even if suspend */
-    cinfo->comp_info = (jpeg_component_info *) (*cinfo->mem->alloc_small)
+    cinfo->comp_info = (jpeg_component_info *) alloc_small
 			((j_common_ptr) cinfo, JPOOL_IMAGE,
 			 cinfo->num_components * SIZEOF(jpeg_component_info));
   
@@ -760,8 +761,7 @@ save_marker (j_decompress_ptr cinfo)
       if ((unsigned int) length < limit)
 	limit = (unsigned int) length;
       /* allocate and initialize the marker item */
-      cur_marker = (jpeg_saved_marker_ptr)
-	(*cinfo->mem->alloc_large) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+      cur_marker = (jpeg_saved_marker_ptr) alloc_large ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				    SIZEOF(struct jpeg_marker_struct) + limit);
       cur_marker->next = NULL;
       cur_marker->marker = (UINT8) cinfo->unread_marker;
@@ -1266,7 +1266,7 @@ jinit_marker_reader (j_decompress_ptr cinfo)
 
   /* Create subobject in permanent pool */
   marker = (my_marker_ptr)
-    (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
+    alloc_small ((j_common_ptr) cinfo, JPOOL_PERMANENT,
 				SIZEOF(my_marker_reader));
   cinfo->marker = (struct jpeg_marker_reader *) marker;
   /* Initialize public method pointers */

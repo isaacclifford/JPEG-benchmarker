@@ -8,8 +8,11 @@
 #include "jpeglib.h"
 #include "jmemsys.h"		/* import the system-dependent declarations */
 
-JSAMPARRAY
-alloc_sarray (j_common_ptr cinfo, int pool_id,
+void * alloc_small (j_common_ptr cinfo, int pool_id, size_t sizeofobject);
+
+void FAR * alloc_large (j_common_ptr cinfo, int pool_id, size_t sizeofobject);
+
+JSAMPARRAY alloc_sarray (j_common_ptr cinfo, int pool_id,
         JDIMENSION samplesperrow, JDIMENSION numrows);
 
 JBLOCKARRAY alloc_barray (j_common_ptr cinfo, int pool_id,

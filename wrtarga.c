@@ -229,7 +229,7 @@ jinit_write_targa (j_decompress_ptr cinfo)
 
   /* Create module interface object, fill in method pointers */
   dest = (tga_dest_ptr)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+      alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				  SIZEOF(tga_dest_struct));
   dest->pub.start_output = start_output_tga;
   dest->pub.finish_output = finish_output_tga;
@@ -240,7 +240,7 @@ jinit_write_targa (j_decompress_ptr cinfo)
   /* Create I/O buffer.  Note we make this near on a PC. */
   dest->buffer_width = cinfo->output_width * cinfo->output_components;
   dest->iobuffer = (char *)
-    (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+    alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				(size_t) (dest->buffer_width * SIZEOF(char)));
 
   /* Create decompressor output buffer. */

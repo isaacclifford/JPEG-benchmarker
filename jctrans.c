@@ -370,7 +370,7 @@ transencode_coef_controller (j_compress_ptr cinfo,
   int i;
 
   coef = (my_coef_ptr)
-    (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+    alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_coef_controller));
   cinfo->coef = (struct jpeg_c_coef_controller *) coef;
   coef->pub.start_pass = start_pass_coef;
@@ -380,8 +380,7 @@ transencode_coef_controller (j_compress_ptr cinfo,
   coef->whole_image = coef_arrays;
 
   /* Allocate and pre-zero space for dummy DCT blocks. */
-  buffer = (JBLOCKROW)
-    (*cinfo->mem->alloc_large) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+  buffer = (JBLOCKROW) alloc_large ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				C_MAX_BLOCKS_IN_MCU * SIZEOF(JBLOCK));
   jzero_far((void FAR *) buffer, C_MAX_BLOCKS_IN_MCU * SIZEOF(JBLOCK));
   for (i = 0; i < C_MAX_BLOCKS_IN_MCU; i++) {

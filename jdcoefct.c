@@ -420,7 +420,7 @@ smoothing_ok (j_decompress_ptr cinfo)
   /* Allocate latch area if not already done */
   if (coef->coef_bits_latch == NULL)
     coef->coef_bits_latch = (int *)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+      alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				  cinfo->num_components *
 				  (SAVED_COEFS * SIZEOF(int)));
   coef_bits_latch = coef->coef_bits_latch;
@@ -680,7 +680,7 @@ jinit_d_coef_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
   my_coef_ptr coef;
 
   coef = (my_coef_ptr)
-    (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+    alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_coef_controller));
   cinfo->coef = (struct jpeg_d_coef_controller *) coef;
   coef->pub.start_input_pass = start_input_pass;
@@ -725,8 +725,7 @@ jinit_d_coef_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
     JBLOCKROW buffer;
     int i;
 
-    buffer = (JBLOCKROW)
-      (*cinfo->mem->alloc_large) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+    buffer = (JBLOCKROW) alloc_large ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				  D_MAX_BLOCKS_IN_MCU * SIZEOF(JBLOCK));
     for (i = 0; i < D_MAX_BLOCKS_IN_MCU; i++) {
       coef->MCU_buffer[i] = buffer + i;

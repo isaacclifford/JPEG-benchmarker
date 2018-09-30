@@ -401,7 +401,7 @@ make_odither_array (j_decompress_ptr cinfo, int ncolors)
   INT32 num,den;
 
   odither = (ODITHER_MATRIX_PTR)
-    (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+    alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(ODITHER_MATRIX));
   /* The inter-value distance for this color is MAXJSAMPLE/(ncolors-1).
    * Hence the dither value for the matrix cell with fill order f
@@ -728,8 +728,7 @@ alloc_fs_workspace (j_decompress_ptr cinfo)
 
   arraysize = (size_t) ((cinfo->output_width + 2) * SIZEOF(FSERROR));
   for (i = 0; i < cinfo->out_color_components; i++) {
-    cquantize->fserrors[i] = (FSERRPTR)
-      (*cinfo->mem->alloc_large)((j_common_ptr) cinfo, JPOOL_IMAGE, arraysize);
+    cquantize->fserrors[i] = (FSERRPTR) alloc_large((j_common_ptr) cinfo, JPOOL_IMAGE, arraysize);
   }
 }
 
@@ -824,7 +823,7 @@ jinit_1pass_quantizer (j_decompress_ptr cinfo)
   my_cquantize_ptr cquantize;
 
   cquantize = (my_cquantize_ptr)
-    (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+    alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_cquantizer));
   cinfo->cquantize = (struct jpeg_color_quantizer *) cquantize;
   cquantize->pub.start_pass = start_pass_1_quant;

@@ -223,7 +223,7 @@ jinit_write_ppm (j_decompress_ptr cinfo)
 
   /* Create module interface object, fill in method pointers */
   dest = (ppm_dest_ptr)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+      alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				  SIZEOF(ppm_dest_struct));
   dest->pub.start_output = start_output_ppm;
   dest->pub.finish_output = finish_output_ppm;
@@ -234,7 +234,7 @@ jinit_write_ppm (j_decompress_ptr cinfo)
   /* Create physical I/O buffer.  Note we make this near on a PC. */
   dest->samples_per_row = cinfo->output_width * cinfo->out_color_components;
   dest->buffer_width = dest->samples_per_row * (BYTESPERSAMPLE * SIZEOF(char));
-  dest->iobuffer = (char *) (*cinfo->mem->alloc_small)
+  dest->iobuffer = (char *) alloc_small
     ((j_common_ptr) cinfo, JPOOL_IMAGE, dest->buffer_width);
 
   if (cinfo->quantize_colors || BITS_IN_JSAMPLE != 8 ||

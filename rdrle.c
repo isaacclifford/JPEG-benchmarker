@@ -375,7 +375,7 @@ jinit_read_rle (j_compress_ptr cinfo)
 
   /* Create module interface object */
   source = (rle_source_ptr)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+      alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
                                   SIZEOF(rle_source_struct));
   /* Fill in method ptrs */
   source->pub.start_input = start_input_rle;

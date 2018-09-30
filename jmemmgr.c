@@ -252,7 +252,7 @@ static const size_t extra_pool_slop[JPOOL_NUMPOOLS] =
 #define MIN_SLOP  50		/* greater than 0 to avoid futile looping */
 
 
-METHODDEF(void *)
+GLOBAL(void *)
 alloc_small (j_common_ptr cinfo, int pool_id, size_t sizeofobject)
 /* Allocate a "small" object */
 {
@@ -337,7 +337,7 @@ alloc_small (j_common_ptr cinfo, int pool_id, size_t sizeofobject)
  * deliberately bunch rows together to ensure a large request size.
  */
 
-METHODDEF(void FAR *)
+GLOBAL(void FAR *)
 alloc_large (j_common_ptr cinfo, int pool_id, size_t sizeofobject)
 /* Allocate a "large" object */
 {
@@ -1064,8 +1064,8 @@ jinit_memory_mgr (j_common_ptr cinfo)
   }
 
   /* OK, fill in the method pointers */
-  mem->pub.alloc_small = alloc_small;
-  mem->pub.alloc_large = alloc_large;
+//  mem->pub.alloc_small = alloc_small;
+//  mem->pub.alloc_large = alloc_large;
 //  mem->pub.alloc_sarray = alloc_sarray;
 //  mem->pub.alloc_barray = alloc_barray;
 //  mem->pub.request_virt_sarray = request_virt_sarray;

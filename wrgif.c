@@ -364,7 +364,7 @@ jinit_write_gif (j_decompress_ptr cinfo)
 
   /* Create module interface object, fill in method pointers */
   dest = (gif_dest_ptr)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+      alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				  SIZEOF(gif_dest_struct));
   dest->cinfo = cinfo;		/* make back link for subroutines */
   dest->pub.start_output = start_output_gif;

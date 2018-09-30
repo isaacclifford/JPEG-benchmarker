@@ -15,6 +15,7 @@
 
 #include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
 #include <ctype.h>		/* to declare isdigit(), isspace() */
+#include "jmemmgr.h"
 
 
 LOCAL(int)
@@ -248,7 +249,7 @@ bogus:
      * but if you want to compress multiple images you'd want JPOOL_PERMANENT.
      */
     scanptr = (jpeg_scan_info *)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+      alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				  scanno * SIZEOF(jpeg_scan_info));
     MEMCOPY(scanptr, scans, scanno * SIZEOF(jpeg_scan_info));
     cinfo->scan_info = scanptr;

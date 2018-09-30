@@ -18,6 +18,7 @@
 #include "jinclude.h"
 #include "jpeglib.h"
 #include "jdhuff.h"		/* Declarations shared with jdhuff.c */
+#include "jmemmgr.h"
 
 
 #ifdef D_PROGRESSIVE_SUPPORTED
@@ -645,7 +646,7 @@ jinit_phuff_decoder (j_decompress_ptr cinfo)
   int ci, i;
 
   entropy = (phuff_entropy_ptr)
-    (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+    alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(phuff_entropy_decoder));
   cinfo->entropy = (struct jpeg_entropy_decoder *) entropy;
   entropy->pub.start_pass = start_pass_phuff_decoder;
@@ -657,7 +658,7 @@ jinit_phuff_decoder (j_decompress_ptr cinfo)
 
   /* Create progression status table */
   cinfo->coef_bits = (int (*)[DCTSIZE2])
-    (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+    alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				cinfo->num_components*DCTSIZE2*SIZEOF(int));
   coef_bit_ptr = & cinfo->coef_bits[0][0];
   for (ci = 0; ci < cinfo->num_components; ci++) 
