@@ -19,6 +19,7 @@
  */
 
 #include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
+#include "jmemmgr.h"
 
 #ifdef PPM_SUPPORTED
 
@@ -401,7 +402,7 @@ start_input_ppm (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
     source->pub.buffer_height = 1;
   } else {
     /* Need to translate anyway, so make a separate sample buffer. */
-    source->pub.buffer = (*cinfo->mem->alloc_sarray)
+    source->pub.buffer = alloc_sarray
       ((j_common_ptr) cinfo, JPOOL_IMAGE,
        (JDIMENSION) w * cinfo->input_components, (JDIMENSION) 1);
     source->pub.buffer_height = 1;

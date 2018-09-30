@@ -21,6 +21,7 @@
 #define JPEG_INTERNALS
 #include "jinclude.h"
 #include "jpeglib.h"
+#include "jmemmgr.h"
 
 
 /* Pointer to routine to upsample a single component */
@@ -468,7 +469,7 @@ jinit_upsampler (j_decompress_ptr cinfo)
     } else
       ERREXIT(cinfo, JERR_FRACT_SAMPLE_NOTIMPL);
     if (need_buffer) {
-      upsample->color_buf[ci] = (*cinfo->mem->alloc_sarray)
+      upsample->color_buf[ci] = alloc_sarray
 	((j_common_ptr) cinfo, JPOOL_IMAGE,
 	 (JDIMENSION) jround_up((long) cinfo->output_width,
 				(long) cinfo->max_h_samp_factor),

@@ -22,6 +22,7 @@
  */
 
 #include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
+#include "jmemmgr.h"
 
 #ifdef QUANT_2PASS_SUPPORTED	/* otherwise can't quantize to supplied map */
 
@@ -231,7 +232,7 @@ GLOBAL(void)
 read_color_map (j_decompress_ptr cinfo, FILE * infile)
 {
   /* Allocate space for a color map of maximum supported size. */
-  cinfo->colormap = (*cinfo->mem->alloc_sarray)
+  cinfo->colormap = alloc_sarray
     ((j_common_ptr) cinfo, JPOOL_IMAGE,
      (JDIMENSION) (MAXJSAMPLE+1), (JDIMENSION) 3);
   cinfo->actual_number_of_colors = 0; /* initialize map to empty */

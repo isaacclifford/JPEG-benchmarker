@@ -38,6 +38,7 @@
  */
 
 #include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
+#include "jmemmgr.h"
 
 #ifdef GIF_SUPPORTED
 
@@ -389,7 +390,7 @@ jinit_write_gif (j_decompress_ptr cinfo)
     ERREXIT(cinfo, JERR_GIF_BUG);
 
   /* Create decompressor output buffer. */
-  dest->pub.buffer = (*cinfo->mem->alloc_sarray)
+  dest->pub.buffer = alloc_sarray
     ((j_common_ptr) cinfo, JPOOL_IMAGE, cinfo->output_width, (JDIMENSION) 1);
   dest->pub.buffer_height = 1;
 

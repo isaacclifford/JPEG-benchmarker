@@ -433,7 +433,7 @@ jinit_write_bmp (j_decompress_ptr cinfo, boolean is_os2)
   }
 
   /* Create decompressor output buffer. */
-  dest->pub.buffer = (*cinfo->mem->alloc_sarray)
+  dest->pub.buffer = alloc_sarray
     ((j_common_ptr) cinfo, JPOOL_IMAGE, row_width, (JDIMENSION) 1);
   dest->pub.buffer_height = 1;
 

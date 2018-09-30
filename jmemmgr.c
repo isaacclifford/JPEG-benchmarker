@@ -390,7 +390,7 @@ alloc_large (j_common_ptr cinfo, int pool_id, size_t sizeofobject)
  * a virtual array.
  */
 
-METHODDEF(JSAMPARRAY)
+GLOBAL(JSAMPARRAY)
 alloc_sarray (j_common_ptr cinfo, int pool_id,
 	      JDIMENSION samplesperrow, JDIMENSION numrows)
 /* Allocate a 2-D sample array */
@@ -1066,7 +1066,7 @@ jinit_memory_mgr (j_common_ptr cinfo)
   /* OK, fill in the method pointers */
   mem->pub.alloc_small = alloc_small;
   mem->pub.alloc_large = alloc_large;
-  mem->pub.alloc_sarray = alloc_sarray;
+//  mem->pub.alloc_sarray = alloc_sarray;
 //  mem->pub.alloc_barray = alloc_barray;
 //  mem->pub.request_virt_sarray = request_virt_sarray;
 //  mem->pub.request_virt_barray = request_virt_barray;

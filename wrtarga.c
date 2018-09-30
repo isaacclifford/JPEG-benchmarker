@@ -15,6 +15,7 @@
  */
 
 #include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
+#include "jmemmgr.h"
 
 #ifdef TARGA_SUPPORTED
 
@@ -243,7 +244,7 @@ jinit_write_targa (j_decompress_ptr cinfo)
 				(size_t) (dest->buffer_width * SIZEOF(char)));
 
   /* Create decompressor output buffer. */
-  dest->pub.buffer = (*cinfo->mem->alloc_sarray)
+  dest->pub.buffer = alloc_sarray
     ((j_common_ptr) cinfo, JPOOL_IMAGE, dest->buffer_width, (JDIMENSION) 1);
   dest->pub.buffer_height = 1;
 

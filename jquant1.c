@@ -13,6 +13,7 @@
 #define JPEG_INTERNALS
 #include "jinclude.h"
 #include "jpeglib.h"
+#include "jmemmgr.h"
 
 #ifdef QUANT_1PASS_SUPPORTED
 
@@ -292,7 +293,7 @@ create_colormap (j_decompress_ptr cinfo)
   /* The colors are ordered in the map in standard row-major order, */
   /* i.e. rightmost (highest-indexed) color changes most rapidly. */
 
-  colormap = (*cinfo->mem->alloc_sarray)
+  colormap = alloc_sarray
     ((j_common_ptr) cinfo, JPOOL_IMAGE,
      (JDIMENSION) total_colors, (JDIMENSION) cinfo->out_color_components);
 
@@ -349,7 +350,7 @@ create_colorindex (j_decompress_ptr cinfo)
     cquantize->is_padded = FALSE;
   }
 
-  cquantize->colorindex = (*cinfo->mem->alloc_sarray)
+  cquantize->colorindex = alloc_sarray
     ((j_common_ptr) cinfo, JPOOL_IMAGE,
      (JDIMENSION) (MAXJSAMPLE+1 + pad),
      (JDIMENSION) cinfo->out_color_components);

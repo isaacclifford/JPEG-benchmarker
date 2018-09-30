@@ -357,7 +357,7 @@ start_input_bmp (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
     else if (biClrUsed > 256)
       ERREXIT(cinfo, JERR_BMP_BADCMAP);
     /* Allocate space to store the colormap */
-    source->colormap = (*cinfo->mem->alloc_sarray)
+    source->colormap = alloc_sarray
       ((j_common_ptr) cinfo, JPOOL_IMAGE,
        (JDIMENSION) biClrUsed, (JDIMENSION) 3);
     /* and read it from the file */
@@ -392,7 +392,7 @@ start_input_bmp (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
   }
 
   /* Allocate one-row buffer for returned data */
-  source->pub.buffer = (*cinfo->mem->alloc_sarray)
+  source->pub.buffer = alloc_sarray
     ((j_common_ptr) cinfo, JPOOL_IMAGE,
      (JDIMENSION) (biWidth * 3), (JDIMENSION) 1);
   source->pub.buffer_height = 1;

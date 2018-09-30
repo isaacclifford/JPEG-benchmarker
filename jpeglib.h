@@ -759,9 +759,9 @@ struct jpeg_memory_mgr {
 				size_t sizeofobject));
   JMETHOD(void FAR *, alloc_large, (j_common_ptr cinfo, int pool_id,
 				     size_t sizeofobject));
-  JMETHOD(JSAMPARRAY, alloc_sarray, (j_common_ptr cinfo, int pool_id,
-				     JDIMENSION samplesperrow,
-				     JDIMENSION numrows));
+//  JMETHOD(JSAMPARRAY, alloc_sarray, (j_common_ptr cinfo, int pool_id,
+//				     JDIMENSION samplesperrow,
+//				     JDIMENSION numrows));
 //  JMETHOD(JBLOCKARRAY, alloc_barray, (j_common_ptr cinfo, int pool_id,
 //				      JDIMENSION blocksperrow,
 //				      JDIMENSION numrows));

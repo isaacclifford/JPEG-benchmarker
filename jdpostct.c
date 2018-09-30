@@ -282,7 +282,7 @@ jinit_d_post_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
 #endif /* QUANT_2PASS_SUPPORTED */
     } else {
       /* One-pass color quantization: just make a strip buffer. */
-      post->buffer = (*cinfo->mem->alloc_sarray)
+      post->buffer = alloc_sarray
 	((j_common_ptr) cinfo, JPOOL_IMAGE,
 	 cinfo->output_width * cinfo->out_color_components,
 	 post->strip_height);

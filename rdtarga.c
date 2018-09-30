@@ -435,7 +435,7 @@ start_input_tga (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
   } else {
     /* Don't need a virtual array, but do need a one-row input buffer. */
     source->whole_image = NULL;
-    source->pub.buffer = (*cinfo->mem->alloc_sarray)
+    source->pub.buffer = alloc_sarray
       ((j_common_ptr) cinfo, JPOOL_IMAGE,
        (JDIMENSION) width * components, (JDIMENSION) 1);
     source->pub.buffer_height = 1;
@@ -449,7 +449,7 @@ start_input_tga (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
     if (maplen > 256 || GET_2B(3) != 0)
       ERREXIT(cinfo, JERR_TGA_BADCMAP);
     /* Allocate space to store the colormap */
-    source->colormap = (*cinfo->mem->alloc_sarray)
+    source->colormap = alloc_sarray
       ((j_common_ptr) cinfo, JPOOL_IMAGE, (JDIMENSION) maplen, (JDIMENSION) 3);
     /* and read it from the file */
     read_colormap(source, (int) maplen, UCH(targaheader[7]));

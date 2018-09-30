@@ -156,7 +156,7 @@ start_input_rle (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
    * (GRAYSCALE scanlines don't need converting)
    */
   if (source->visual != GRAYSCALE) {
-    source->rle_row = (rle_pixel**) (*cinfo->mem->alloc_sarray)
+    source->rle_row = (rle_pixel**) alloc_sarray
       ((j_common_ptr) cinfo, JPOOL_IMAGE,
        (JDIMENSION) width, (JDIMENSION) cinfo->input_components);
   }

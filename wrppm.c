@@ -16,6 +16,7 @@
  */
 
 #include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
+#include "jmemmgr.h"
 
 #ifdef PPM_SUPPORTED
 
@@ -242,7 +243,7 @@ jinit_write_ppm (j_decompress_ptr cinfo)
      * that's separate from the physical I/O buffer.  We also need a
      * separate buffer if pixel format translation must take place.
      */
-    dest->pub.buffer = (*cinfo->mem->alloc_sarray)
+    dest->pub.buffer = alloc_sarray
       ((j_common_ptr) cinfo, JPOOL_IMAGE,
        cinfo->output_width * cinfo->output_components, (JDIMENSION) 1);
     dest->pub.buffer_height = 1;

@@ -20,6 +20,7 @@
 #define JPEG_INTERNALS
 #include "jinclude.h"
 #include "jpeglib.h"
+#include "jmemmgr.h"
 
 #ifdef QUANT_2PASS_SUPPORTED
 
@@ -1282,7 +1283,7 @@ jinit_2pass_quantizer (j_decompress_ptr cinfo)
     /* Make sure colormap indexes can be represented by JSAMPLEs */
     if (desired > MAXNUMCOLORS)
       ERREXIT1(cinfo, JERR_QUANT_MANY_COLORS, MAXNUMCOLORS);
-    cquantize->sv_colormap = (*cinfo->mem->alloc_sarray)
+    cquantize->sv_colormap = alloc_sarray
       ((j_common_ptr) cinfo,JPOOL_IMAGE, (JDIMENSION) desired, (JDIMENSION) 3);
     cquantize->desired = desired;
   } else

@@ -290,7 +290,7 @@ jinit_write_rle (j_decompress_ptr cinfo)
   jpeg_calc_output_dimensions(cinfo);
 
   /* Allocate a work array for output to the RLE library. */
-  dest->rle_row = (*cinfo->mem->alloc_sarray)
+  dest->rle_row = alloc_sarray
     ((j_common_ptr) cinfo, JPOOL_IMAGE,
      cinfo->output_width, (JDIMENSION) cinfo->output_components);
 
