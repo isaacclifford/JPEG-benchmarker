@@ -363,7 +363,7 @@ finish_output_bmp (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
     if (progress != NULL) {
       progress->pub.pass_counter = (long) (cinfo->output_height - row);
       progress->pub.pass_limit = (long) cinfo->output_height;
-      (*progress->pub.progress_monitor) ((j_common_ptr) cinfo);
+      progress_monitor((j_common_ptr) cinfo);
     }
     image_ptr = access_virt_sarray
       ((j_common_ptr) cinfo, dest->whole_image, row-1, (JDIMENSION) 1, FALSE);

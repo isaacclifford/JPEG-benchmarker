@@ -62,9 +62,7 @@ enable_signal_catcher (j_common_ptr cinfo)
  * Optional progress monitor: display a percent-done figure on stderr.
  */
 
-#ifdef PROGRESS_REPORT
-
-METHODDEF(void)
+GLOBAL(void)
 progress_monitor (j_common_ptr cinfo)
 {
   fprintf(stderr, "IS: %s\n", __func__);
@@ -85,6 +83,7 @@ progress_monitor (j_common_ptr cinfo)
   }
 }
 
+#ifdef PROGRESS_REPORT
 
 GLOBAL(void)
 start_progress_monitor (j_common_ptr cinfo, cd_progress_ptr progress)
@@ -92,7 +91,6 @@ start_progress_monitor (j_common_ptr cinfo, cd_progress_ptr progress)
   /* Enable progress display, unless trace output is on */
   if (cinfo->err->trace_level == 0) {
     fprintf(stderr, "IS: Progress Monitor Initialization\n");
-    progress->pub.progress_monitor = progress_monitor;
     progress->completed_extra_passes = 0;
     progress->total_extra_passes = 0;
     progress->percent_done = -1;

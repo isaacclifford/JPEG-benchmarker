@@ -216,7 +216,7 @@ finish_output_rle (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
   if (progress != NULL) {
     progress->pub.pass_limit = cinfo->output_height;
     progress->pub.pass_counter = 0;
-    (*progress->pub.progress_monitor) ((j_common_ptr) cinfo);
+    progress_monitor ((j_common_ptr) cinfo);
   }
 #endif
 
@@ -229,7 +229,7 @@ finish_output_rle (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 #ifdef PROGRESS_REPORT
       if (progress != NULL) {
         progress->pub.pass_counter++;
-        (*progress->pub.progress_monitor) ((j_common_ptr) cinfo);
+        progress_monitor ((j_common_ptr) cinfo);
       }
 #endif
     }
@@ -251,7 +251,7 @@ finish_output_rle (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 #ifdef PROGRESS_REPORT
       if (progress != NULL) {
         progress->pub.pass_counter++;
-        (*progress->pub.progress_monitor) ((j_common_ptr) cinfo);
+        progress_monitor ((j_common_ptr) cinfo);
       }
 #endif
     }

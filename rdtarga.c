@@ -309,7 +309,7 @@ preload_image (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
     if (progress != NULL) {
       progress->pub.pass_counter = (long) row;
       progress->pub.pass_limit = (long) cinfo->image_height;
-      (*progress->pub.progress_monitor) ((j_common_ptr) cinfo);
+      progress_monitor ((j_common_ptr) cinfo);
     }
     source->pub.buffer = access_virt_sarray
       ((j_common_ptr) cinfo, source->whole_image, row, (JDIMENSION) 1, TRUE);

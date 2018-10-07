@@ -694,8 +694,9 @@ struct jpeg_error_mgr {
 
 /* Progress monitor object */
 
+EXTERN (void) progress_monitor (j_common_ptr cinfo);
+
 struct jpeg_progress_mgr {
-  JMETHOD(void, progress_monitor, (j_common_ptr cinfo)); //IS: doable
 
   long pass_counter;		/* work units completed in this pass */
   long pass_limit;		/* total number of work units in this pass */

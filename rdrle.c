@@ -264,7 +264,7 @@ load_image (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
   if (progress != NULL) {
     progress->pub.pass_limit = cinfo->image_height;
     progress->pub.pass_counter = 0;
-    (*progress->pub.progress_monitor) ((j_common_ptr) cinfo);
+    progress_monitor ((j_common_ptr) cinfo);
   }
 #endif
 
@@ -279,7 +279,7 @@ load_image (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
 #ifdef PROGRESS_REPORT
       if (progress != NULL) {
         progress->pub.pass_counter++;
-        (*progress->pub.progress_monitor) ((j_common_ptr) cinfo);
+        progress_monitor ((j_common_ptr) cinfo);
       }
 #endif
     }
@@ -303,7 +303,7 @@ load_image (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
 #ifdef PROGRESS_REPORT
       if (progress != NULL) {
         progress->pub.pass_counter++;
-        (*progress->pub.progress_monitor) ((j_common_ptr) cinfo);
+        progress_monitor ((j_common_ptr) cinfo);
       }
 #endif
     }
@@ -328,7 +328,7 @@ load_image (j_compress_ptr cinfo, cjpeg_source_ptr sinfo)
 #ifdef PROGRESS_REPORT
       if (progress != NULL) {
         progress->pub.pass_counter++;
-        (*progress->pub.progress_monitor) ((j_common_ptr) cinfo);
+        progress_monitor ((j_common_ptr) cinfo);
       }
 #endif
     }
