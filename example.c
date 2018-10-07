@@ -70,7 +70,7 @@ extern int image_width;		/* Number of columns in image */
  */
 
 GLOBAL(void)
-write_JPEG_file (char * filename, int quality)
+write_JPEG_file (char * filename, int quality) //IS: Compression JPEG file example
 {
   /* This struct contains the JPEG compression parameters and pointers to
    * working space (which is allocated as needed by the JPEG library).

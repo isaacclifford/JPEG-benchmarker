@@ -32,7 +32,6 @@
 
 #define JPEG_LIB_VERSION  62	/* Version 6b */
 
-
 /* Various constants determining the sizes of things.
  * All of these are specified by the JPEG standard, so don't change them
  * if you want to be compatible.
@@ -267,9 +266,6 @@ typedef struct jpeg_decompress_struct * j_decompress_ptr;
 
 struct jpeg_compress_struct {
   jpeg_common_fields;		/* Fields shared with jpeg_decompress_struct */
-
-  /* Destination for compressed data */
-  struct jpeg_destination_mgr * dest;
 
   /* Description of source image --- these fields must be filled in by
    * outer application before starting compression.  in_color_space must
@@ -642,16 +638,16 @@ struct jpeg_decompress_struct {
 
 struct jpeg_error_mgr {
   /* Error exit handler: does not return to caller */
-  JMETHOD(void, error_exit, (j_common_ptr cinfo));
+  JMETHOD(void, error_exit, (j_common_ptr cinfo)); //IS: changing this function causes us not to be able to run own error message**//
   /* Conditionally emit a trace or warning message */
-  JMETHOD(void, emit_message, (j_common_ptr cinfo, int msg_level));
+  JMETHOD(void, emit_message, (j_common_ptr cinfo, int msg_level)); //IS: doable
   /* Routine that actually outputs a trace or error message */
-  JMETHOD(void, output_message, (j_common_ptr cinfo));
+  JMETHOD(void, output_message, (j_common_ptr cinfo)); //IS: doable
   /* Format a message string for the most recent JPEG error or message */
-  JMETHOD(void, format_message, (j_common_ptr cinfo, char * buffer));
+  JMETHOD(void, format_message, (j_common_ptr cinfo, char * buffer)); //IS: doable
 #define JMSG_LENGTH_MAX  200	/* recommended size of format_message buffer */
   /* Reset error state variables at start of a new image */
-  JMETHOD(void, reset_error_mgr, (j_common_ptr cinfo));
+  JMETHOD(void, reset_error_mgr, (j_common_ptr cinfo)); //Doable
   
   /* The message ID code and any parameters are saved here.
    * A message can have one string parameter or up to 8 int parameters.
@@ -699,7 +695,7 @@ struct jpeg_error_mgr {
 /* Progress monitor object */
 
 struct jpeg_progress_mgr {
-  JMETHOD(void, progress_monitor, (j_common_ptr cinfo));
+  JMETHOD(void, progress_monitor, (j_common_ptr cinfo)); //IS: doable
 
   long pass_counter;		/* work units completed in this pass */
   long pass_limit;		/* total number of work units in this pass */
@@ -707,30 +703,17 @@ struct jpeg_progress_mgr {
   int total_passes;		/* total number of passes expected */
 };
 
-
-/* Data destination object for compression */
-
-struct jpeg_destination_mgr {
-  JOCTET * next_output_byte;	/* => next byte to write in buffer */
-  size_t free_in_buffer;	/* # of byte spaces remaining in buffer */
-
-  JMETHOD(void, init_destination, (j_compress_ptr cinfo));
-  JMETHOD(boolean, empty_output_buffer, (j_compress_ptr cinfo));
-  JMETHOD(void, term_destination, (j_compress_ptr cinfo));
-};
-
-
 /* Data source object for decompression */
 
 struct jpeg_source_mgr {
   const JOCTET * next_input_byte; /* => next byte to read from buffer */
   size_t bytes_in_buffer;	/* # of bytes remaining in buffer */
 
-  JMETHOD(void, init_source, (j_decompress_ptr cinfo));
-  JMETHOD(boolean, fill_input_buffer, (j_decompress_ptr cinfo));
-  JMETHOD(void, skip_input_data, (j_decompress_ptr cinfo, long num_bytes));
-  JMETHOD(boolean, resync_to_restart, (j_decompress_ptr cinfo, int desired));
-  JMETHOD(void, term_source, (j_decompress_ptr cinfo));
+  JMETHOD(void, init_source, (j_decompress_ptr cinfo)); //IS: doable
+  JMETHOD(boolean, fill_input_buffer, (j_decompress_ptr cinfo)); //IS: doable
+  JMETHOD(void, skip_input_data, (j_decompress_ptr cinfo, long num_bytes)); //IS: doable
+  JMETHOD(boolean, resync_to_restart, (j_decompress_ptr cinfo, int desired)); //IS: doable
+  JMETHOD(void, term_source, (j_decompress_ptr cinfo)); //IS: doable
 };
 
 
