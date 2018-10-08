@@ -294,7 +294,7 @@ jpeg_consume_input (j_decompress_ptr cinfo)
     /* Start-of-datastream actions: reset appropriate modules */
     (*cinfo->inputctl->reset_input_controller) (cinfo);
     /* Initialize application's data source module */
-    (*cinfo->src->init_source) (cinfo);
+    init_source (cinfo);
     cinfo->global_state = DSTATE_INHEADER;
     /*FALLTHROUGH*/
   case DSTATE_INHEADER:
@@ -388,7 +388,7 @@ jpeg_finish_decompress (j_decompress_ptr cinfo)
       return FALSE;		/* Suspend, come back later */
   }
   /* Do final cleanup */
-  (*cinfo->src->term_source) (cinfo);
+  term_source(cinfo);
   /* We can use jpeg_abort to release memory and reset global_state */
   jpeg_abort((j_common_ptr) cinfo);
   return TRUE;

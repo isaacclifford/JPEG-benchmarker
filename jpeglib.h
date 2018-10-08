@@ -706,15 +706,15 @@ struct jpeg_progress_mgr {
 
 /* Data source object for decompression */
 
+/* Data source functions */
+void init_source (j_decompress_ptr cinfo);
+boolean fill_input_buffer(j_decompress_ptr cinfo);
+void skip_input_data (j_decompress_ptr cinfo, long num_bytes);
+void term_source (j_decompress_ptr cinfo);
+
 struct jpeg_source_mgr {
   const JOCTET * next_input_byte; /* => next byte to read from buffer */
   size_t bytes_in_buffer;	/* # of bytes remaining in buffer */
-
-  JMETHOD(void, init_source, (j_decompress_ptr cinfo)); //IS: doable
-  JMETHOD(boolean, fill_input_buffer, (j_decompress_ptr cinfo)); //IS: doable
-  JMETHOD(void, skip_input_data, (j_decompress_ptr cinfo, long num_bytes)); //IS: doable
-  JMETHOD(boolean, resync_to_restart, (j_decompress_ptr cinfo, int desired)); //IS: doable
-  JMETHOD(void, term_source, (j_decompress_ptr cinfo)); //IS: doable
 };
 
 

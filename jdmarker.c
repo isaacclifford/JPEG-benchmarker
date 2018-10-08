@@ -138,7 +138,7 @@ typedef my_marker_reader * my_marker_ptr;
  */
 #define MAKE_BYTE_AVAIL(cinfo,action)  \
 	if (bytes_in_buffer == 0) {  \
-	  if (! (*datasrc->fill_input_buffer) (cinfo))  \
+	  if (!fill_input_buffer(cinfo))  \
 	    { action; }  \
 	  INPUT_RELOAD(cinfo);  \
 	}
@@ -728,7 +728,7 @@ get_interesting_appn (j_decompress_ptr cinfo)
   /* skip any remaining data -- could be lots */
   INPUT_SYNC(cinfo);
   if (length > 0)
-    (*cinfo->src->skip_input_data) (cinfo, (long) length);
+    skip_input_data(cinfo, (long) length);
 
   return TRUE;
 }
@@ -833,7 +833,7 @@ save_marker (j_decompress_ptr cinfo)
   /* skip any remaining data -- could be lots */
   INPUT_SYNC(cinfo);		/* do before skip_input_data */
   if (length > 0)
-    (*cinfo->src->skip_input_data) (cinfo, (long) length);
+    skip_input_data(cinfo, (long) length);
 
   return TRUE;
 }
@@ -855,7 +855,7 @@ skip_variable (j_decompress_ptr cinfo)
 
   INPUT_SYNC(cinfo);		/* do before skip_input_data */
   if (length > 0)
-    (*cinfo->src->skip_input_data) (cinfo, (long) length);
+    skip_input_data(cinfo, (long) length);
 
   return TRUE;
 }
@@ -1127,8 +1127,7 @@ read_restart_marker (j_decompress_ptr cinfo)
   } else {
     /* Uh-oh, the restart markers have been messed up. */
     /* Let the data source manager determine how to resync. */
-    if (! (*cinfo->src->resync_to_restart) (cinfo,
-					    cinfo->marker->next_restart_num))
+    if (! jpeg_resync_to_restart(cinfo, cinfo->marker->next_restart_num))
       return FALSE;
   }
 

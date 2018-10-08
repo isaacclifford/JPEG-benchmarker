@@ -41,7 +41,7 @@ typedef my_source_mgr * my_src_ptr;
  * before any data is actually read.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 init_source (j_decompress_ptr cinfo)
 {
   my_src_ptr src = (my_src_ptr) cinfo->src;
@@ -87,7 +87,7 @@ init_source (j_decompress_ptr cinfo)
  * the front of the buffer rather than discarding it.
  */
 
-METHODDEF(boolean)
+GLOBAL(boolean)
 fill_input_buffer (j_decompress_ptr cinfo)
 {
   my_src_ptr src = (my_src_ptr) cinfo->src;
@@ -125,7 +125,7 @@ fill_input_buffer (j_decompress_ptr cinfo)
  * buffer is the application writer's problem.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 {
   my_src_ptr src = (my_src_ptr) cinfo->src;
@@ -166,7 +166,7 @@ skip_input_data (j_decompress_ptr cinfo, long num_bytes)
  * for error exit.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 term_source (j_decompress_ptr cinfo)
 {
   /* no work necessary here */
@@ -202,11 +202,6 @@ jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile)
   }
 
   src = (my_src_ptr) cinfo->src;
-  src->pub.init_source = init_source;
-  src->pub.fill_input_buffer = fill_input_buffer;
-  src->pub.skip_input_data = skip_input_data;
-  src->pub.resync_to_restart = jpeg_resync_to_restart; /* use default method */
-  src->pub.term_source = term_source;
   src->infile = infile;
   src->pub.bytes_in_buffer = 0; /* forces fill_input_buffer on first read */
   src->pub.next_input_byte = NULL; /* until buffer loaded */
