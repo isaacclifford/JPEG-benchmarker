@@ -46,7 +46,7 @@ typedef struct {
   struct jpeg_upsampler pub;	/* public fields */
 
   /* Pointer to routine to do actual upsampling/conversion of one row group */
-  JMETHOD(void, upmethod, (j_decompress_ptr cinfo,
+  JMETHOD(void, upmethod, (j_decompress_ptr cinfo, //Multiple Functions
 			   JSAMPIMAGE input_buf, JDIMENSION in_row_group_ctr,
 			   JSAMPARRAY output_buf));
 

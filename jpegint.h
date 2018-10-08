@@ -43,9 +43,9 @@ typedef enum {			/* Operating modes for buffer controllers */
 
 /* Master control module */
 struct jpeg_comp_master {
-  JMETHOD(void, prepare_for_pass, (j_compress_ptr cinfo));
-  JMETHOD(void, pass_startup, (j_compress_ptr cinfo));
-  JMETHOD(void, finish_pass, (j_compress_ptr cinfo));
+  JMETHOD(void, prepare_for_pass, (j_compress_ptr cinfo)); //COMPRESSION UNUSED
+  JMETHOD(void, pass_startup, (j_compress_ptr cinfo)); //COMPRESSION UNUSED
+  JMETHOD(void, finish_pass, (j_compress_ptr cinfo)); //COMPRESSION UNUSED
 
   /* State variables made visible to other modules */
   boolean call_pass_startup;	/* True if pass_startup must be called */
@@ -54,8 +54,8 @@ struct jpeg_comp_master {
 
 /* Main buffer control (downsampled-data buffer) */
 struct jpeg_c_main_controller {
-  JMETHOD(void, start_pass, (j_compress_ptr cinfo, J_BUF_MODE pass_mode));
-  JMETHOD(void, process_data, (j_compress_ptr cinfo,
+  JMETHOD(void, start_pass, (j_compress_ptr cinfo, J_BUF_MODE pass_mode)); //Multiple
+  JMETHOD(void, process_data, (j_compress_ptr cinfo, //Multiple
 			       JSAMPARRAY input_buf, JDIMENSION *in_row_ctr,
 			       JDIMENSION in_rows_avail));
 };

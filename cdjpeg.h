@@ -24,11 +24,11 @@
 typedef struct cjpeg_source_struct * cjpeg_source_ptr;
 
 struct cjpeg_source_struct {
-  JMETHOD(void, start_input, (j_compress_ptr cinfo,
+  JMETHOD(void, start_input, (j_compress_ptr cinfo, //Multiple
 			      cjpeg_source_ptr sinfo));
-  JMETHOD(JDIMENSION, get_pixel_rows, (j_compress_ptr cinfo,
+  JMETHOD(JDIMENSION, get_pixel_rows, (j_compress_ptr cinfo, //Multiple
 				       cjpeg_source_ptr sinfo));
-  JMETHOD(void, finish_input, (j_compress_ptr cinfo,
+  JMETHOD(void, finish_input, (j_compress_ptr cinfo, //Multiple ez
 			       cjpeg_source_ptr sinfo));
 
   FILE *input_file;
@@ -48,14 +48,14 @@ struct djpeg_dest_struct {
   /* start_output is called after jpeg_start_decompress finishes.
    * The color map will be ready at this time, if one is needed.
    */
-  JMETHOD(void, start_output, (j_decompress_ptr cinfo,
+  JMETHOD(void, start_output, (j_decompress_ptr cinfo, //Multiple
 			       djpeg_dest_ptr dinfo));
   /* Emit the specified number of pixel rows from the buffer. */
-  JMETHOD(void, put_pixel_rows, (j_decompress_ptr cinfo,
+  JMETHOD(void, put_pixel_rows, (j_decompress_ptr cinfo, //Multiple
 				 djpeg_dest_ptr dinfo,
 				 JDIMENSION rows_supplied));
   /* Finish up at the end of the image. */
-  JMETHOD(void, finish_output, (j_decompress_ptr cinfo,
+  JMETHOD(void, finish_output, (j_decompress_ptr cinfo, //Multiple
 				djpeg_dest_ptr dinfo));
 
   /* Target file spec; filled in by djpeg.c after object is created. */

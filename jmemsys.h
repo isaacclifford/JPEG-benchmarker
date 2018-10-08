@@ -138,15 +138,15 @@ typedef struct backing_store_struct * backing_store_ptr;
 
 typedef struct backing_store_struct {
   /* Methods for reading/writing/closing this backing-store object */
-  JMETHOD(void, read_backing_store, (j_common_ptr cinfo,
+  JMETHOD(void, read_backing_store, (j_common_ptr cinfo, //Multiple Functions
 				     backing_store_ptr info,
 				     void FAR * buffer_address,
 				     long file_offset, long byte_count));
-  JMETHOD(void, write_backing_store, (j_common_ptr cinfo,
+  JMETHOD(void, write_backing_store, (j_common_ptr cinfo, //Multiple Functions
 				      backing_store_ptr info,
 				      void FAR * buffer_address,
 				      long file_offset, long byte_count));
-  JMETHOD(void, close_backing_store, (j_common_ptr cinfo,
+  JMETHOD(void, close_backing_store, (j_common_ptr cinfo, //Multiple functions
 				      backing_store_ptr info));
 
   /* Private fields for system-dependent backing-store management */
