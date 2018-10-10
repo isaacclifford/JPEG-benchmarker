@@ -16,28 +16,6 @@
 #include "jerror.h"		/* get library error codes too */
 #include "cderror.h"		/* get application-specific error codes */
 
-
-/*
- * Object interface for cjpeg's source file decoding modules
- */
-
-typedef struct cjpeg_source_struct * cjpeg_source_ptr;
-
-struct cjpeg_source_struct {
-  JMETHOD(void, start_input, (j_compress_ptr cinfo, //Multiple
-			      cjpeg_source_ptr sinfo));
-  JMETHOD(JDIMENSION, get_pixel_rows, (j_compress_ptr cinfo, //Multiple
-				       cjpeg_source_ptr sinfo));
-  JMETHOD(void, finish_input, (j_compress_ptr cinfo, //Multiple ez
-			       cjpeg_source_ptr sinfo));
-
-  FILE *input_file;
-
-  JSAMPARRAY buffer;
-  JDIMENSION buffer_height;
-};
-
-
 /*
  * Object interface for djpeg's output file encoding modules
  */
@@ -116,16 +94,11 @@ typedef struct cdjpeg_progress_mgr * cd_progress_ptr;
 
 /* Module selection routines for I/O modules. */
 
-EXTERN(cjpeg_source_ptr) jinit_read_bmp JPP((j_compress_ptr cinfo));
 EXTERN(djpeg_dest_ptr) jinit_write_bmp JPP((j_decompress_ptr cinfo,
 					    boolean is_os2));
-EXTERN(cjpeg_source_ptr) jinit_read_gif JPP((j_compress_ptr cinfo));
 EXTERN(djpeg_dest_ptr) jinit_write_gif JPP((j_decompress_ptr cinfo));
-EXTERN(cjpeg_source_ptr) jinit_read_ppm JPP((j_compress_ptr cinfo));
 EXTERN(djpeg_dest_ptr) jinit_write_ppm JPP((j_decompress_ptr cinfo));
-EXTERN(cjpeg_source_ptr) jinit_read_rle JPP((j_compress_ptr cinfo));
 EXTERN(djpeg_dest_ptr) jinit_write_rle JPP((j_decompress_ptr cinfo));
-EXTERN(cjpeg_source_ptr) jinit_read_targa JPP((j_compress_ptr cinfo));
 EXTERN(djpeg_dest_ptr) jinit_write_targa JPP((j_decompress_ptr cinfo));
 
 /* cjpeg support routines (in rdswitch.c) */
