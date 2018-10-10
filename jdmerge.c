@@ -42,13 +42,19 @@
 
 /* Private subobject */
 
+/* Two routines that can do actual upsampling/conversion of one row group */
+void h2v1_merged_upsample (j_decompress_ptr cinfo,
+JSAMPIMAGE input_buf, JDIMENSION in_row_group_ctr,
+JSAMPARRAY output_buf);
+
+void h2v2_merged_upsample (j_decompress_ptr cinfo,
+                      JSAMPIMAGE input_buf, JDIMENSION in_row_group_ctr,
+                      JSAMPARRAY output_buf);
+
 typedef struct {
   struct jpeg_upsampler pub;	/* public fields */
 
-  /* Pointer to routine to do actual upsampling/conversion of one row group */
-  JMETHOD(void, upmethod, (j_decompress_ptr cinfo, //Multiple Functions
-			   JSAMPIMAGE input_buf, JDIMENSION in_row_group_ctr,
-			   JSAMPARRAY output_buf));
+  int vertical_index;
 
   /* Private state for YCC->RGB conversion */
   int * Cr_r_tab;		/* => table for Cr to R conversion */
@@ -178,7 +184,11 @@ merged_2v_upsample (j_decompress_ptr cinfo,
       upsample->spare_full = TRUE;
     }
     /* Now do the upsampling. */
-    (*upsample->upmethod) (cinfo, input_buf, *in_row_group_ctr, work_ptrs);
+    if (upsample->vertical_index == 1) {
+      h2v1_merged_upsample(cinfo, input_buf, *in_row_group_ctr, work_ptrs);
+    } else if (upsample->vertical_index == 2) {
+      h2v2_merged_upsample (cinfo, input_buf, *in_row_group_ctr, work_ptrs);
+    }
   }
 
   /* Adjust counts */
@@ -201,8 +211,13 @@ merged_1v_upsample (j_decompress_ptr cinfo,
   my_upsample_ptr upsample = (my_upsample_ptr) cinfo->upsample;
 
   /* Just do the upsampling. */
-  (*upsample->upmethod) (cinfo, input_buf, *in_row_group_ctr,
-			 output_buf + *out_row_ctr);
+  if (upsample->vertical_index == 1) {
+    h2v1_merged_upsample(cinfo, input_buf, *in_row_group_ctr,
+              output_buf + *out_row_ctr);
+  } else if (upsample->vertical_index == 2) {
+      h2v2_merged_upsample(cinfo, input_buf, *in_row_group_ctr,
+              output_buf + *out_row_ctr);
+  }
   /* Adjust counts */
   (*out_row_ctr)++;
   (*in_row_group_ctr)++;
@@ -223,7 +238,7 @@ merged_1v_upsample (j_decompress_ptr cinfo,
  * Upsample and color convert for the case of 2:1 horizontal and 1:1 vertical.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 h2v1_merged_upsample (j_decompress_ptr cinfo,
 		      JSAMPIMAGE input_buf, JDIMENSION in_row_group_ctr,
 		      JSAMPARRAY output_buf)
@@ -285,7 +300,7 @@ h2v1_merged_upsample (j_decompress_ptr cinfo,
  * Upsample and color convert for the case of 2:1 horizontal and 2:1 vertical.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 h2v2_merged_upsample (j_decompress_ptr cinfo,
 		      JSAMPIMAGE input_buf, JDIMENSION in_row_group_ctr,
 		      JSAMPARRAY output_buf)
@@ -383,13 +398,13 @@ jinit_merged_upsampler (j_decompress_ptr cinfo)
 
   if (cinfo->max_v_samp_factor == 2) {
     upsample->pub.upsample = merged_2v_upsample;
-    upsample->upmethod = h2v2_merged_upsample;
+    upsample->vertical_index = 2;
     /* Allocate a spare row buffer */
     upsample->spare_row = (JSAMPROW) alloc_large ((j_common_ptr) cinfo, JPOOL_IMAGE,
 		(size_t) (upsample->out_row_width * SIZEOF(JSAMPLE)));
   } else {
     upsample->pub.upsample = merged_1v_upsample;
-    upsample->upmethod = h2v1_merged_upsample;
+    upsample->vertical_index = 1;
     /* No spare row needed */
     upsample->spare_row = NULL;
   }
