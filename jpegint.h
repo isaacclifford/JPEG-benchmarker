@@ -39,18 +39,6 @@ typedef enum {			/* Operating modes for buffer controllers */
 #define DSTATE_STOPPING	210	/* looking for EOI in jpeg_finish_decompress */
 
 
-/* Declarations for compression modules */
-
-/* Master control module */
-struct jpeg_comp_master {
-  JMETHOD(void, prepare_for_pass, (j_compress_ptr cinfo)); //COMPRESSION UNUSED
-  JMETHOD(void, pass_startup, (j_compress_ptr cinfo)); //COMPRESSION UNUSED
-  JMETHOD(void, finish_pass, (j_compress_ptr cinfo)); //COMPRESSION UNUSED
-
-  /* State variables made visible to other modules */
-  boolean call_pass_startup;	/* True if pass_startup must be called */
-  boolean is_last_pass;		/* True during last pass */
-};
 
 /* Main buffer control (downsampled-data buffer) */
 struct jpeg_c_main_controller {

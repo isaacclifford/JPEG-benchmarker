@@ -79,18 +79,6 @@ jpeg_CreateCompress (j_compress_ptr cinfo, int version, size_t structsize)
   cinfo->global_state = CSTATE_START;
 }
 
-
-/*
- * Destruction of a JPEG compression object
- */
-
-GLOBAL(void)
-jpeg_destroy_compress (j_compress_ptr cinfo)
-{
-  jpeg_destroy((j_common_ptr) cinfo); /* use common routine */
-}
-
-
 /*
  * Abort processing of a JPEG compression operation,
  * but don't destroy the object itself.
@@ -134,52 +122,6 @@ jpeg_suppress_tables (j_compress_ptr cinfo, boolean suppress)
       htbl->sent_table = suppress;
   }
 }
-
-
-/*
- * Finish JPEG compression.
- *
- * If a multipass operating mode was selected, this may do a great deal of
- * work including most of the actual output.
- */
-
-GLOBAL(void)
-jpeg_finish_compress (j_compress_ptr cinfo)
-{
-  JDIMENSION iMCU_row;
-
-  if (cinfo->global_state == CSTATE_SCANNING ||
-      cinfo->global_state == CSTATE_RAW_OK) {
-    /* Terminate first pass */
-    if (cinfo->next_scanline < cinfo->image_height)
-      ERREXIT(cinfo, JERR_TOO_LITTLE_DATA);
-    (*cinfo->master->finish_pass) (cinfo);
-  } else if (cinfo->global_state != CSTATE_WRCOEFS)
-    ERREXIT1(cinfo, JERR_BAD_STATE, cinfo->global_state);
-  /* Perform any remaining passes */
-  while (! cinfo->master->is_last_pass) {
-    (*cinfo->master->prepare_for_pass) (cinfo);
-    for (iMCU_row = 0; iMCU_row < cinfo->total_iMCU_rows; iMCU_row++) {
-      if (cinfo->progress != NULL) {
-	cinfo->progress->pass_counter = (long) iMCU_row;
-	cinfo->progress->pass_limit = (long) cinfo->total_iMCU_rows;
-	progress_monitor ((j_common_ptr) cinfo);
-      }
-      /* We bypass the main controller and invoke coef controller directly;
-       * all work is being done from the coefficient buffer.
-       */
-      if (! (*cinfo->coef->compress_data) (cinfo, (JSAMPIMAGE) NULL))
-	ERREXIT(cinfo, JERR_CANT_SUSPEND);
-    }
-    (*cinfo->master->finish_pass) (cinfo);
-  }
-  /* Write EOI, do final cleanup */
-  (*cinfo->marker->write_file_trailer) (cinfo);
-  (*cinfo->dest->term_destination) (cinfo);
-  /* We can use jpeg_abort to release memory and reset global_state */
-  jpeg_abort((j_common_ptr) cinfo);
-}
-
 
 /*
  * Write a special marker.
