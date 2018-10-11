@@ -104,19 +104,14 @@ struct jpeg_entropy_encoder {
   JMETHOD(void, finish_pass, (j_compress_ptr cinfo));
 };
 
-/* Marker writing */
-struct jpeg_marker_writer {
-  JMETHOD(void, write_file_header, (j_compress_ptr cinfo)); //COMPRESSION UNUSED
-  JMETHOD(void, write_frame_header, (j_compress_ptr cinfo)); //COMPRESSION UNUSED
-  JMETHOD(void, write_scan_header, (j_compress_ptr cinfo)); //COMPRESSION UNUSED
-  JMETHOD(void, write_file_trailer, (j_compress_ptr cinfo)); //COMPRESSION UNUSED
-  JMETHOD(void, write_tables_only, (j_compress_ptr cinfo)); //COMPRESSION UNUSED
-  /* These routines are exported to allow insertion of extra markers */
-  /* Probably only COM and APPn markers should be written this way */
-  JMETHOD(void, write_marker_header, (j_compress_ptr cinfo, int marker,
-				      unsigned int datalen)); //COMPRESSION UNUSED
-  JMETHOD(void, write_marker_byte, (j_compress_ptr cinfo, int val)); //COMPRESSION UNUSED
-};
+///* Marker writing */
+//struct jpeg_marker_writer {
+//  /* These routines are exported to allow insertion of extra markers */
+//  /* Probably only COM and APPn markers should be written this way */
+//  JMETHOD(void, write_marker_header, (j_compress_ptr cinfo, int marker,
+//				      unsigned int datalen)); //COMPRESSION UNUSED
+//  JMETHOD(void, write_marker_byte, (j_compress_ptr cinfo, int val)); //COMPRESSION UNUSED
+//};
 
 
 /* Declarations for decompression modules */
