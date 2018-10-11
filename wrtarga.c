@@ -208,7 +208,7 @@ start_output_tga (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
  * Finish up at the end of the file.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 finish_output_tga (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 {
   /* Make sure we wrote the output file OK */
@@ -232,7 +232,6 @@ jinit_write_targa (j_decompress_ptr cinfo)
       alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				  SIZEOF(tga_dest_struct));
   dest->pub.file_type = TGA;
-  dest->pub.finish_output = finish_output_tga;
 
   /* Calculate output image dimensions so we can allocate space */
   jpeg_calc_output_dimensions(cinfo);

@@ -341,7 +341,7 @@ write_colormap (j_decompress_ptr cinfo, bmp_dest_ptr dest,
 }
 
 
-METHODDEF(void)
+GLOBAL(void)
 finish_output_bmp (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 {
   bmp_dest_ptr dest = (bmp_dest_ptr) dinfo;
@@ -398,7 +398,6 @@ jinit_write_bmp (j_decompress_ptr cinfo, boolean is_os2)
       alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				  SIZEOF(bmp_dest_struct));
   dest->pub.file_type = BMP;
-  dest->pub.finish_output = finish_output_bmp;
   dest->is_os2 = is_os2;
 
   if (cinfo->out_color_space == JCS_GRAYSCALE) {

@@ -181,9 +181,9 @@ write_stdout (void)
 }
 
 GLOBAL (void)
-start_output_master (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo, output_type type)
+start_output_master (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 {
-    switch (type){
+    switch (dinfo->file_type){
         case TGA:
             start_output_tga(cinfo,dinfo);
             break;
@@ -205,5 +205,32 @@ start_output_master (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo, output_type t
             //Should not enter
             break;
 
+    }
+}
+
+GLOBAL (void)
+finish_output_master (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
+{
+    switch (dinfo->file_type){
+        case TGA:
+            finish_output_tga(cinfo,dinfo);
+            break;
+        case RLE:
+#ifdef RLE_SUPPORTED
+            finish_output_rle(cinfo,dinfo);
+#endif
+            break;
+        case PPM:
+            finish_output_ppm(cinfo,dinfo);
+            break;
+        case BMP:
+            finish_output_bmp(cinfo,dinfo);
+            break;
+        case GIF:
+            finish_output_gif(cinfo,dinfo);
+            break;
+        default:
+            //Should not enter
+            break;
     }
 }

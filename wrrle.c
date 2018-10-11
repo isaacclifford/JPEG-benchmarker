@@ -169,7 +169,7 @@ rle_put_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
  * Here is where we really output the RLE file.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 finish_output_rle (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 {
   rle_dest_ptr dest = (rle_dest_ptr) dinfo;
@@ -284,8 +284,6 @@ jinit_write_rle (j_decompress_ptr cinfo)
       alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
                                   SIZEOF(rle_dest_struct));
   dest->pub.file_type = RLE;
-  dest->pub.finish_output = finish_output_rle;
-
   /* Calculate output image dimensions so we can allocate space */
   jpeg_calc_output_dimensions(cinfo);
 

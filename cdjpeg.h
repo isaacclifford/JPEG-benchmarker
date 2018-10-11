@@ -39,17 +39,23 @@ void start_output_ppm (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo);
 void start_output_bmp (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo);
 void start_output_gif (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo);
 
-void start_output_master (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo, output_type type);
+void start_output_master (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo);
+
+
+/* Finish up at the end of the image. */
+void finish_output_tga (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo);
+void finish_output_rle (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo);
+void finish_output_ppm (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo);
+void finish_output_bmp (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo);
+void finish_output_gif (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo);
+
+void finish_output_master (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo);
 
 struct djpeg_dest_struct {
   /* Emit the specified number of pixel rows from the buffer. */
   JMETHOD(void, put_pixel_rows, (j_decompress_ptr cinfo, //Multiple
 				 djpeg_dest_ptr dinfo,
 				 JDIMENSION rows_supplied));
-  /* Finish up at the end of the image. */
-  JMETHOD(void, finish_output, (j_decompress_ptr cinfo, //Multiple
-				djpeg_dest_ptr dinfo));
-
   /* Target file spec; filled in by djpeg.c after object is created. */
   FILE * output_file;
 

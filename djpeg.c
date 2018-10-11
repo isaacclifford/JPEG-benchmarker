@@ -579,7 +579,7 @@ main (int argc, char **argv)
 
   /* Write output file header */
   //IS: Function Pointer
-  (*dest_mgr->start_output) (&cinfo, dest_mgr);
+  start_output_master(&cinfo, dest_mgr);
 
   /* Process data */
   while (cinfo.output_scanline < cinfo.output_height) {
@@ -600,7 +600,7 @@ main (int argc, char **argv)
    * I must do it in this order because output module has allocated memory
    * of lifespan JPOOL_IMAGE; it needs to finish before releasing memory.
    */
-  (*dest_mgr->finish_output) (&cinfo, dest_mgr);
+  finish_output_master (&cinfo, dest_mgr);
   (void) jpeg_finish_decompress(&cinfo);
   jpeg_destroy_decompress(&cinfo);
 

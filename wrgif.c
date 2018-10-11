@@ -335,7 +335,7 @@ put_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
  * Finish up at the end of the file.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 finish_output_gif (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 {
   gif_dest_ptr dest = (gif_dest_ptr) dinfo;
@@ -369,7 +369,6 @@ jinit_write_gif (j_decompress_ptr cinfo)
   dest->cinfo = cinfo;		/* make back link for subroutines */
   dest->pub.file_type = GIF;
   dest->pub.put_pixel_rows = put_pixel_rows;
-  dest->pub.finish_output = finish_output_gif;
 
   if (cinfo->out_color_space != JCS_GRAYSCALE &&
       cinfo->out_color_space != JCS_RGB)
