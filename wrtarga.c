@@ -164,7 +164,7 @@ put_demapped_gray (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
  * Startup: write the file header.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_output_tga (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 {
   tga_dest_ptr dest = (tga_dest_ptr) dinfo;
@@ -231,7 +231,7 @@ jinit_write_targa (j_decompress_ptr cinfo)
   dest = (tga_dest_ptr)
       alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				  SIZEOF(tga_dest_struct));
-  dest->pub.start_output = start_output_tga;
+  dest->pub.file_type = TGA;
   dest->pub.finish_output = finish_output_tga;
 
   /* Calculate output image dimensions so we can allocate space */

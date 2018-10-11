@@ -173,7 +173,7 @@ put_demapped_gray (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
  * Startup: write the file header.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_output_ppm (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 {
   ppm_dest_ptr dest = (ppm_dest_ptr) dinfo;
@@ -225,7 +225,7 @@ jinit_write_ppm (j_decompress_ptr cinfo)
   dest = (ppm_dest_ptr)
       alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				  SIZEOF(ppm_dest_struct));
-  dest->pub.start_output = start_output_ppm;
+  dest->pub.file_type = PPM;
   dest->pub.finish_output = finish_output_ppm;
 
   /* Calculate output image dimensions so we can allocate space */

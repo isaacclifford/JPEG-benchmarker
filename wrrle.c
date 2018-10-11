@@ -74,7 +74,7 @@ METHODDEF(void) rle_put_pixel_rows
  * In this module it's easier to wait till finish_output to write anything.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_output_rle (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 {
   rle_dest_ptr dest = (rle_dest_ptr) dinfo;
@@ -283,7 +283,7 @@ jinit_write_rle (j_decompress_ptr cinfo)
   dest = (rle_dest_ptr)
       alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
                                   SIZEOF(rle_dest_struct));
-  dest->pub.start_output = start_output_rle;
+  dest->pub.file_type = RLE;
   dest->pub.finish_output = finish_output_rle;
 
   /* Calculate output image dimensions so we can allocate space */

@@ -299,7 +299,7 @@ emit_header (gif_dest_ptr dinfo, int num_colors, JSAMPARRAY colormap)
  * Startup: write the file header.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_output_gif (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 {
   gif_dest_ptr dest = (gif_dest_ptr) dinfo;
@@ -367,7 +367,7 @@ jinit_write_gif (j_decompress_ptr cinfo)
       alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				  SIZEOF(gif_dest_struct));
   dest->cinfo = cinfo;		/* make back link for subroutines */
-  dest->pub.start_output = start_output_gif;
+  dest->pub.file_type = GIF;
   dest->pub.put_pixel_rows = put_pixel_rows;
   dest->pub.finish_output = finish_output_gif;
 

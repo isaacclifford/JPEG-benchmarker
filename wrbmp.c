@@ -139,7 +139,7 @@ put_gray_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
  * In this module we may as well postpone everything until finish_output.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_output_bmp (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 {
   /* no work here */
@@ -397,7 +397,7 @@ jinit_write_bmp (j_decompress_ptr cinfo, boolean is_os2)
   dest = (bmp_dest_ptr)
       alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				  SIZEOF(bmp_dest_struct));
-  dest->pub.start_output = start_output_bmp;
+  dest->pub.file_type = BMP;
   dest->pub.finish_output = finish_output_bmp;
   dest->is_os2 = is_os2;
 

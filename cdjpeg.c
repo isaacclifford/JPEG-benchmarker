@@ -179,3 +179,31 @@ write_stdout (void)
 #endif
   return output_file;
 }
+
+GLOBAL (void)
+start_output_master (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo, output_type type)
+{
+    switch (type){
+        case TGA:
+            start_output_tga(cinfo,dinfo);
+            break;
+        case RLE:
+#ifdef RLE_SUPPORTED
+            start_output_rle(cinfo,dinfo);
+#endif
+            break;
+        case PPM:
+            start_output_ppm(cinfo,dinfo);
+            break;
+        case BMP:
+            start_output_bmp(cinfo,dinfo);
+            break;
+        case GIF:
+            start_output_gif(cinfo,dinfo);
+            break;
+        default:
+            //Should not enter
+            break;
+
+    }
+}
