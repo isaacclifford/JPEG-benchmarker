@@ -40,69 +40,69 @@ typedef enum {			/* Operating modes for buffer controllers */
 
 
 
-/* Main buffer control (downsampled-data buffer) */
-struct jpeg_c_main_controller {
-  JMETHOD(void, start_pass, (j_compress_ptr cinfo, J_BUF_MODE pass_mode)); //Multiple
-  JMETHOD(void, process_data, (j_compress_ptr cinfo, //Multiple
-			       JSAMPARRAY input_buf, JDIMENSION *in_row_ctr,
-			       JDIMENSION in_rows_avail));
-};
-
-/* Compression preprocessing (downsampling input buffer control) */
-struct jpeg_c_prep_controller {
-  JMETHOD(void, start_pass, (j_compress_ptr cinfo, J_BUF_MODE pass_mode));
-  JMETHOD(void, pre_process_data, (j_compress_ptr cinfo,
-				   JSAMPARRAY input_buf,
-				   JDIMENSION *in_row_ctr,
-				   JDIMENSION in_rows_avail,
-				   JSAMPIMAGE output_buf,
-				   JDIMENSION *out_row_group_ctr,
-				   JDIMENSION out_row_groups_avail));
-};
-
-/* Coefficient buffer control */
-struct jpeg_c_coef_controller {
-  JMETHOD(void, start_pass, (j_compress_ptr cinfo, J_BUF_MODE pass_mode));
-  JMETHOD(boolean, compress_data, (j_compress_ptr cinfo,
-				   JSAMPIMAGE input_buf));
-};
-
-/* Colorspace conversion */
-struct jpeg_color_converter {
-  JMETHOD(void, start_pass, (j_compress_ptr cinfo));
-  JMETHOD(void, color_convert, (j_compress_ptr cinfo,
-				JSAMPARRAY input_buf, JSAMPIMAGE output_buf,
-				JDIMENSION output_row, int num_rows));
-};
-
-/* Downsampling */
-struct jpeg_downsampler {
-  JMETHOD(void, start_pass, (j_compress_ptr cinfo));
-  JMETHOD(void, downsample, (j_compress_ptr cinfo,
-			     JSAMPIMAGE input_buf, JDIMENSION in_row_index,
-			     JSAMPIMAGE output_buf,
-			     JDIMENSION out_row_group_index));
-
-  boolean need_context_rows;	/* TRUE if need rows above & below */
-};
-
-/* Forward DCT (also controls coefficient quantization) */
-struct jpeg_forward_dct {
-  JMETHOD(void, start_pass, (j_compress_ptr cinfo));
-  /* perhaps this should be an array??? */
-  JMETHOD(void, forward_DCT, (j_compress_ptr cinfo,
-			      jpeg_component_info * compptr,
-			      JSAMPARRAY sample_data, JBLOCKROW coef_blocks,
-			      JDIMENSION start_row, JDIMENSION start_col,
-			      JDIMENSION num_blocks));
-};
-
-/* Entropy encoding */
-struct jpeg_entropy_encoder {
-  JMETHOD(void, start_pass, (j_compress_ptr cinfo, boolean gather_statistics));
-  JMETHOD(boolean, encode_mcu, (j_compress_ptr cinfo, JBLOCKROW *MCU_data));
-  JMETHOD(void, finish_pass, (j_compress_ptr cinfo));
-};
+///* Main buffer control (downsampled-data buffer) */
+//struct jpeg_c_main_controller {
+//  JMETHOD(void, start_pass, (j_compress_ptr cinfo, J_BUF_MODE pass_mode)); //Multiple
+//  JMETHOD(void, process_data, (j_compress_ptr cinfo, //Multiple
+//			       JSAMPARRAY input_buf, JDIMENSION *in_row_ctr,
+//			       JDIMENSION in_rows_avail));
+//};
+//
+///* Compression preprocessing (downsampling input buffer control) */
+//struct jpeg_c_prep_controller {
+//  JMETHOD(void, start_pass, (j_compress_ptr cinfo, J_BUF_MODE pass_mode));
+//  JMETHOD(void, pre_process_data, (j_compress_ptr cinfo,
+//				   JSAMPARRAY input_buf,
+//				   JDIMENSION *in_row_ctr,
+//				   JDIMENSION in_rows_avail,
+//				   JSAMPIMAGE output_buf,
+//				   JDIMENSION *out_row_group_ctr,
+//				   JDIMENSION out_row_groups_avail));
+//};
+//
+///* Coefficient buffer control */
+//struct jpeg_c_coef_controller {
+//  JMETHOD(void, start_pass, (j_compress_ptr cinfo, J_BUF_MODE pass_mode));
+//  JMETHOD(boolean, compress_data, (j_compress_ptr cinfo,
+//				   JSAMPIMAGE input_buf));
+//};
+//
+///* Colorspace conversion */
+//struct jpeg_color_converter {
+//  JMETHOD(void, start_pass, (j_compress_ptr cinfo));
+//  JMETHOD(void, color_convert, (j_compress_ptr cinfo,
+//				JSAMPARRAY input_buf, JSAMPIMAGE output_buf,
+//				JDIMENSION output_row, int num_rows));
+//};
+//
+///* Downsampling */
+//struct jpeg_downsampler {
+//  JMETHOD(void, start_pass, (j_compress_ptr cinfo));
+//  JMETHOD(void, downsample, (j_compress_ptr cinfo,
+//			     JSAMPIMAGE input_buf, JDIMENSION in_row_index,
+//			     JSAMPIMAGE output_buf,
+//			     JDIMENSION out_row_group_index));
+//
+//  boolean need_context_rows;	/* TRUE if need rows above & below */
+//};
+//
+///* Forward DCT (also controls coefficient quantization) */
+//struct jpeg_forward_dct {
+//  JMETHOD(void, start_pass, (j_compress_ptr cinfo));
+//  /* perhaps this should be an array??? */
+//  JMETHOD(void, forward_DCT, (j_compress_ptr cinfo,
+//			      jpeg_component_info * compptr,
+//			      JSAMPARRAY sample_data, JBLOCKROW coef_blocks,
+//			      JDIMENSION start_row, JDIMENSION start_col,
+//			      JDIMENSION num_blocks));
+//};
+//
+///* Entropy encoding */
+//struct jpeg_entropy_encoder {
+//  JMETHOD(void, start_pass, (j_compress_ptr cinfo, boolean gather_statistics));
+//  JMETHOD(boolean, encode_mcu, (j_compress_ptr cinfo, JBLOCKROW *MCU_data));
+//  JMETHOD(void, finish_pass, (j_compress_ptr cinfo));
+//};
 
 ///* Marker writing */
 //struct jpeg_marker_writer {

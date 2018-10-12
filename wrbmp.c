@@ -68,7 +68,7 @@ LOCAL(void) write_colormap
  * In this module rows_supplied will always be 1.
  */
 
-METHODDEF(void)
+LOCAL(void)
 put_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 		JDIMENSION rows_supplied)
 /* This version is for writing 24-bit pixels */
@@ -103,7 +103,7 @@ put_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
     *outptr++ = 0;
 }
 
-METHODDEF(void)
+LOCAL(void)
 put_gray_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 	       JDIMENSION rows_supplied)
 /* This version is for grayscale OR quantized color output */
@@ -383,6 +383,21 @@ finish_output_bmp (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 }
 
 
+GLOBAL (void)
+put_pixel_rows_bmp_master(j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
+                          JDIMENSION rows_supplied)
+{
+  put_pixel_rows_t type = dinfo->put_pixel_rows_type;
+
+  if (type == GRAY_ROWS) {
+    put_gray_rows(cinfo, dinfo, rows_supplied);
+  } else if (type == PIXEL_ROWS) {
+    put_pixel_rows(cinfo, dinfo, rows_supplied);
+  } else {
+    //Should not enter.
+  }
+}
+
 /*
  * The module selection routine for BMP format output.
  */
@@ -401,12 +416,12 @@ jinit_write_bmp (j_decompress_ptr cinfo, boolean is_os2)
   dest->is_os2 = is_os2;
 
   if (cinfo->out_color_space == JCS_GRAYSCALE) {
-    dest->pub.put_pixel_rows = put_gray_rows;
+    dest->pub.put_pixel_rows_type = GRAY_ROWS;
   } else if (cinfo->out_color_space == JCS_RGB) {
     if (cinfo->quantize_colors)
-      dest->pub.put_pixel_rows = put_gray_rows;
+      dest->pub.put_pixel_rows_type = GRAY_ROWS;
     else
-      dest->pub.put_pixel_rows = put_pixel_rows;
+      dest->pub.put_pixel_rows_type = PIXEL_ROWS;
   } else {
     ERREXIT(cinfo, JERR_BMP_COLORSPACE);
   }

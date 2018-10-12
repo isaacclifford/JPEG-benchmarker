@@ -234,3 +234,25 @@ finish_output_master (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
             break;
     }
 }
+
+GLOBAL (void)
+put_pixel_rows_master(j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
+                           JDIMENSION rows_supplied){
+
+    output_type f_type = dinfo->file_type;
+    if (f_type == TGA) {
+        put_pixel_rows_tga_master(cinfo, dinfo, rows_supplied);
+    } else if (f_type == RLE) {
+#ifdef RLE_SUPPORTED
+        rle_put_pixel_rows(cinfo, dinfo, rows_supplied);
+#endif
+    } else if (f_type == PPM) {
+        put_pixel_rows_ppm_master(cinfo, dinfo, rows_supplied);
+    } else if (f_type == BMP) {
+      put_pixel_rows_bmp_master(cinfo, dinfo, rows_supplied);
+    } else if (f_type == GIF) {
+      put_pixel_rows_gif(cinfo, dinfo, rows_supplied);
+    } else {
+    
+    }
+}

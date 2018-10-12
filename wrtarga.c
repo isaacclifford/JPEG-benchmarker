@@ -96,7 +96,7 @@ write_header (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo, int num_colors)
  * In this module rows_supplied will always be 1.
  */
 
-METHODDEF(void)
+LOCAL(void)
 put_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 		JDIMENSION rows_supplied)
 /* used for unquantized full-color output */
@@ -117,7 +117,7 @@ put_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
   (void) JFWRITE(dest->pub.output_file, dest->iobuffer, dest->buffer_width);
 }
 
-METHODDEF(void)
+LOCAL(void)
 put_gray_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 	       JDIMENSION rows_supplied)
 /* used for grayscale OR quantized color output */
@@ -141,7 +141,7 @@ put_gray_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
  * For Targa, this is only applied to grayscale data.
  */
 
-METHODDEF(void)
+LOCAL(void)
 put_demapped_gray (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 		   JDIMENSION rows_supplied)
 {
@@ -163,6 +163,25 @@ put_demapped_gray (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 /*
  * Startup: write the file header.
  */
+GLOBAL(void)
+put_pixel_rows_tga_master(j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
+                               JDIMENSION rows_supplied){
+  switch(dinfo->put_pixel_rows_type){
+      case DEMAPPED_GRAY:
+        put_demapped_gray(cinfo, dinfo, rows_supplied);
+        break;
+      case GRAY_ROWS:
+        put_gray_rows(cinfo, dinfo, rows_supplied);
+        break;
+      case PIXEL_ROWS:
+        put_pixel_rows(cinfo, dinfo, rows_supplied);
+        break;
+      default:
+        //Should not occur.
+        break;
+  }
+}
+
 
 GLOBAL(void)
 start_output_tga (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
@@ -176,9 +195,9 @@ start_output_tga (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
     /* demap quantized gray output.  Never emit a colormap. */
     write_header(cinfo, dinfo, 0);
     if (cinfo->quantize_colors)
-      dest->pub.put_pixel_rows = put_demapped_gray;
+      dest->pub.put_pixel_rows_type = DEMAPPED_GRAY;
     else
-      dest->pub.put_pixel_rows = put_gray_rows;
+      dest->pub.put_pixel_rows_type = GRAY_ROWS;
   } else if (cinfo->out_color_space == JCS_RGB) {
     if (cinfo->quantize_colors) {
       /* We only support 8-bit colormap indexes, so only 256 colors */
@@ -193,10 +212,10 @@ start_output_tga (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
 	putc(GETJSAMPLE(cinfo->colormap[1][i]), outfile);
 	putc(GETJSAMPLE(cinfo->colormap[0][i]), outfile);
       }
-      dest->pub.put_pixel_rows = put_gray_rows;
+      dest->pub.put_pixel_rows_type = GRAY_ROWS;
     } else {
       write_header(cinfo, dinfo, 0);
-      dest->pub.put_pixel_rows = put_pixel_rows;
+      dest->pub.put_pixel_rows_type = PIXEL_ROWS;
     }
   } else {
     ERREXIT(cinfo, JERR_TGA_COLORSPACE);

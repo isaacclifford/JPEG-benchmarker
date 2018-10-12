@@ -87,7 +87,7 @@ typedef ppm_dest_struct * ppm_dest_ptr;
  * output buffer is physically the same as the fwrite buffer.
  */
 
-METHODDEF(void)
+LOCAL(void)
 put_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 		JDIMENSION rows_supplied)
 {
@@ -102,7 +102,7 @@ put_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
  * format translation.  Typically this only happens in 12-bit mode.
  */
 
-METHODDEF(void)
+LOCAL(void)
 copy_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 		 JDIMENSION rows_supplied)
 {
@@ -125,7 +125,7 @@ copy_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
  * We have to demap the color index values to straight data.
  */
 
-METHODDEF(void)
+LOCAL(void)
 put_demapped_rgb (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 		  JDIMENSION rows_supplied)
 {
@@ -150,7 +150,7 @@ put_demapped_rgb (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 }
 
 
-METHODDEF(void)
+LOCAL(void)
 put_demapped_gray (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 		   JDIMENSION rows_supplied)
 {
@@ -211,6 +211,24 @@ finish_output_ppm (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
     ERREXIT(cinfo, JERR_FILE_WRITE);
 }
 
+GLOBAL (void)
+put_pixel_rows_ppm_master(j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
+                          JDIMENSION rows_supplied)
+{
+  put_pixel_rows_t type = dinfo->put_pixel_rows_type;
+
+  if (type == COPY_PIXEL_ROWS) {
+    copy_pixel_rows(cinfo, dinfo, rows_supplied);
+  } else if (type == DEMAPPED_GRAY) {
+    put_demapped_gray(cinfo, dinfo, rows_supplied);
+  } else if (type == DEMAPPED_RGB) {
+    put_demapped_rgb(cinfo, dinfo, rows_supplied);
+  } else if (type == PIXEL_ROWS) {
+    put_pixel_rows(cinfo, dinfo, rows_supplied);
+  }
+
+}
+
 
 /*
  * The module selection routine for PPM format output.
@@ -247,11 +265,11 @@ jinit_write_ppm (j_decompress_ptr cinfo)
        cinfo->output_width * cinfo->output_components, (JDIMENSION) 1);
     dest->pub.buffer_height = 1;
     if (! cinfo->quantize_colors)
-      dest->pub.put_pixel_rows = copy_pixel_rows;
+      dest->pub.put_pixel_rows_type = COPY_PIXEL_ROWS;
     else if (cinfo->out_color_space == JCS_GRAYSCALE)
-      dest->pub.put_pixel_rows = put_demapped_gray;
-    else
-      dest->pub.put_pixel_rows = put_demapped_rgb;
+      dest->pub.put_pixel_rows_type = DEMAPPED_GRAY;
+      else
+      dest->pub.put_pixel_rows_type = DEMAPPED_RGB;
   } else {
     /* We will fwrite() directly from decompressor output buffer. */
     /* Synthesize a JSAMPARRAY pointer structure */
@@ -259,7 +277,7 @@ jinit_write_ppm (j_decompress_ptr cinfo)
     dest->pixrow = (JSAMPROW) dest->iobuffer;
     dest->pub.buffer = & dest->pixrow;
     dest->pub.buffer_height = 1;
-    dest->pub.put_pixel_rows = put_pixel_rows;
+    dest->pub.put_pixel_rows_type = PIXEL_ROWS;
   }
 
   return (djpeg_dest_ptr) dest;

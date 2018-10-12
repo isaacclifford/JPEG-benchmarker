@@ -316,8 +316,8 @@ start_output_gif (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
  * In this module rows_supplied will always be 1.
  */
 
-METHODDEF(void)
-put_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
+GLOBAL(void)
+put_pixel_rows_gif (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 		JDIMENSION rows_supplied)
 {
   gif_dest_ptr dest = (gif_dest_ptr) dinfo;
@@ -368,7 +368,6 @@ jinit_write_gif (j_decompress_ptr cinfo)
 				  SIZEOF(gif_dest_struct));
   dest->cinfo = cinfo;		/* make back link for subroutines */
   dest->pub.file_type = GIF;
-  dest->pub.put_pixel_rows = put_pixel_rows;
 
   if (cinfo->out_color_space != JCS_GRAYSCALE &&
       cinfo->out_color_space != JCS_RGB)

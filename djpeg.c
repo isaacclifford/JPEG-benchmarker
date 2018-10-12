@@ -586,7 +586,7 @@ main (int argc, char **argv)
     num_scanlines = jpeg_read_scanlines(&cinfo, dest_mgr->buffer,
 					dest_mgr->buffer_height);
     //IS: Function Pointer
-    (*dest_mgr->put_pixel_rows) (&cinfo, dest_mgr, num_scanlines);
+    put_pixel_rows_master (&cinfo, dest_mgr, num_scanlines);
   }
 
 #ifdef PROGRESS_REPORT

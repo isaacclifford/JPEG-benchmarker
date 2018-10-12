@@ -63,7 +63,7 @@ typedef struct {
 typedef rle_dest_struct * rle_dest_ptr;
 
 /* Forward declarations */
-METHODDEF(void) rle_put_pixel_rows
+GLOBAL(void) rle_put_pixel_rows
     JPP((j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 	 JDIMENSION rows_supplied));
 
@@ -134,8 +134,6 @@ start_output_rle (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
     ((j_common_ptr) cinfo, dest->image, (JDIMENSION) 0, (JDIMENSION) 1, TRUE);
   dest->pub.buffer_height = 1;
 
-  dest->pub.put_pixel_rows = rle_put_pixel_rows;
-
 #ifdef PROGRESS_REPORT
   if (progress != NULL) {
     progress->total_extra_passes++;  /* count file writing as separate pass */
@@ -150,7 +148,7 @@ start_output_rle (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo)
  * This routine just saves the data away in a virtual array.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 rle_put_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 		    JDIMENSION rows_supplied)
 {

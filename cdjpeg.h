@@ -28,6 +28,14 @@ typedef enum {
  	GIF
  } output_type;
 
+typedef enum {
+	DEMAPPED_GRAY,
+	GRAY_ROWS,
+	PIXEL_ROWS,
+    COPY_PIXEL_ROWS,
+    DEMAPPED_RGB
+
+} put_pixel_rows_t;
 typedef struct djpeg_dest_struct * djpeg_dest_ptr;
 
 /* start_output is called after jpeg_start_decompress finishes.
@@ -51,11 +59,24 @@ void finish_output_gif (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo);
 
 void finish_output_master (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo);
 
+/* Emit the specified number of pixel rows from the buffer. */
+void put_pixel_rows_tga_master(j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
+						  JDIMENSION rows_supplied);
+void rle_put_pixel_rows (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
+		JDIMENSION rows_supplied);
+void put_pixel_rows_ppm_master(j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
+        JDIMENSION rows_supplied);
+void put_pixel_rows_bmp_master(j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
+        JDIMENSION rows_supplied);
+void put_pixel_rows_gif (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
+        JDIMENSION rows_supplied);
+
+void put_pixel_rows_master(j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
+							   JDIMENSION rows_supplied);
+
+
+
 struct djpeg_dest_struct {
-  /* Emit the specified number of pixel rows from the buffer. */
-  JMETHOD(void, put_pixel_rows, (j_decompress_ptr cinfo, //Multiple
-				 djpeg_dest_ptr dinfo,
-				 JDIMENSION rows_supplied));
   /* Target file spec; filled in by djpeg.c after object is created. */
   FILE * output_file;
 
@@ -66,6 +87,7 @@ struct djpeg_dest_struct {
   JSAMPARRAY buffer;
   JDIMENSION buffer_height;
   output_type file_type;
+  put_pixel_rows_t put_pixel_rows_type;
 
 };
 
