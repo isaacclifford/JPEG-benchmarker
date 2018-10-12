@@ -16,10 +16,8 @@
 #include "jerror.h"		/* get library error codes too */
 #include "cderror.h"		/* get application-specific error codes */
 
-/*
- * Object interface for djpeg's output file encoding modules
- */
 
+ /* Enums used or djpeg's output file encodign modules */
 typedef enum {
  	TGA,
  	RLE,
@@ -36,7 +34,12 @@ typedef enum {
     DEMAPPED_RGB
 
 } put_pixel_rows_t;
-typedef struct djpeg_dest_struct * djpeg_dest_ptr;
+
+ /*
+ * Object interface for djpeg's output file encoding modules
+ */
+
+ typedef struct djpeg_dest_struct * djpeg_dest_ptr;
 
 /* start_output is called after jpeg_start_decompress finishes.
  * The color map will be ready at this time, if one is needed.
@@ -59,6 +62,7 @@ void finish_output_gif (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo);
 
 void finish_output_master (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo);
 
+
 /* Emit the specified number of pixel rows from the buffer. */
 void put_pixel_rows_tga_master(j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 						  JDIMENSION rows_supplied);
@@ -74,8 +78,6 @@ void put_pixel_rows_gif (j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 void put_pixel_rows_master(j_decompress_ptr cinfo, djpeg_dest_ptr dinfo,
 							   JDIMENSION rows_supplied);
 
-
-
 struct djpeg_dest_struct {
   /* Target file spec; filled in by djpeg.c after object is created. */
   FILE * output_file;
@@ -86,9 +88,13 @@ struct djpeg_dest_struct {
    */
   JSAMPARRAY buffer;
   JDIMENSION buffer_height;
+
+  /* Used to replace function pointers for
+   * start_output,
+   * finish_output,
+   * and put_pixel_rows */
   output_type file_type;
   put_pixel_rows_t put_pixel_rows_type;
-
 };
 
 
