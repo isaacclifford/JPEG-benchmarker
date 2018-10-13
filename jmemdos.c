@@ -255,7 +255,7 @@ read_file_store (j_common_ptr cinfo, backing_store_ptr info,
 }
 
 
-LOCAL(void)
+METHODDEF(void)
 write_file_store (j_common_ptr cinfo, backing_store_ptr info,
 		  void FAR * buffer_address,
 		  long file_offset, long byte_count)
@@ -297,8 +297,8 @@ open_file_store (j_common_ptr cinfo, backing_store_ptr info,
     return FALSE;
   }
   info->handle.file_handle = handle;
-  info->system_module = DOS;
-  info->store_method_t = FILE_STORE;
+  info->read_backing_store = read_file_store;
+  info->write_backing_store = write_file_store;
   info->close_backing_store = close_file_store;
   TRACEMSS(cinfo, 1, JTRC_TFILE_OPEN, info->temp_name);
   return TRUE;			/* succeeded */
@@ -362,7 +362,7 @@ read_xms_store (j_common_ptr cinfo, backing_store_ptr info,
 }
 
 
-LOCAL(void)
+METHODDEF(void)
 write_xms_store (j_common_ptr cinfo, backing_store_ptr info,
 		 void FAR * buffer_address,
 		 long file_offset, long byte_count)
@@ -436,8 +436,7 @@ open_xms_store (j_common_ptr cinfo, backing_store_ptr info,
 
   /* Succeeded, save the handle and away we go */
   info->handle.xms_handle = ctx.dx;
-  info->system_module = DOS;
-  info->store_method_t = XMS_STORE;
+  info->read_backing_store = read_xms_store;
   info->write_backing_store = write_xms_store;
   info->close_backing_store = close_xms_store;
   TRACEMS1(cinfo, 1, JTRC_XMS_OPEN, ctx.dx);
@@ -488,7 +487,7 @@ typedef union {			/* EMS move specification structure */
 #define LOBYTE(W)  ((W) & 0xFF)
 
 
-LOCAL(void)
+METHODDEF(void)
 read_ems_store (j_common_ptr cinfo, backing_store_ptr info,
 		void FAR * buffer_address,
 		long file_offset, long byte_count)
@@ -513,7 +512,7 @@ read_ems_store (j_common_ptr cinfo, backing_store_ptr info,
 }
 
 
-LOCAL(void)
+METHODDEF(void)
 write_ems_store (j_common_ptr cinfo, backing_store_ptr info,
 		 void FAR * buffer_address,
 		 long file_offset, long byte_count)
@@ -582,8 +581,7 @@ open_ems_store (j_common_ptr cinfo, backing_store_ptr info,
 
   /* Succeeded, save the handle and away we go */
   info->handle.ems_handle = ctx.dx;
-  info->system_module = DOS;
-  info->store_method_t = EMS_STORE;
+  info->read_backing_store = read_ems_store;
   info->write_backing_store = write_ems_store;
   info->close_backing_store = close_ems_store;
   TRACEMS1(cinfo, 1, JTRC_EMS_OPEN, ctx.dx);
@@ -613,40 +611,6 @@ jpeg_open_backing_store (j_common_ptr cinfo, backing_store_ptr info,
   if (open_file_store(cinfo, info, total_bytes_needed))
     return;
   ERREXITS(cinfo, JERR_TFILE_CREATE, "");
-}
-
-GLOBAL (void) read_backing_store_dos_master(j_common_ptr cinfo, backing_store_ptr info,
-                                 void FAR * buffer_address,
-                                 long file_offset, long byte_count)
-{
-  read_store_method type = info->store_method_t;
-
-  if (type == FILE_STORE) {
-    read_file_store(cinfo, info, buffer_address, file_offset, byte_count);
-  } else if (type == EMS_STORE) {
-    read_ems_store(cinfo, info, buffer_address, file_offset, byte_count);
-  } else if (type == XMS_STORE) {
-    read_xms_store(cinfo, info, buffer_address, file_offset, byte_count);
-  } else {
-    //Should never enter.
-  }
-}
-
-GLOBAL (void) write_backing_store_dos_master(j_common_ptr cinfo, backing_store_ptr info,
-                                             void FAR * buffer_address,
-                                             long file_offset, long byte_count)
-{
-  read_store_method type = info->store_method_t;
-
-  if (type == FILE_STORE) {
-    write_file_store(cinfo, info, buffer_address, file_offset, byte_count);
-  } else if (type == EMS_STORE) {
-    write_ems_store(cinfo, info, buffer_address, file_offset, byte_count);
-  } else if (type == XMS_STORE) {
-    write_xms_store(cinfo, info, buffer_address, file_offset, byte_count);
-  } else {
-    //Should never enter.
-  }
 }
 
 

@@ -200,8 +200,8 @@ jpeg_mem_available (j_common_ptr cinfo, long min_bytes_needed,
  */
 
 
-GLOBAL(void)
-read_backing_store_name (j_common_ptr cinfo, backing_store_ptr info,
+METHODDEF(void)
+read_backing_store (j_common_ptr cinfo, backing_store_ptr info,
 		    void FAR * buffer_address,
 		    long file_offset, long byte_count)
 {
@@ -213,8 +213,8 @@ read_backing_store_name (j_common_ptr cinfo, backing_store_ptr info,
 }
 
 
-GLOBAL(void)
-write_backing_store_name (j_common_ptr cinfo, backing_store_ptr info,
+METHODDEF(void)
+write_backing_store (j_common_ptr cinfo, backing_store_ptr info,
 		     void FAR * buffer_address,
 		     long file_offset, long byte_count)
 {
@@ -250,8 +250,8 @@ jpeg_open_backing_store (j_common_ptr cinfo, backing_store_ptr info,
   select_file_name(info->temp_name);
   if ((info->temp_file = fopen(info->temp_name, RW_BINARY)) == NULL)
     ERREXITS(cinfo, JERR_TFILE_CREATE, info->temp_name);
-  info->system_module = NAME;
-  info->store_method_t = BACKING_STORE;
+  info->read_backing_store = read_backing_store;
+  info->write_backing_store = write_backing_store;
   info->close_backing_store = close_backing_store;
   TRACEMSS(cinfo, 1, JTRC_TFILE_OPEN, info->temp_name);
 }

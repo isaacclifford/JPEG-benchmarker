@@ -93,8 +93,8 @@ jpeg_mem_available (j_common_ptr cinfo, long min_bytes_needed,
  */
 
 
-GLOBAL(void)
-read_backing_store_ansi (j_common_ptr cinfo, backing_store_ptr info,
+METHODDEF(void)
+read_backing_store (j_common_ptr cinfo, backing_store_ptr info,
 		    void FAR * buffer_address,
 		    long file_offset, long byte_count)
 {
@@ -106,8 +106,8 @@ read_backing_store_ansi (j_common_ptr cinfo, backing_store_ptr info,
 }
 
 
-GLOBAL(void)
-write_backing_store_ansi (j_common_ptr cinfo, backing_store_ptr info,
+METHODDEF(void)
+write_backing_store (j_common_ptr cinfo, backing_store_ptr info,
 		     void FAR * buffer_address,
 		     long file_offset, long byte_count)
 {
@@ -143,8 +143,8 @@ jpeg_open_backing_store (j_common_ptr cinfo, backing_store_ptr info,
 {
   if ((info->temp_file = tmpfile()) == NULL)
     ERREXITS(cinfo, JERR_TFILE_CREATE, "");
-  info->system_module = ANSI;
-  info->store_method_t = BACKING_STORE;
+  info->read_backing_store = read_backing_store;
+  info->write_backing_store = write_backing_store;
   info->close_backing_store = close_backing_store;
 }
 
