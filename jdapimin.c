@@ -292,7 +292,7 @@ jpeg_consume_input (j_decompress_ptr cinfo)
   switch (cinfo->global_state) {
   case DSTATE_START:
     /* Start-of-datastream actions: reset appropriate modules */
-    (*cinfo->inputctl->reset_input_controller) (cinfo);
+    reset_input_controller(cinfo);
     /* Initialize application's data source module */
     init_source (cinfo);
     cinfo->global_state = DSTATE_INHEADER;

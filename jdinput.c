@@ -251,8 +251,8 @@ latch_quant_tables (j_decompress_ptr cinfo)
  * Subsequent calls come from consume_markers, below.
  */
 
-METHODDEF(void)
-start_input_pass (j_decompress_ptr cinfo)
+GLOBAL(void)
+start_input_pass_controller (j_decompress_ptr cinfo)
 {
   per_scan_setup(cinfo);
   latch_quant_tables(cinfo);
@@ -308,7 +308,7 @@ consume_markers (j_decompress_ptr cinfo)
     } else {			/* 2nd or later SOS marker */
       if (! inputctl->pub.has_multiple_scans)
 	ERREXIT(cinfo, JERR_EOI_EXPECTED); /* Oops, I wasn't expecting this! */
-      start_input_pass(cinfo);
+      start_input_pass_controller(cinfo);
     }
     break;
   case JPEG_REACHED_EOI:	/* Found EOI */
@@ -336,7 +336,7 @@ consume_markers (j_decompress_ptr cinfo)
  * Reset state to begin a fresh datastream.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 reset_input_controller (j_decompress_ptr cinfo)
 {
   my_inputctl_ptr inputctl = (my_inputctl_ptr) cinfo->inputctl;
@@ -370,8 +370,6 @@ jinit_input_controller (j_decompress_ptr cinfo)
   cinfo->inputctl = (struct jpeg_input_controller *) inputctl;
   /* Initialize method pointers */
   inputctl->pub.consume_input = consume_markers;
-  inputctl->pub.reset_input_controller = reset_input_controller;
-  inputctl->pub.start_input_pass = start_input_pass;
   inputctl->pub.finish_input_pass = finish_input_pass;
   /* Initialize state: can't use reset_input_controller since we don't
    * want to try to reset other modules yet.

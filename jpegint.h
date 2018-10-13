@@ -126,10 +126,14 @@ struct jpeg_decomp_master {
 };
 
 /* Input control module */
+
+void reset_input_controller (j_decompress_ptr cinfo);
+void start_input_pass_controller (j_decompress_ptr cinfo);
+
 struct jpeg_input_controller {
   JMETHOD(int, consume_input, (j_decompress_ptr cinfo));
-  JMETHOD(void, reset_input_controller, (j_decompress_ptr cinfo));
-  JMETHOD(void, start_input_pass, (j_decompress_ptr cinfo));
+//  JMETHOD(void, reset_input_controller, (j_decompress_ptr cinfo));
+//  JMETHOD(void, start_input_pass, (j_decompress_ptr cinfo));
   JMETHOD(void, finish_input_pass, (j_decompress_ptr cinfo));
 
   /* State variables made visible to other modules */
