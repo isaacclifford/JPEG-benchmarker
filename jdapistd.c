@@ -102,7 +102,7 @@ output_pass_setup (j_decompress_ptr cinfo)
     /* First call: do pass setup */
 
     //IS: Find out how these functions work
-    (*cinfo->master->prepare_for_output_pass) (cinfo);
+    prepare_for_output_pass(cinfo);
     cinfo->output_scanline = 0;
     cinfo->global_state = DSTATE_PRESCAN;
   }
@@ -126,8 +126,8 @@ output_pass_setup (j_decompress_ptr cinfo)
 	return FALSE;		/* No progress made, must suspend */
     }
     /* Finish up dummy pass, and set up for another one */
-    (*cinfo->master->finish_output_pass) (cinfo);
-    (*cinfo->master->prepare_for_output_pass) (cinfo);
+    finish_output_pass(cinfo);
+    prepare_for_output_pass(cinfo);
     cinfo->output_scanline = 0;
 #else
     ERREXIT(cinfo, JERR_NOT_COMPILED);
@@ -262,7 +262,7 @@ jpeg_finish_output (j_decompress_ptr cinfo)
        cinfo->global_state == DSTATE_RAW_OK) && cinfo->buffered_image) {
     /* Terminate this pass. */
     /* We do not require the whole pass to have been completed. */
-    (*cinfo->master->finish_output_pass) (cinfo);
+    finish_output_pass(cinfo);
     cinfo->global_state = DSTATE_BUFPOST;
   } else if (cinfo->global_state != DSTATE_BUFPOST) {
     /* BUFPOST = repeat call after a suspension, anything else is error */

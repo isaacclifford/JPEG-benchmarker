@@ -437,7 +437,7 @@ master_selection (j_decompress_ptr cinfo)
  * (In the latter case, jdapistd.c will crank the pass to completion.)
  */
 
-METHODDEF(void)
+GLOBAL(void)
 prepare_for_output_pass (j_decompress_ptr cinfo)
 {
   my_master_ptr master = (my_master_ptr) cinfo->master;
@@ -497,7 +497,7 @@ prepare_for_output_pass (j_decompress_ptr cinfo)
  * Finish up at end of an output pass.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 finish_output_pass (j_decompress_ptr cinfo)
 {
   my_master_ptr master = (my_master_ptr) cinfo->master;
@@ -552,8 +552,6 @@ jinit_master_decompress (j_decompress_ptr cinfo)
       alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				  SIZEOF(my_decomp_master));
   cinfo->master = (struct jpeg_decomp_master *) master;
-  master->pub.prepare_for_output_pass = prepare_for_output_pass;
-  master->pub.finish_output_pass = finish_output_pass;
 
   master->pub.is_dummy_pass = FALSE;
 

@@ -116,11 +116,11 @@ typedef enum {			/* Operating modes for buffer controllers */
 
 /* Declarations for decompression modules */
 
+void prepare_for_output_pass (j_decompress_ptr cinfo);
+void finish_output_pass (j_decompress_ptr cinfo);
+
 /* Master control module */
 struct jpeg_decomp_master {
-  JMETHOD(void, prepare_for_output_pass, (j_decompress_ptr cinfo));
-  JMETHOD(void, finish_output_pass, (j_decompress_ptr cinfo));
-
   /* State variables made visible to other modules */
   boolean is_dummy_pass;	/* True during 1st pass for 2-pass quant */
 };

@@ -373,7 +373,7 @@ jpeg_finish_decompress (j_decompress_ptr cinfo)
     /* Terminate final pass of non-buffered mode */
     if (cinfo->output_scanline < cinfo->output_height)
       ERREXIT(cinfo, JERR_TOO_LITTLE_DATA);
-    (*cinfo->master->finish_output_pass) (cinfo);
+    finish_output_pass(cinfo);
     cinfo->global_state = DSTATE_STOPPING;
   } else if (cinfo->global_state == DSTATE_BUFIMAGE) {
     /* Finishing after a buffered-image operation */
