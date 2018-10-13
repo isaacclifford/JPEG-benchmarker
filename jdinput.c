@@ -272,7 +272,6 @@ start_input_pass_input (j_decompress_ptr cinfo)
 GLOBAL(void)
 finish_input_pass (j_decompress_ptr cinfo)
 {
-//  cinfo->inputctl->consume_input = consume_markers;
   cinfo->inputctl->consume_using_coefficient = FALSE;
 }
 
@@ -343,7 +342,6 @@ reset_input_controller (j_decompress_ptr cinfo)
 {
   my_inputctl_ptr inputctl = (my_inputctl_ptr) cinfo->inputctl;
 
-//  inputctl->pub.consume_input = consume_markers;
   cinfo->inputctl->consume_using_coefficient = FALSE;
   inputctl->pub.has_multiple_scans = FALSE; /* "unknown" would be better */
   inputctl->pub.eoi_reached = FALSE;
@@ -372,9 +370,7 @@ jinit_input_controller (j_decompress_ptr cinfo)
 				SIZEOF(my_input_controller));
   cinfo->inputctl = (struct jpeg_input_controller *) inputctl;
   /* Initialize method pointers */
-//  inputctl->pub.consume_input = consume_markers;
     cinfo->inputctl->consume_using_coefficient = FALSE;
-//  inputctl->pub.finish_input_pass = finish_input_pass;
   /* Initialize state: can't use reset_input_controller since we don't
    * want to try to reset other modules yet.
    */
