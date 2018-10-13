@@ -134,11 +134,6 @@ void finish_input_pass (j_decompress_ptr cinfo);
 int consume_input_master(j_decompress_ptr cinfo);
 
 struct jpeg_input_controller {
-//  JMETHOD(int, consume_input, (j_decompress_ptr cinfo));
-//  JMETHOD(void, reset_input_controller, (j_decompress_ptr cinfo));
-//  JMETHOD(void, start_input_pass, (j_decompress_ptr cinfo));
-//  JMETHOD(void, finish_input_pass, (j_decompress_ptr cinfo));
-
   /* State variables made visible to other modules */
   boolean has_multiple_scans;	/* True if file has multiple scans */
   boolean eoi_reached;		/* True when EOI has been consumed */
@@ -163,8 +158,6 @@ void start_input_pass_coef (j_decompress_ptr cinfo);
 int consume_data_master(j_decompress_ptr cinfo);
 
 struct jpeg_d_coef_controller {
-//  JMETHOD(void, start_input_pass, (j_decompress_ptr cinfo));
-//  JMETHOD(int, consume_data, (j_decompress_ptr cinfo));
   JMETHOD(void, start_output_pass, (j_decompress_ptr cinfo));
   JMETHOD(int, decompress_data, (j_decompress_ptr cinfo,
 				 JSAMPIMAGE output_buf));

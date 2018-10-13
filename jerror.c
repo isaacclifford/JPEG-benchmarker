@@ -66,11 +66,11 @@ const char * const jpeg_std_message_table[] = {
  * or jpeg_destroy) at some point.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 error_exit (j_common_ptr cinfo)
 {
   /* Always display the message */
-  (*cinfo->err->output_message) (cinfo);
+  output_message(cinfo);
 
   /* Let the memory manager delete any temp files before we die */
   jpeg_destroy(cinfo);
@@ -94,13 +94,13 @@ error_exit (j_common_ptr cinfo)
  * not just not use this routine.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 output_message (j_common_ptr cinfo)
 {
   char buffer[JMSG_LENGTH_MAX];
 
   /* Create the message */
-  (*cinfo->err->format_message) (cinfo, buffer);
+  format_message(cinfo, buffer);
 
 #ifdef USE_WINDOWS_MESSAGEBOX
   /* Display it in a message dialog box */
@@ -124,7 +124,7 @@ output_message (j_common_ptr cinfo)
  * or change the policy about which messages to display.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 emit_message (j_common_ptr cinfo, int msg_level)
 {
   struct jpeg_error_mgr * err = cinfo->err;
@@ -135,13 +135,13 @@ emit_message (j_common_ptr cinfo, int msg_level)
      * unless trace_level >= 3.
      */
     if (err->num_warnings == 0 || err->trace_level >= 3)
-      (*err->output_message) (cinfo);
+      output_message(cinfo);
     /* Always count warnings in num_warnings. */
     err->num_warnings++;
   } else {
     /* It's a trace message.  Show it if trace_level >= msg_level. */
     if (err->trace_level >= msg_level)
-      (*err->output_message) (cinfo);
+      output_message(cinfo);
   }
 }
 
@@ -153,7 +153,7 @@ emit_message (j_common_ptr cinfo, int msg_level)
  * Few applications should need to override this method.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 format_message (j_common_ptr cinfo, char * buffer)
 {
   struct jpeg_error_mgr * err = cinfo->err;
@@ -208,7 +208,7 @@ format_message (j_common_ptr cinfo, char * buffer)
  * this method if it has additional error processing state.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 reset_error_mgr (j_common_ptr cinfo)
 {
   cinfo->err->num_warnings = 0;
@@ -230,11 +230,6 @@ reset_error_mgr (j_common_ptr cinfo)
 GLOBAL(struct jpeg_error_mgr *)
 jpeg_std_error (struct jpeg_error_mgr * err)
 {
-  err->error_exit = error_exit;
-  err->emit_message = emit_message;
-  err->output_message = output_message;
-  err->format_message = format_message;
-  err->reset_error_mgr = reset_error_mgr;
 
   err->trace_level = 0;		/* default = no tracing */
   err->num_warnings = 0;	/* no warnings emitted yet */

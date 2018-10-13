@@ -721,7 +721,6 @@ jinit_d_coef_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
 				(long) compptr->v_samp_factor),
 	 (JDIMENSION) access_rows);
     }
-//    coef->pub.consume_data = consume_data;
     coef->pub.consume_data_type = DEFAULT;
     coef->pub.decompress_data = decompress_data;
     coef->pub.coef_arrays = coef->whole_image; /* link to virtual arrays */
@@ -738,7 +737,6 @@ jinit_d_coef_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
     for (i = 0; i < D_MAX_BLOCKS_IN_MCU; i++) {
       coef->MCU_buffer[i] = buffer + i;
     }
-//    coef->pub.consume_data = dummy_consume_data;
     coef->pub.consume_data_type = DUMMY;
     coef->pub.decompress_data = decompress_onepass;
     coef->pub.coef_arrays = NULL; /* flag for no virtual arrays */

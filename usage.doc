@@ -206,6 +206,8 @@ don't know what you are doing, DON'T USE THEM.  These switches are documented
 further in the file wizard.doc.
 
 
+
+
 DJPEG DETAILS
 
 The basic command line switches for djpeg are:
@@ -560,3 +562,4 @@ file.
 These utility programs do not depend on the IJG JPEG library.  In
 particular, the source code for rdjpgcom is intended as an illustration of
 the minimum amount of code required to parse a JPEG file header correctly.
+
