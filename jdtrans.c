@@ -58,7 +58,7 @@ jpeg_read_coefficients (j_decompress_ptr cinfo)
       if (cinfo->progress != NULL)
 	progress_monitor ((j_common_ptr) cinfo);
       /* Absorb some more input */
-      retcode = (*cinfo->inputctl->consume_input) (cinfo);
+      retcode = consume_input_master(cinfo);
       if (retcode == JPEG_SUSPENDED)
 	return NULL;
       if (retcode == JPEG_REACHED_EOI)
@@ -121,7 +121,7 @@ transdecode_master_selection (j_decompress_ptr cinfo)
   realize_virt_arrays((j_common_ptr) cinfo);
 
   /* Initialize input side of decompressor to consume first scan. */
-  start_input_pass_controller (cinfo);
+  start_input_pass_input (cinfo);
 
   /* Initialize progress monitoring. */
   if (cinfo->progress != NULL) {

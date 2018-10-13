@@ -399,7 +399,7 @@ master_selection (j_decompress_ptr cinfo)
   realize_virt_arrays((j_common_ptr) cinfo);
 
   /* Initialize input side of decompressor to consume first scan. */
-  start_input_pass_controller(cinfo);
+  start_input_pass_input(cinfo);
 
 #ifdef D_MULTISCAN_FILES_SUPPORTED
   /* If jpeg_start_decompress will read the whole file, initialize

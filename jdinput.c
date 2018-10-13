@@ -29,7 +29,7 @@ typedef my_input_controller * my_inputctl_ptr;
 
 
 /* Forward declarations */
-METHODDEF(int) consume_markers JPP((j_decompress_ptr cinfo));
+LOCAL(int) consume_markers JPP((j_decompress_ptr cinfo));
 
 
 /*
@@ -252,13 +252,14 @@ latch_quant_tables (j_decompress_ptr cinfo)
  */
 
 GLOBAL(void)
-start_input_pass_controller (j_decompress_ptr cinfo)
+start_input_pass_input (j_decompress_ptr cinfo)
 {
   per_scan_setup(cinfo);
   latch_quant_tables(cinfo);
   (*cinfo->entropy->start_pass) (cinfo);
-  (*cinfo->coef->start_input_pass) (cinfo);
-  cinfo->inputctl->consume_input = cinfo->coef->consume_data;
+  start_input_pass_coef (cinfo);
+//  cinfo->inputctl->consume_input = cinfo->coef->consume_data;
+  cinfo->inputctl->consume_using_coefficient = TRUE;
 }
 
 
@@ -268,10 +269,11 @@ start_input_pass_controller (j_decompress_ptr cinfo)
  * the expected data of the scan.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 finish_input_pass (j_decompress_ptr cinfo)
 {
-  cinfo->inputctl->consume_input = consume_markers;
+//  cinfo->inputctl->consume_input = consume_markers;
+  cinfo->inputctl->consume_using_coefficient = FALSE;
 }
 
 
@@ -285,7 +287,7 @@ finish_input_pass (j_decompress_ptr cinfo)
  * we are reading a compressed data segment or inter-segment markers.
  */
 
-METHODDEF(int)
+LOCAL(int)
 consume_markers (j_decompress_ptr cinfo)
 {
   my_inputctl_ptr inputctl = (my_inputctl_ptr) cinfo->inputctl;
@@ -308,7 +310,7 @@ consume_markers (j_decompress_ptr cinfo)
     } else {			/* 2nd or later SOS marker */
       if (! inputctl->pub.has_multiple_scans)
 	ERREXIT(cinfo, JERR_EOI_EXPECTED); /* Oops, I wasn't expecting this! */
-      start_input_pass_controller(cinfo);
+      start_input_pass_input(cinfo);
     }
     break;
   case JPEG_REACHED_EOI:	/* Found EOI */
@@ -341,7 +343,8 @@ reset_input_controller (j_decompress_ptr cinfo)
 {
   my_inputctl_ptr inputctl = (my_inputctl_ptr) cinfo->inputctl;
 
-  inputctl->pub.consume_input = consume_markers;
+//  inputctl->pub.consume_input = consume_markers;
+  cinfo->inputctl->consume_using_coefficient = FALSE;
   inputctl->pub.has_multiple_scans = FALSE; /* "unknown" would be better */
   inputctl->pub.eoi_reached = FALSE;
   inputctl->inheaders = TRUE;
@@ -369,12 +372,21 @@ jinit_input_controller (j_decompress_ptr cinfo)
 				SIZEOF(my_input_controller));
   cinfo->inputctl = (struct jpeg_input_controller *) inputctl;
   /* Initialize method pointers */
-  inputctl->pub.consume_input = consume_markers;
-  inputctl->pub.finish_input_pass = finish_input_pass;
+//  inputctl->pub.consume_input = consume_markers;
+    cinfo->inputctl->consume_using_coefficient = FALSE;
+//  inputctl->pub.finish_input_pass = finish_input_pass;
   /* Initialize state: can't use reset_input_controller since we don't
    * want to try to reset other modules yet.
    */
   inputctl->pub.has_multiple_scans = FALSE; /* "unknown" would be better */
   inputctl->pub.eoi_reached = FALSE;
   inputctl->inheaders = TRUE;
+}
+
+GLOBAL(int) consume_input_master(j_decompress_ptr cinfo) {
+  if (cinfo->inputctl->consume_using_coefficient) {
+    return consume_data_master(cinfo);
+  } else {
+    return consume_markers(cinfo);
+  }
 }

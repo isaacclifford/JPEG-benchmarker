@@ -298,7 +298,7 @@ jpeg_consume_input (j_decompress_ptr cinfo)
     cinfo->global_state = DSTATE_INHEADER;
     /*FALLTHROUGH*/
   case DSTATE_INHEADER:
-    retcode = (*cinfo->inputctl->consume_input) (cinfo);
+    retcode = consume_input_master(cinfo);
     if (retcode == JPEG_REACHED_SOS) { /* Found SOS, prepare to decompress */
       /* Set up default parameters based on header data */
       default_decompress_parms(cinfo);
@@ -317,7 +317,7 @@ jpeg_consume_input (j_decompress_ptr cinfo)
   case DSTATE_BUFIMAGE:
   case DSTATE_BUFPOST:
   case DSTATE_STOPPING:
-    retcode = (*cinfo->inputctl->consume_input) (cinfo);
+    retcode = consume_input_master (cinfo);
     break;
   default:
     ERREXIT1(cinfo, JERR_BAD_STATE, cinfo->global_state);
@@ -384,7 +384,7 @@ jpeg_finish_decompress (j_decompress_ptr cinfo)
   }
   /* Read until EOI */
   while (! cinfo->inputctl->eoi_reached) {
-    if ((*cinfo->inputctl->consume_input) (cinfo) == JPEG_SUSPENDED)
+    if (consume_input_master(cinfo) == JPEG_SUSPENDED)
       return FALSE;		/* Suspend, come back later */
   }
   /* Do final cleanup */

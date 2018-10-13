@@ -105,8 +105,8 @@ start_iMCU_row (j_decompress_ptr cinfo)
  * Initialize for an input processing pass.
  */
 
-METHODDEF(void)
-start_input_pass (j_decompress_ptr cinfo)
+GLOBAL(void)
+start_input_pass_coef (j_decompress_ptr cinfo)
 {
   cinfo->input_iMCU_row = 0;
   start_iMCU_row(cinfo);
@@ -217,7 +217,7 @@ decompress_onepass (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
     return JPEG_ROW_COMPLETED;
   }
   /* Completed the scan */
-  (*cinfo->inputctl->finish_input_pass) (cinfo);
+  finish_input_pass (cinfo);
   return JPEG_SCAN_COMPLETED;
 }
 
@@ -226,7 +226,7 @@ decompress_onepass (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
  * Dummy consume-input routine for single-pass operation.
  */
 
-METHODDEF(int)
+LOCAL(int)
 dummy_consume_data (j_decompress_ptr cinfo)
 {
   return JPEG_SUSPENDED;	/* Always indicate nothing was done */
@@ -242,7 +242,7 @@ dummy_consume_data (j_decompress_ptr cinfo)
  * Return value is JPEG_ROW_COMPLETED, JPEG_SCAN_COMPLETED, or JPEG_SUSPENDED.
  */
 
-METHODDEF(int)
+LOCAL(int)
 consume_data (j_decompress_ptr cinfo)
 {
   my_coef_ptr coef = (my_coef_ptr) cinfo->coef;
@@ -300,8 +300,16 @@ consume_data (j_decompress_ptr cinfo)
     return JPEG_ROW_COMPLETED;
   }
   /* Completed the scan */
-  (*cinfo->inputctl->finish_input_pass) (cinfo);
+  finish_input_pass(cinfo);
   return JPEG_SCAN_COMPLETED;
+}
+
+GLOBAL (int) consume_data_master(j_decompress_ptr cinfo) {
+  if(cinfo->coef->consume_data_type == DEFAULT) {
+    return consume_data(cinfo);
+  } else if (cinfo->coef->consume_data_type == DUMMY) {
+    return dummy_consume_data(cinfo);
+  }
 }
 
 
@@ -331,7 +339,7 @@ decompress_data (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
   while (cinfo->input_scan_number < cinfo->output_scan_number ||
 	 (cinfo->input_scan_number == cinfo->output_scan_number &&
 	  cinfo->input_iMCU_row <= cinfo->output_iMCU_row)) {
-    if ((*cinfo->inputctl->consume_input)(cinfo) == JPEG_SUSPENDED)
+    if (consume_input_master(cinfo) == JPEG_SUSPENDED)
       return JPEG_SUSPENDED;
   }
 
@@ -493,7 +501,7 @@ decompress_smooth_data (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
       if (cinfo->input_iMCU_row > cinfo->output_iMCU_row+delta)
 	break;
     }
-    if ((*cinfo->inputctl->consume_input)(cinfo) == JPEG_SUSPENDED)
+    if (consume_input_master(cinfo) == JPEG_SUSPENDED)
       return JPEG_SUSPENDED;
   }
 
@@ -683,7 +691,6 @@ jinit_d_coef_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
     alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_coef_controller));
   cinfo->coef = (struct jpeg_d_coef_controller *) coef;
-  coef->pub.start_input_pass = start_input_pass;
   coef->pub.start_output_pass = start_output_pass;
 #ifdef BLOCK_SMOOTHING_SUPPORTED
   coef->coef_bits_latch = NULL;
@@ -714,7 +721,8 @@ jinit_d_coef_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
 				(long) compptr->v_samp_factor),
 	 (JDIMENSION) access_rows);
     }
-    coef->pub.consume_data = consume_data;
+//    coef->pub.consume_data = consume_data;
+    coef->pub.consume_data_type = DEFAULT;
     coef->pub.decompress_data = decompress_data;
     coef->pub.coef_arrays = coef->whole_image; /* link to virtual arrays */
 #else
@@ -730,7 +738,8 @@ jinit_d_coef_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
     for (i = 0; i < D_MAX_BLOCKS_IN_MCU; i++) {
       coef->MCU_buffer[i] = buffer + i;
     }
-    coef->pub.consume_data = dummy_consume_data;
+//    coef->pub.consume_data = dummy_consume_data;
+    coef->pub.consume_data_type = DUMMY;
     coef->pub.decompress_data = decompress_onepass;
     coef->pub.coef_arrays = NULL; /* flag for no virtual arrays */
   }

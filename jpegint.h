@@ -128,17 +128,21 @@ struct jpeg_decomp_master {
 /* Input control module */
 
 void reset_input_controller (j_decompress_ptr cinfo);
-void start_input_pass_controller (j_decompress_ptr cinfo);
+void start_input_pass_input (j_decompress_ptr cinfo);
+void finish_input_pass (j_decompress_ptr cinfo);
+
+int consume_input_master(j_decompress_ptr cinfo);
 
 struct jpeg_input_controller {
-  JMETHOD(int, consume_input, (j_decompress_ptr cinfo));
+//  JMETHOD(int, consume_input, (j_decompress_ptr cinfo));
 //  JMETHOD(void, reset_input_controller, (j_decompress_ptr cinfo));
 //  JMETHOD(void, start_input_pass, (j_decompress_ptr cinfo));
-  JMETHOD(void, finish_input_pass, (j_decompress_ptr cinfo));
+//  JMETHOD(void, finish_input_pass, (j_decompress_ptr cinfo));
 
   /* State variables made visible to other modules */
   boolean has_multiple_scans;	/* True if file has multiple scans */
   boolean eoi_reached;		/* True when EOI has been consumed */
+  boolean consume_using_coefficient;
 };
 
 /* Main buffer control (downsampled-data buffer) */
@@ -150,14 +154,24 @@ struct jpeg_d_main_controller {
 };
 
 /* Coefficient buffer control */
+typedef enum {
+    DEFAULT,
+    DUMMY
+}consume_data_t;
+
+void start_input_pass_coef (j_decompress_ptr cinfo);
+int consume_data_master(j_decompress_ptr cinfo);
+
 struct jpeg_d_coef_controller {
-  JMETHOD(void, start_input_pass, (j_decompress_ptr cinfo));
-  JMETHOD(int, consume_data, (j_decompress_ptr cinfo));
+//  JMETHOD(void, start_input_pass, (j_decompress_ptr cinfo));
+//  JMETHOD(int, consume_data, (j_decompress_ptr cinfo));
   JMETHOD(void, start_output_pass, (j_decompress_ptr cinfo));
   JMETHOD(int, decompress_data, (j_decompress_ptr cinfo,
 				 JSAMPIMAGE output_buf));
   /* Pointer to array of coefficient virtual arrays, or NULL if none */
   jvirt_barray_ptr *coef_arrays;
+  consume_data_t consume_data_type;
+
 };
 
 /* Decompression postprocessing (color quantization buffer control) */
