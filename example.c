@@ -82,23 +82,23 @@ struct my_error_mgr {
 
 typedef struct my_error_mgr * my_error_ptr;
 
-/*
- * Here's the routine that will replace the standard error_exit method:
- */
-
-METHODDEF(void)
-my_error_exit (j_common_ptr cinfo)
-{
-  /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
-  my_error_ptr myerr = (my_error_ptr) cinfo->err;
-
-  /* Always display the message. */
-  /* We could postpone this until after returning, if we chose. */
-  (*cinfo->err->output_message) (cinfo);
-
-  /* Return control to the setjmp point */
-  longjmp(myerr->setjmp_buffer, 1);
-}
+///*
+// * Here's the routine that will replace the standard error_exit method:
+// */
+//
+//GLOBAL(void)
+//my_error_exit (j_common_ptr cinfo)
+//{
+//  /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
+//  my_error_ptr myerr = (my_error_ptr) cinfo->err;
+//
+//  /* Always display the message. */
+//  /* We could postpone this until after returning, if we chose. */
+//  output_message(cinfo);
+//
+//  /* Return control to the setjmp point */
+//  longjmp(myerr->setjmp_buffer, 1);
+//}
 
 
 /*
@@ -139,7 +139,6 @@ read_JPEG_file (char * filename)
 
   /* We set up the normal JPEG error routines, then override error_exit. */
   cinfo.err = jpeg_std_error(&jerr.pub);
-  jerr.pub.error_exit = my_error_exit;
   /* Establish the setjmp return context for my_error_exit to use. */
   if (setjmp(jerr.setjmp_buffer)) {
     /* If we get here, the JPEG code has signaled an error.

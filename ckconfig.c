@@ -102,11 +102,11 @@ typedef size_t my_size_t;	/* The payoff: do we have size_t now? */
 #ifdef HAVE_PROTOTYPES
 int testfunction (int arg1, int * arg2); /* check prototypes */
 
-struct methods_struct {		/* check method-pointer declarations */
-  int (*error_exit) (char *msgtext);
-  int (*trace_message) (char *msgtext);
-  int (*another_method) (void);
-};
+//struct methods_struct {		/* check method-pointer declarations */
+//  int (*error_exit) (char *msgtext);
+//  int (*trace_message) (char *msgtext);
+//  int (*another_method) (void);
+//};
 
 int testfunction (int arg1, int * arg2) /* check definitions */
 {
