@@ -347,7 +347,7 @@ reset_input_controller (j_decompress_ptr cinfo)
   inputctl->pub.eoi_reached = FALSE;
   inputctl->inheaders = TRUE;
   /* Reset other modules */
-  reset_error_mgr((j_common_ptr) cinfo);
+  (*cinfo->err->reset_error_mgr) ((j_common_ptr) cinfo);
   (*cinfo->marker->reset_marker_reader) (cinfo);
   /* Reset progression state -- would be cleaner if entropy decoder did this */
   cinfo->coef_bits = NULL;

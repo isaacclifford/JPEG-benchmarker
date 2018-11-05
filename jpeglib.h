@@ -636,19 +636,18 @@ struct jpeg_decompress_struct {
 
 /* Error handler object */
 
-/* Error exit handler: does not return to caller */
-void error_exit (j_common_ptr cinfo);
-/* Conditionally emit a trace or warning message */
-void emit_message (j_common_ptr cinfo, int msg_level);
-/* Routine that actually outputs a trace or error message */
-void output_message (j_common_ptr cinfo);
-/* Reset error state variables at start of a new image */
-void format_message (j_common_ptr cinfo, char * buffer);
-/* Reset error state variables at start of a new image */
-void reset_error_mgr (j_common_ptr cinfo);
-
 struct jpeg_error_mgr {
+  /* Error exit handler: does not return to caller */
+  JMETHOD(void, error_exit, (j_common_ptr cinfo)); //IS: changing this function causes us not to be able to run own error message**//
+  /* Conditionally emit a trace or warning message */
+  JMETHOD(void, emit_message, (j_common_ptr cinfo, int msg_level)); //IS: doable - Low prio
+  /* Routine that actually outputs a trace or error message */
+  JMETHOD(void, output_message, (j_common_ptr cinfo)); //IS: doable - Low prio
+  /* Format a message string for the most recent JPEG error or message */
+  JMETHOD(void, format_message, (j_common_ptr cinfo, char * buffer)); //IS: doable - Low prio
 #define JMSG_LENGTH_MAX  200	/* recommended size of format_message buffer */
+  /* Reset error state variables at start of a new image */
+  JMETHOD(void, reset_error_mgr, (j_common_ptr cinfo)); //Doable - Low prio
   
   /* The message ID code and any parameters are saved here.
    * A message can have one string parameter or up to 8 int parameters.
