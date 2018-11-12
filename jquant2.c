@@ -1227,7 +1227,7 @@ start_pass_2_quant (j_decompress_ptr cinfo, boolean is_pre_scan)
  * Switch to a new external colormap between output passes.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 new_color_map_2_quant (j_decompress_ptr cinfo)
 {
   my_cquantize_ptr cquantize = (my_cquantize_ptr) cinfo->cquantize;
@@ -1252,7 +1252,7 @@ jinit_2pass_quantizer (j_decompress_ptr cinfo)
 				SIZEOF(my_cquantizer));
   cinfo->cquantize = (struct jpeg_color_quantizer *) cquantize;
   cquantize->pub.start_pass = start_pass_2_quant;
-  cquantize->pub.new_color_map = new_color_map_2_quant;
+  cquantize->pub.new_color_map_quant_index = 2;
   cquantize->fserrors = NULL;	/* flag optional arrays not allocated */
   cquantize->error_limiter = NULL;
 

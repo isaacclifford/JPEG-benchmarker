@@ -527,8 +527,14 @@ jpeg_new_colormap (j_decompress_ptr cinfo)
       cinfo->colormap != NULL) {
     /* Select 2-pass quantizer for external colormap use */
     cinfo->cquantize = master->quantizer_2pass;
+
     /* Notify quantizer of colormap change */
-    (*cinfo->cquantize->new_color_map) (cinfo);
+    if (cinfo->cquantize->new_color_map_quant_index == 1) {
+      new_color_map_1_quant(cinfo);
+    } else if (cinfo->cquantize->new_color_map_quant_index == 2) {
+      new_color_map_2_quant(cinfo);
+    }
+
     master->pub.is_dummy_pass = FALSE; /* just in case */
   } else
     ERREXIT(cinfo, JERR_MODE_CHANGE);

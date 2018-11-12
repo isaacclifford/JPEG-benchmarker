@@ -806,7 +806,7 @@ finish_pass_1_quant (j_decompress_ptr cinfo)
  * Shouldn't get to this module!
  */
 
-METHODDEF(void)
+GLOBAL(void)
 new_color_map_1_quant (j_decompress_ptr cinfo)
 {
   ERREXIT(cinfo, JERR_MODE_CHANGE);
@@ -828,7 +828,7 @@ jinit_1pass_quantizer (j_decompress_ptr cinfo)
   cinfo->cquantize = (struct jpeg_color_quantizer *) cquantize;
   cquantize->pub.start_pass = start_pass_1_quant;
   cquantize->pub.finish_pass = finish_pass_1_quant;
-  cquantize->pub.new_color_map = new_color_map_1_quant;
+  cquantize->pub.new_color_map_quant_index = 1;
   cquantize->fserrors[0] = NULL; /* Flag FS workspace not allocated */
   cquantize->odither[0] = NULL;	/* Also flag odither arrays not allocated */
 
