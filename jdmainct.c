@@ -352,7 +352,7 @@ process_data_simple_main (j_decompress_ptr cinfo,
 
   /* Read input data if we haven't filled the main buffer yet */
   if (! main->buffer_full) {
-    if (! (*cinfo->coef->decompress_data) (cinfo, main->buffer))
+    if (!decompress_data_master(cinfo->coef->d_type, cinfo, main->buffer))
       return;			/* suspension forced, can do nothing more */
     main->buffer_full = TRUE;	/* OK, we have an iMCU row to work with */
   }
@@ -391,7 +391,7 @@ process_data_context_main (j_decompress_ptr cinfo,
 
   /* Read input data if we haven't filled the main buffer yet */
   if (! main->buffer_full) {
-    if (! (*cinfo->coef->decompress_data) (cinfo,
+    if (! decompress_data_master(cinfo->coef->d_type, cinfo,
 					   main->xbuffer[main->whichptr]))
       return;			/* suspension forced, can do nothing more */
     main->buffer_full = TRUE;	/* OK, we have an iMCU row to work with */

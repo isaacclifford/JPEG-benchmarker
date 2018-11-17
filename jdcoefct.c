@@ -64,15 +64,15 @@ typedef struct {
 typedef my_coef_controller * my_coef_ptr;
 
 /* Forward declarations */
-METHODDEF(int) decompress_onepass
+LOCAL(int) decompress_onepass
 	JPP((j_decompress_ptr cinfo, JSAMPIMAGE output_buf));
 #ifdef D_MULTISCAN_FILES_SUPPORTED
-METHODDEF(int) decompress_data
+LOCAL(int) decompress_data
 	JPP((j_decompress_ptr cinfo, JSAMPIMAGE output_buf));
 #endif
 #ifdef BLOCK_SMOOTHING_SUPPORTED
 LOCAL(boolean) smoothing_ok JPP((j_decompress_ptr cinfo));
-METHODDEF(int) decompress_smooth_data
+LOCAL(int) decompress_smooth_data
 	JPP((j_decompress_ptr cinfo, JSAMPIMAGE output_buf));
 #endif
 
@@ -117,7 +117,10 @@ start_input_pass_coef (j_decompress_ptr cinfo)
  * Initialize for an output processing pass.
  */
 
-METHODDEF(void)
+
+
+
+GLOBAL(void)
 start_output_pass (j_decompress_ptr cinfo)
 {
 #ifdef BLOCK_SMOOTHING_SUPPORTED
@@ -126,9 +129,9 @@ start_output_pass (j_decompress_ptr cinfo)
   /* If multipass, check to see whether to use block smoothing on this pass */
   if (coef->pub.coef_arrays != NULL) {
     if (cinfo->do_block_smoothing && smoothing_ok(cinfo))
-      coef->pub.decompress_data = decompress_smooth_data;
+      coef->pub.d_type = SMOOTH;
     else
-      coef->pub.decompress_data = decompress_data;
+      coef->pub.d_type = DEFAULT_DECOMPRESS;
   }
 #endif
   cinfo->output_iMCU_row = 0;
@@ -145,7 +148,7 @@ start_output_pass (j_decompress_ptr cinfo)
  * which we index according to the component's SOF position.
  */
 
-METHODDEF(int)
+LOCAL(int)
 decompress_onepass (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
 {
   my_coef_ptr coef = (my_coef_ptr) cinfo->coef;
@@ -321,7 +324,7 @@ GLOBAL (int) consume_data_master(j_decompress_ptr cinfo) {
  * NB: output_buf contains a plane for each component in image.
  */
 
-METHODDEF(int)
+GLOBAL(int)
 decompress_data (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
 {
   my_coef_ptr coef = (my_coef_ptr) cinfo->coef;
@@ -467,7 +470,7 @@ smoothing_ok (j_decompress_ptr cinfo)
  * Variant of decompress_data for use when doing block smoothing.
  */
 
-METHODDEF(int)
+LOCAL(int)
 decompress_smooth_data (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
 {
   my_coef_ptr coef = (my_coef_ptr) cinfo->coef;
@@ -691,7 +694,6 @@ jinit_d_coef_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
     alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_coef_controller));
   cinfo->coef = (struct jpeg_d_coef_controller *) coef;
-  coef->pub.start_output_pass = start_output_pass;
 #ifdef BLOCK_SMOOTHING_SUPPORTED
   coef->coef_bits_latch = NULL;
 #endif
@@ -722,7 +724,7 @@ jinit_d_coef_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
 	 (JDIMENSION) access_rows);
     }
     coef->pub.consume_data_type = DEFAULT;
-    coef->pub.decompress_data = decompress_data;
+    coef->pub.d_type = DEFAULT_DECOMPRESS;
     coef->pub.coef_arrays = coef->whole_image; /* link to virtual arrays */
 #else
     ERREXIT(cinfo, JERR_NOT_COMPILED);
@@ -738,7 +740,20 @@ jinit_d_coef_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
       coef->MCU_buffer[i] = buffer + i;
     }
     coef->pub.consume_data_type = DUMMY;
-    coef->pub.decompress_data = decompress_onepass;
+    coef->pub.d_type = ONEPASS;
     coef->pub.coef_arrays = NULL; /* flag for no virtual arrays */
   }
+}
+
+GLOBAL(int)
+decompress_data_master(decompress_data_type type, j_decompress_ptr cinfo, JSAMPIMAGE output_buf) {
+  int res;
+  if (type == DEFAULT_DECOMPRESS){
+    res = decompress_data(cinfo, output_buf);
+  } else if (type == ONEPASS) {
+    res = decompress_onepass(cinfo, output_buf);
+  } else if (type == SMOOTH) {
+    res = decompress_smooth_data(cinfo, output_buf);
+  }
+  return res;
 }

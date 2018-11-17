@@ -156,11 +156,21 @@ typedef enum {
 
 void start_input_pass_coef (j_decompress_ptr cinfo);
 int consume_data_master(j_decompress_ptr cinfo);
+void start_output_pass (j_decompress_ptr cinfo);
+
+typedef enum {
+	DEFAULT_DECOMPRESS,
+	ONEPASS,
+	SMOOTH
+}decompress_data_type;
+
+int decompress_data_master(decompress_data_type type, j_decompress_ptr cinfo, JSAMPIMAGE output_buf);
+
 
 struct jpeg_d_coef_controller {
-  JMETHOD(void, start_output_pass, (j_decompress_ptr cinfo));
-  JMETHOD(int, decompress_data, (j_decompress_ptr cinfo,
-				 JSAMPIMAGE output_buf));
+	decompress_data_type d_type;
+//  JMETHOD(int, decompress_data, (j_decompress_ptr cinfo,
+//				 JSAMPIMAGE output_buf));
   /* Pointer to array of coefficient virtual arrays, or NULL if none */
   jvirt_barray_ptr *coef_arrays;
   consume_data_t consume_data_type;

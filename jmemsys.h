@@ -136,6 +136,7 @@ typedef union {
 
 typedef struct backing_store_struct * backing_store_ptr;
 
+//TODO: HARD
 typedef struct backing_store_struct {
   /* Methods for reading/writing/closing this backing-store object */
   JMETHOD(void, read_backing_store, (j_common_ptr cinfo, //Multiple Functions

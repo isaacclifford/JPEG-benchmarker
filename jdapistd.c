@@ -213,7 +213,7 @@ jpeg_read_raw_data (j_decompress_ptr cinfo, JSAMPIMAGE data,
     ERREXIT(cinfo, JERR_BUFFER_SIZE);
 
   /* Decompress directly into user's buffer. */
-  if (! (*cinfo->coef->decompress_data) (cinfo, data))
+  if (! decompress_data_master(cinfo->coef->d_type, cinfo, data))
     return 0;			/* suspension forced, can do nothing more */
 
   /* OK, we processed one iMCU row. */

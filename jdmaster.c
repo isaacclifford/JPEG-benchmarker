@@ -465,7 +465,7 @@ prepare_for_output_pass (j_decompress_ptr cinfo)
       }
     }
     (*cinfo->idct->start_pass) (cinfo);
-    (*cinfo->coef->start_output_pass) (cinfo);
+    start_output_pass(cinfo);
     if (! cinfo->raw_data_out) {
       if (! master->using_merged_upsample)
 	(*cinfo->cconvert->start_pass) (cinfo);
