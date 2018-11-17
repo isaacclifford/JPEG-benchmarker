@@ -39,81 +39,6 @@ typedef enum {			/* Operating modes for buffer controllers */
 #define DSTATE_STOPPING	210	/* looking for EOI in jpeg_finish_decompress */
 
 
-
-///* Main buffer control (downsampled-data buffer) */
-//struct jpeg_c_main_controller {
-//  JMETHOD(void, start_pass, (j_compress_ptr cinfo, J_BUF_MODE pass_mode)); //Multiple
-//  JMETHOD(void, process_data, (j_compress_ptr cinfo, //Multiple
-//			       JSAMPARRAY input_buf, JDIMENSION *in_row_ctr,
-//			       JDIMENSION in_rows_avail));
-//};
-//
-///* Compression preprocessing (downsampling input buffer control) */
-//struct jpeg_c_prep_controller {
-//  JMETHOD(void, start_pass, (j_compress_ptr cinfo, J_BUF_MODE pass_mode));
-//  JMETHOD(void, pre_process_data, (j_compress_ptr cinfo,
-//				   JSAMPARRAY input_buf,
-//				   JDIMENSION *in_row_ctr,
-//				   JDIMENSION in_rows_avail,
-//				   JSAMPIMAGE output_buf,
-//				   JDIMENSION *out_row_group_ctr,
-//				   JDIMENSION out_row_groups_avail));
-//};
-//
-///* Coefficient buffer control */
-//struct jpeg_c_coef_controller {
-//  JMETHOD(void, start_pass, (j_compress_ptr cinfo, J_BUF_MODE pass_mode));
-//  JMETHOD(boolean, compress_data, (j_compress_ptr cinfo,
-//				   JSAMPIMAGE input_buf));
-//};
-//
-///* Colorspace conversion */
-//struct jpeg_color_converter {
-//  JMETHOD(void, start_pass, (j_compress_ptr cinfo));
-//  JMETHOD(void, color_convert, (j_compress_ptr cinfo,
-//				JSAMPARRAY input_buf, JSAMPIMAGE output_buf,
-//				JDIMENSION output_row, int num_rows));
-//};
-//
-///* Downsampling */
-//struct jpeg_downsampler {
-//  JMETHOD(void, start_pass, (j_compress_ptr cinfo));
-//  JMETHOD(void, downsample, (j_compress_ptr cinfo,
-//			     JSAMPIMAGE input_buf, JDIMENSION in_row_index,
-//			     JSAMPIMAGE output_buf,
-//			     JDIMENSION out_row_group_index));
-//
-//  boolean need_context_rows;	/* TRUE if need rows above & below */
-//};
-//
-///* Forward DCT (also controls coefficient quantization) */
-//struct jpeg_forward_dct {
-//  JMETHOD(void, start_pass, (j_compress_ptr cinfo));
-//  /* perhaps this should be an array??? */
-//  JMETHOD(void, forward_DCT, (j_compress_ptr cinfo,
-//			      jpeg_component_info * compptr,
-//			      JSAMPARRAY sample_data, JBLOCKROW coef_blocks,
-//			      JDIMENSION start_row, JDIMENSION start_col,
-//			      JDIMENSION num_blocks));
-//};
-//
-///* Entropy encoding */
-//struct jpeg_entropy_encoder {
-//  JMETHOD(void, start_pass, (j_compress_ptr cinfo, boolean gather_statistics));
-//  JMETHOD(boolean, encode_mcu, (j_compress_ptr cinfo, JBLOCKROW *MCU_data));
-//  JMETHOD(void, finish_pass, (j_compress_ptr cinfo));
-//};
-
-///* Marker writing */
-//struct jpeg_marker_writer {
-//  /* These routines are exported to allow insertion of extra markers */
-//  /* Probably only COM and APPn markers should be written this way */
-//  JMETHOD(void, write_marker_header, (j_compress_ptr cinfo, int marker,
-//				      unsigned int datalen)); //COMPRESSION UNUSED
-//  JMETHOD(void, write_marker_byte, (j_compress_ptr cinfo, int val)); //COMPRESSION UNUSED
-//};
-
-
 /* Declarations for decompression modules */
 
 void prepare_for_output_pass (j_decompress_ptr cinfo);
@@ -340,21 +265,21 @@ struct jpeg_color_quantizer {
 
 
 /* Compression module initialization routines */
-EXTERN(void) jinit_compress_master JPP((j_compress_ptr cinfo));
-EXTERN(void) jinit_c_master_control JPP((j_compress_ptr cinfo,
-					 boolean transcode_only));
-EXTERN(void) jinit_c_main_controller JPP((j_compress_ptr cinfo,
-					  boolean need_full_buffer));
-EXTERN(void) jinit_c_prep_controller JPP((j_compress_ptr cinfo,
-					  boolean need_full_buffer));
-EXTERN(void) jinit_c_coef_controller JPP((j_compress_ptr cinfo,
-					  boolean need_full_buffer));
-EXTERN(void) jinit_color_converter JPP((j_compress_ptr cinfo));
-EXTERN(void) jinit_downsampler JPP((j_compress_ptr cinfo));
-EXTERN(void) jinit_forward_dct JPP((j_compress_ptr cinfo));
-EXTERN(void) jinit_huff_encoder JPP((j_compress_ptr cinfo));
-EXTERN(void) jinit_phuff_encoder JPP((j_compress_ptr cinfo));
-EXTERN(void) jinit_marker_writer JPP((j_compress_ptr cinfo));
+//EXTERN(void) jinit_compress_master JPP((j_compress_ptr cinfo));
+//EXTERN(void) jinit_c_master_control JPP((j_compress_ptr cinfo,
+//					 boolean transcode_only));
+//EXTERN(void) jinit_c_main_controller JPP((j_compress_ptr cinfo,
+//					  boolean need_full_buffer));
+//EXTERN(void) jinit_c_prep_controller JPP((j_compress_ptr cinfo,
+//					  boolean need_full_buffer));
+//EXTERN(void) jinit_c_coef_controller JPP((j_compress_ptr cinfo,
+//					  boolean need_full_buffer));
+//EXTERN(void) jinit_color_converter JPP((j_compress_ptr cinfo));
+//EXTERN(void) jinit_downsampler JPP((j_compress_ptr cinfo));
+//EXTERN(void) jinit_forward_dct JPP((j_compress_ptr cinfo));
+//EXTERN(void) jinit_huff_encoder JPP((j_compress_ptr cinfo));
+//EXTERN(void) jinit_phuff_encoder JPP((j_compress_ptr cinfo));
+//EXTERN(void) jinit_marker_writer JPP((j_compress_ptr cinfo));
 /* Decompression module initialization routines */
 EXTERN(void) jinit_master_decompress JPP((j_decompress_ptr cinfo));
 EXTERN(void) jinit_d_main_controller JPP((j_decompress_ptr cinfo,

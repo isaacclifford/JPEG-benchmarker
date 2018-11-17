@@ -258,7 +258,7 @@ struct jpeg_common_struct {
 };
 
 typedef struct jpeg_common_struct * j_common_ptr;
-typedef struct jpeg_compress_struct * j_compress_ptr;
+//typedef struct jpeg_compress_struct * j_compress_ptr; //TODO REMOVE THIS.
 typedef struct jpeg_decompress_struct * j_decompress_ptr;
 
 
@@ -274,20 +274,7 @@ struct jpeg_compress_struct {
 
   JDIMENSION image_width;	/* input image width */
   JDIMENSION image_height;	/* input image height */
-  int input_components;		/* # of color components in input image */
-  J_COLOR_SPACE in_color_space;	/* colorspace of input image */
 
-  double input_gamma;		/* image gamma of input image */
-
-  /* Compression parameters --- these fields must be set before calling
-   * jpeg_start_compress().  We recommend calling jpeg_set_defaults() to
-   * initialize everything to reasonable defaults, then changing anything
-   * the application specifically wants to change.  That way you won't get
-   * burnt when new parameters are added.  Also note that there are several
-   * helper routines to simplify changing parameters.
-   */
-
-  int data_precision;		/* bits of precision in image data */
 
   int num_components;		/* # of color components in JPEG image */
   J_COLOR_SPACE jpeg_color_space; /* colorspace of JPEG image */
@@ -385,18 +372,7 @@ struct jpeg_compress_struct {
 
   int Ss, Se, Ah, Al;		/* progressive JPEG parameters for scan */
 
-  /*
-   * Links to compression subobjects (methods and private variables of modules)
-   */
-  struct jpeg_comp_master * master;
-  struct jpeg_c_main_controller * main;
-  struct jpeg_c_prep_controller * prep;
-  struct jpeg_c_coef_controller * coef;
-  struct jpeg_marker_writer * marker;
-  struct jpeg_color_converter * cconvert;
-  struct jpeg_downsampler * downsample;
-  struct jpeg_forward_dct * fdct;
-  struct jpeg_entropy_encoder * entropy;
+
   jpeg_scan_info * script_space; /* workspace for jpeg_simple_progression */
   int script_space_size;
 };
@@ -949,15 +925,8 @@ EXTERN(boolean) jpeg_resync_to_restart JPP((j_decompress_ptr cinfo,
 #ifndef JPEG_INTERNALS		/* will be defined in jpegint.h */
 struct jvirt_sarray_control { long dummy; };
 struct jvirt_barray_control { long dummy; };
-struct jpeg_comp_master { long dummy; };
-struct jpeg_c_main_controller { long dummy; };
-struct jpeg_c_prep_controller { long dummy; };
-struct jpeg_c_coef_controller { long dummy; };
-struct jpeg_marker_writer { long dummy; };
-struct jpeg_color_converter { long dummy; };
-struct jpeg_downsampler { long dummy; };
+
 struct jpeg_forward_dct { long dummy; };
-struct jpeg_entropy_encoder { long dummy; };
 struct jpeg_decomp_master { long dummy; };
 struct jpeg_d_main_controller { long dummy; };
 struct jpeg_d_coef_controller { long dummy; };

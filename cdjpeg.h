@@ -153,11 +153,11 @@ EXTERN(djpeg_dest_ptr) jinit_write_targa JPP((j_decompress_ptr cinfo));
 
 /* cjpeg support routines (in rdswitch.c) */
 
-EXTERN(boolean) read_quant_tables JPP((j_compress_ptr cinfo, char * filename,
-				    int scale_factor, boolean force_baseline));
-EXTERN(boolean) read_scan_script JPP((j_compress_ptr cinfo, char * filename));
-EXTERN(boolean) set_quant_slots JPP((j_compress_ptr cinfo, char *arg));
-EXTERN(boolean) set_sample_factors JPP((j_compress_ptr cinfo, char *arg));
+//EXTERN(boolean) read_quant_tables JPP((j_compress_ptr cinfo, char * filename,
+//				    int scale_factor, boolean force_baseline));
+//EXTERN(boolean) read_scan_script JPP((j_compress_ptr cinfo, char * filename));
+//EXTERN(boolean) set_quant_slots JPP((j_compress_ptr cinfo, char *arg));
+//EXTERN(boolean) set_sample_factors JPP((j_compress_ptr cinfo, char *arg));
 
 /* djpeg support routines (in rdcolmap.c) */
 
