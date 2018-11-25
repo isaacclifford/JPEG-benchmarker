@@ -150,8 +150,8 @@ jpeg_mem_available (j_common_ptr cinfo, long min_bytes_needed,
  */
 
 
-METHODDEF(void)
-read_backing_store (j_common_ptr cinfo, backing_store_ptr info,
+GLOBAL(void)
+read_backing_store_mac (j_common_ptr cinfo, backing_store_ptr info,
 		    void FAR * buffer_address,
 		    long file_offset, long byte_count)
 {
@@ -168,10 +168,10 @@ read_backing_store (j_common_ptr cinfo, backing_store_ptr info,
 }
 
 
-METHODDEF(void)
-write_backing_store (j_common_ptr cinfo, backing_store_ptr info,
+GLOBAL(void)
+write_backing_store_mac (j_common_ptr cinfo, backing_store_ptr info,
 		     void FAR * buffer_address,
-		     long file_offset, long byte_count)
+		     long file_offset, long byte_count);
 {
   long bytes = byte_count;
   long retVal;
@@ -256,8 +256,8 @@ jpeg_open_backing_store (j_common_ptr cinfo, backing_store_ptr info,
 
   info->tempSpec = theSpec;
 
-  info->read_backing_store = read_backing_store;
-  info->write_backing_store = write_backing_store;
+  info->system_module = MAC;
+  info->store_method_t = BACKING_STORE;
   info->close_backing_store = close_backing_store;
   TRACEMSS(cinfo, 1, JTRC_TFILE_OPEN, info->temp_name);
 }

@@ -35,6 +35,42 @@ extern char * getenv JPP((const char * name));
 #endif
 #endif
 
+GLOBAL(void)
+read_backing_store_master(j_common_ptr cinfo, backing_store_ptr info,
+                          void FAR * buffer_address,
+                          long file_offset, long byte_count)
+{
+  memory_system_type_module sys_type = info->system_module;
+
+  if(sys_type == NAME) {
+    read_backing_store_name(cinfo, info, buffer_address, file_offset, byte_count);
+  } else if (sys_type == ANSI) {
+    read_backing_store_ansi(cinfo, info, buffer_address, file_offset, byte_count);
+  } else if (sys_type == MAC) {
+    read_backing_store_mac(cinfo, info, buffer_address, file_offset, byte_count);
+  } else if (sys_type == DOS) {
+    read_backing_store_dos_master(cinfo, info, buffer_address, file_offset, byte_count);
+  }
+}
+
+GLOBAL(void)
+write_backing_store_master(j_common_ptr cinfo, backing_store_ptr info,
+                          void FAR * buffer_address,
+                          long file_offset, long byte_count)
+{
+  memory_system_type_module sys_type = info->system_module;
+
+  if(sys_type == NAME) {
+    write_backing_store_name(cinfo, info, buffer_address, file_offset, byte_count);
+  } else if (sys_type == ANSI) {
+    write_backing_store_ansi(cinfo, info, buffer_address, file_offset, byte_count);
+  } else if (sys_type == MAC) {
+    write_backing_store_mac(cinfo, info, buffer_address, file_offset, byte_count);
+  } else if (sys_type == DOS) {
+    write_backing_store_dos_master(cinfo, info, buffer_address, file_offset, byte_count);
+  }
+}
+
 
 /*
  * Some important notes:
@@ -706,11 +742,11 @@ do_sarray_io (j_common_ptr cinfo, jvirt_sarray_ptr ptr, boolean writing)
       break;
     byte_count = rows * bytesperrow;
     if (writing)
-      (*ptr->b_s_info.write_backing_store) (cinfo, & ptr->b_s_info,
+      write_backing_store_master (cinfo, & ptr->b_s_info,
 					    (void FAR *) ptr->mem_buffer[i],
 					    file_offset, byte_count);
     else
-      (*ptr->b_s_info.read_backing_store) (cinfo, & ptr->b_s_info,
+      read_backing_store_master(cinfo, & ptr->b_s_info,
 					   (void FAR *) ptr->mem_buffer[i],
 					   file_offset, byte_count);
     file_offset += byte_count;
@@ -739,11 +775,11 @@ do_barray_io (j_common_ptr cinfo, jvirt_barray_ptr ptr, boolean writing)
       break;
     byte_count = rows * bytesperrow;
     if (writing)
-      (*ptr->b_s_info.write_backing_store) (cinfo, & ptr->b_s_info,
+      write_backing_store_master (cinfo, & ptr->b_s_info,
 					    (void FAR *) ptr->mem_buffer[i],
 					    file_offset, byte_count);
     else
-      (*ptr->b_s_info.read_backing_store) (cinfo, & ptr->b_s_info,
+      read_backing_store_master (cinfo, & ptr->b_s_info,
 					   (void FAR *) ptr->mem_buffer[i],
 					   file_offset, byte_count);
     file_offset += byte_count;
