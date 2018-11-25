@@ -84,41 +84,6 @@ jpeg_mem_available (j_common_ptr cinfo, long min_bytes_needed,
   return cinfo->mem->max_memory_to_use - already_allocated;
 }
 
-
-/*
- * Backing store (temporary file) management.
- * Backing store objects are only used when the value returned by
- * jpeg_mem_available is less than the total space needed.  You can dispense
- * with these routines if you have plenty of virtual memory; see jmemnobs.c.
- */
-
-
-GLOBAL(void)
-read_backing_store_ansi (j_common_ptr cinfo, backing_store_ptr info,
-		    void FAR * buffer_address,
-		    long file_offset, long byte_count)
-{
-  if (fseek(info->temp_file, file_offset, SEEK_SET))
-    ERREXIT(cinfo, JERR_TFILE_SEEK);
-  if (JFREAD(info->temp_file, buffer_address, byte_count)
-      != (size_t) byte_count)
-    ERREXIT(cinfo, JERR_TFILE_READ);
-}
-
-
-GLOBAL(void)
-write_backing_store_ansi (j_common_ptr cinfo, backing_store_ptr info,
-		     void FAR * buffer_address,
-		     long file_offset, long byte_count)
-{
-  if (fseek(info->temp_file, file_offset, SEEK_SET))
-    ERREXIT(cinfo, JERR_TFILE_SEEK);
-  if (JFWRITE(info->temp_file, buffer_address, byte_count)
-      != (size_t) byte_count)
-    ERREXIT(cinfo, JERR_TFILE_WRITE);
-}
-
-
 METHODDEF(void)
 close_backing_store (j_common_ptr cinfo, backing_store_ptr info)
 {

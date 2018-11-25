@@ -150,42 +150,6 @@ jpeg_mem_available (j_common_ptr cinfo, long min_bytes_needed,
  */
 
 
-GLOBAL(void)
-read_backing_store_mac (j_common_ptr cinfo, backing_store_ptr info,
-		    void FAR * buffer_address,
-		    long file_offset, long byte_count)
-{
-  long bytes = byte_count;
-  long retVal;
-
-  if ( SetFPos ( info->temp_file, fsFromStart, file_offset ) != noErr )
-    ERREXIT(cinfo, JERR_TFILE_SEEK);
-
-  retVal = FSRead ( info->temp_file, &bytes,
-		    (unsigned char *) buffer_address );
-  if ( retVal != noErr || bytes != byte_count )
-    ERREXIT(cinfo, JERR_TFILE_READ);
-}
-
-
-GLOBAL(void)
-write_backing_store_mac (j_common_ptr cinfo, backing_store_ptr info,
-		     void FAR * buffer_address,
-		     long file_offset, long byte_count);
-{
-  long bytes = byte_count;
-  long retVal;
-
-  if ( SetFPos ( info->temp_file, fsFromStart, file_offset ) != noErr )
-    ERREXIT(cinfo, JERR_TFILE_SEEK);
-
-  retVal = FSWrite ( info->temp_file, &bytes,
-		     (unsigned char *) buffer_address );
-  if ( retVal != noErr || bytes != byte_count )
-    ERREXIT(cinfo, JERR_TFILE_WRITE);
-}
-
-
 METHODDEF(void)
 close_backing_store (j_common_ptr cinfo, backing_store_ptr info)
 {
