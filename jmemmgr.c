@@ -157,7 +157,6 @@ struct jvirt_sarray_control {
   boolean dirty;		/* do current buffer contents need written? */
   boolean b_s_open;		/* is backing-store data valid? */
   jvirt_sarray_ptr next;	/* link to next virtual sarray control block */
-  backing_store_info b_s_info;	/* System-dependent control info */
 };
 
 struct jvirt_barray_control {
@@ -173,7 +172,6 @@ struct jvirt_barray_control {
   boolean dirty;		/* do current buffer contents need written? */
   boolean b_s_open;		/* is backing-store data valid? */
   jvirt_barray_ptr next;	/* link to next virtual barray control block */
-  backing_store_info b_s_info;	/* System-dependent control info */
 };
 
 
@@ -642,10 +640,6 @@ realize_virt_arrays (j_common_ptr cinfo)
       } else {
 	/* It doesn't fit in memory, create backing store. */
 	sptr->rows_in_mem = (JDIMENSION) (max_minheights * sptr->maxaccess);
-	jpeg_open_backing_store(cinfo, & sptr->b_s_info,
-				(long) sptr->rows_in_array *
-				(long) sptr->samplesperrow *
-				(long) SIZEOF(JSAMPLE));
 	sptr->b_s_open = TRUE;
       }
       sptr->mem_buffer = alloc_sarray(cinfo, JPOOL_IMAGE,
@@ -666,10 +660,6 @@ realize_virt_arrays (j_common_ptr cinfo)
       } else {
 	/* It doesn't fit in memory, create backing store. */
 	bptr->rows_in_mem = (JDIMENSION) (max_minheights * bptr->maxaccess);
-	jpeg_open_backing_store(cinfo, & bptr->b_s_info,
-				(long) bptr->rows_in_array *
-				(long) bptr->blocksperrow *
-				(long) SIZEOF(JBLOCK));
 	bptr->b_s_open = TRUE;
       }
       bptr->mem_buffer = alloc_barray(cinfo, JPOOL_IMAGE,
@@ -932,14 +922,12 @@ free_pool (j_common_ptr cinfo, int pool_id)
     for (sptr = mem->virt_sarray_list; sptr != NULL; sptr = sptr->next) {
       if (sptr->b_s_open) {	/* there may be no backing store */
 	sptr->b_s_open = FALSE;	/* prevent recursive close if error */
-	(*sptr->b_s_info.close_backing_store) (cinfo, & sptr->b_s_info);
       }
     }
     mem->virt_sarray_list = NULL;
     for (bptr = mem->virt_barray_list; bptr != NULL; bptr = bptr->next) {
       if (bptr->b_s_open) {	/* there may be no backing store */
 	bptr->b_s_open = FALSE;	/* prevent recursive close if error */
-	(*bptr->b_s_info.close_backing_store) (cinfo, & bptr->b_s_info);
       }
     }
     mem->virt_barray_list = NULL;
