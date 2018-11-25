@@ -184,12 +184,25 @@ struct jpeg_color_deconverter {
 void new_color_map_1_quant (j_decompress_ptr cinfo);
 void new_color_map_2_quant (j_decompress_ptr cinfo);
 
+typedef enum{
+	DEFAULT_ONE,
+	DEFAULT_TWO,
+	QUANT_ONE,
+
+} finish_pass_type;
+
+void finish_pass1 (j_decompress_ptr cinfo);
+void finish_pass2 (j_decompress_ptr cinfo);
+void finish_pass_1_quant(j_decompress_ptr cinfo);
+
+
 struct jpeg_color_quantizer {
-  JMETHOD(void, start_pass, (j_decompress_ptr cinfo, boolean is_pre_scan));
-  JMETHOD(void, color_quantize, (j_decompress_ptr cinfo,
+  JMETHOD(void, start_pass, (j_decompress_ptr cinfo, boolean is_pre_scan)); //Multi
+  JMETHOD(void, color_quantize, (j_decompress_ptr cinfo, //Single
 				 JSAMPARRAY input_buf, JSAMPARRAY output_buf,
 				 int num_rows));
-  JMETHOD(void, finish_pass, (j_decompress_ptr cinfo));
+//  JMETHOD(void, finish_pass, (j_decompress_ptr cinfo)); //Single
+	finish_pass_type fin_pass_type;
 	int new_color_map_quant_index;
 
 };

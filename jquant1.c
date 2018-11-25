@@ -794,7 +794,7 @@ start_pass_1_quant (j_decompress_ptr cinfo, boolean is_pre_scan)
  * Finish up at the end of the pass.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 finish_pass_1_quant (j_decompress_ptr cinfo)
 {
   /* no work in 1-pass case */
@@ -827,7 +827,7 @@ jinit_1pass_quantizer (j_decompress_ptr cinfo)
 				SIZEOF(my_cquantizer));
   cinfo->cquantize = (struct jpeg_color_quantizer *) cquantize;
   cquantize->pub.start_pass = start_pass_1_quant;
-  cquantize->pub.finish_pass = finish_pass_1_quant;
+  cquantize->pub.fin_pass_type = QUANT_ONE;
   cquantize->pub.new_color_map_quant_index = 1;
   cquantize->fserrors[0] = NULL; /* Flag FS workspace not allocated */
   cquantize->odither[0] = NULL;	/* Also flag odither arrays not allocated */

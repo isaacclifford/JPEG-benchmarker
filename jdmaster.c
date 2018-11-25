@@ -498,12 +498,23 @@ prepare_for_output_pass (j_decompress_ptr cinfo)
  */
 
 GLOBAL(void)
+finish_pass_master (finish_pass_type type, j_decompress_ptr cinfo) {
+  if (type == DEFAULT_ONE) {
+    finish_pass1(cinfo);
+  } else if (type == DEFAULT_TWO) {
+    finish_pass2(cinfo);
+  } else if (type == QUANT_ONE) {
+    finish_pass_1_quant(cinfo);
+  }
+}
+
+GLOBAL(void)
 finish_output_pass (j_decompress_ptr cinfo)
 {
   my_master_ptr master = (my_master_ptr) cinfo->master;
 
   if (cinfo->quantize_colors)
-    (*cinfo->cquantize->finish_pass) (cinfo);
+    finish_pass_master(cinfo->cquantize->fin_pass_type, cinfo);
   master->pass_number++;
 }
 

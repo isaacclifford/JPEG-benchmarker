@@ -1140,7 +1140,7 @@ init_error_limit (j_decompress_ptr cinfo)
  * Finish up at the end of each pass.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 finish_pass1 (j_decompress_ptr cinfo)
 {
   my_cquantize_ptr cquantize = (my_cquantize_ptr) cinfo->cquantize;
@@ -1153,7 +1153,7 @@ finish_pass1 (j_decompress_ptr cinfo)
 }
 
 
-METHODDEF(void)
+GLOBAL(void)
 finish_pass2 (j_decompress_ptr cinfo)
 {
   /* no work */
@@ -1179,7 +1179,7 @@ start_pass_2_quant (j_decompress_ptr cinfo, boolean is_pre_scan)
   if (is_pre_scan) {
     /* Set up method pointers */
     cquantize->pub.color_quantize = prescan_quantize;
-    cquantize->pub.finish_pass = finish_pass1;
+    cquantize->pub.fin_pass_type = DEFAULT_ONE;
     cquantize->needs_zeroed = TRUE; /* Always zero histogram */
   } else {
     /* Set up method pointers */
@@ -1187,7 +1187,7 @@ start_pass_2_quant (j_decompress_ptr cinfo, boolean is_pre_scan)
       cquantize->pub.color_quantize = pass2_fs_dither;
     else
       cquantize->pub.color_quantize = pass2_no_dither;
-    cquantize->pub.finish_pass = finish_pass2;
+    cquantize->pub.fin_pass_type = DEFAULT_TWO;
 
     /* Make sure color count is acceptable */
     i = cinfo->actual_number_of_colors;
