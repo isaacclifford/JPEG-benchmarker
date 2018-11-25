@@ -102,16 +102,45 @@ struct jpeg_d_coef_controller {
 
 };
 
+typedef enum {
+	PROC_PREPASS,
+	PROC_ONEPASS,
+	PROC_TWOPASS,
+	PROC_UPSAMPLE,
+} post_proc_data_func_type;
+
+void
+post_process_1pass (j_decompress_ptr cinfo,
+										JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
+										JDIMENSION in_row_groups_avail,
+										JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
+										JDIMENSION out_rows_avail);
+
+void
+post_process_2pass (j_decompress_ptr cinfo,
+										JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
+										JDIMENSION in_row_groups_avail,
+										JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
+										JDIMENSION out_rows_avail);
+
+void
+post_process_prepass (j_decompress_ptr cinfo,
+											JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
+											JDIMENSION in_row_groups_avail,
+											JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
+											JDIMENSION out_rows_avail);
+
+void post_process_master(post_proc_data_func_type func_type, j_decompress_ptr cinfo,
+																 JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
+																 JDIMENSION in_row_groups_avail,
+																 JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
+																 JDIMENSION out_rows_avail);
+
 /* Decompression postprocessing (color quantization buffer control) */
 struct jpeg_d_post_controller {
   JMETHOD(void, start_pass, (j_decompress_ptr cinfo, J_BUF_MODE pass_mode));
-  JMETHOD(void, post_process_data, (j_decompress_ptr cinfo,
-				    JSAMPIMAGE input_buf,
-				    JDIMENSION *in_row_group_ctr,
-				    JDIMENSION in_row_groups_avail,
-				    JSAMPARRAY output_buf,
-				    JDIMENSION *out_row_ctr,
-				    JDIMENSION out_rows_avail));
+
+	post_proc_data_func_type post_proc_func;
 };
 
 /* Marker reading & parsing */

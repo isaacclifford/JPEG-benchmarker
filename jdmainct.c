@@ -336,6 +336,22 @@ start_pass_main (j_decompress_ptr cinfo, J_BUF_MODE pass_mode)
   }
 }
 
+GLOBAL(void)
+post_process_master(post_proc_data_func_type func_type, j_decompress_ptr cinfo,
+                                      JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
+                                      JDIMENSION in_row_groups_avail,
+                                      JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
+                                      JDIMENSION out_rows_avail){
+  if (func_type == PROC_PREPASS) {
+    post_process_prepass(cinfo, input_buf, in_row_group_ctr, in_row_groups_avail, output_buf, out_row_ctr, out_rows_avail);
+  } else if (func_type == PROC_ONEPASS) {
+    post_process_1pass(cinfo, input_buf, in_row_group_ctr, in_row_groups_avail, output_buf, out_row_ctr, out_rows_avail);
+  } else if (func_type == PROC_TWOPASS) {
+    post_process_2pass(cinfo, input_buf, in_row_group_ctr, in_row_groups_avail, output_buf, out_row_ctr, out_rows_avail);
+  } else if (func_type == PROC_UPSAMPLE) {
+//    post_process_upsample_master(cinfo, input_buf, in_row_group_ctr, in_row_groups_avail, output_buf, out_row_ctr, out_rows_avail);
+  }
+}
 
 /*
  * Process some data.
@@ -365,7 +381,7 @@ process_data_simple_main (j_decompress_ptr cinfo,
    */
 
   /* Feed the postprocessor */
-  (*cinfo->post->post_process_data) (cinfo, main->buffer,
+  post_process_master(cinfo->post->post_proc_func, cinfo, main->buffer,
 				     &main->rowgroup_ctr, rowgroups_avail,
 				     output_buf, out_row_ctr, out_rows_avail);
 
@@ -406,7 +422,7 @@ process_data_context_main (j_decompress_ptr cinfo,
   switch (main->context_state) {
   case CTX_POSTPONED_ROW:
     /* Call postprocessor using previously set pointers for postponed row */
-    (*cinfo->post->post_process_data) (cinfo, main->xbuffer[main->whichptr],
+    post_process_master(cinfo->post->post_proc_func,cinfo, main->xbuffer[main->whichptr],
 			&main->rowgroup_ctr, main->rowgroups_avail,
 			output_buf, out_row_ctr, out_rows_avail);
     if (main->rowgroup_ctr < main->rowgroups_avail)
@@ -428,7 +444,7 @@ process_data_context_main (j_decompress_ptr cinfo,
     /*FALLTHROUGH*/
   case CTX_PROCESS_IMCU:
     /* Call postprocessor using previously set pointers */
-    (*cinfo->post->post_process_data) (cinfo, main->xbuffer[main->whichptr],
+    post_process_master(cinfo->post->post_proc_func, cinfo, main->xbuffer[main->whichptr],
 			&main->rowgroup_ctr, main->rowgroups_avail,
 			output_buf, out_row_ctr, out_rows_avail);
     if (main->rowgroup_ctr < main->rowgroups_avail)
@@ -461,7 +477,7 @@ process_data_crank_post (j_decompress_ptr cinfo,
 			 JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
 			 JDIMENSION out_rows_avail)
 {
-  (*cinfo->post->post_process_data) (cinfo, (JSAMPIMAGE) NULL,
+  post_process_master(cinfo->post->post_proc_func,cinfo, (JSAMPIMAGE) NULL,
 				     (JDIMENSION *) NULL, (JDIMENSION) 0,
 				     output_buf, out_row_ctr, out_rows_avail);
 }

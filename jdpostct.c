@@ -44,20 +44,20 @@ typedef my_post_controller * my_post_ptr;
 
 
 /* Forward declarations */
-METHODDEF(void) post_process_1pass
+GLOBAL(void) post_process_1pass
 	JPP((j_decompress_ptr cinfo,
 	     JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
 	     JDIMENSION in_row_groups_avail,
 	     JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
 	     JDIMENSION out_rows_avail));
 #ifdef QUANT_2PASS_SUPPORTED
-METHODDEF(void) post_process_prepass
+GLOBAL(void) post_process_prepass
 	JPP((j_decompress_ptr cinfo,
 	     JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
 	     JDIMENSION in_row_groups_avail,
 	     JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
 	     JDIMENSION out_rows_avail));
-METHODDEF(void) post_process_2pass
+GLOBAL(void) post_process_2pass
 	JPP((j_decompress_ptr cinfo,
 	     JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
 	     JDIMENSION in_row_groups_avail,
@@ -79,7 +79,7 @@ start_pass_dpost (j_decompress_ptr cinfo, J_BUF_MODE pass_mode)
   case JBUF_PASS_THRU:
     if (cinfo->quantize_colors) {
       /* Single-pass processing with color quantization. */
-      post->pub.post_process_data = post_process_1pass;
+        post->pub.post_proc_func = PROC_ONEPASS;
       /* We could be doing buffered-image output before starting a 2-pass
        * color quantization; in that case, jinit_d_post_controller did not
        * allocate a strip buffer.  Use the virtual-array buffer as workspace.
@@ -93,7 +93,8 @@ start_pass_dpost (j_decompress_ptr cinfo, J_BUF_MODE pass_mode)
       /* For single-pass processing without color quantization,
        * I have no work to do; just call the upsampler directly.
        */
-      post->pub.post_process_data = cinfo->upsample->upsample;
+//      post->pub.post_process_data = cinfo->upsample->upsample;
+      post->pub.post_proc_func = PROC_UPSAMPLE;
     }
     break;
 #ifdef QUANT_2PASS_SUPPORTED
@@ -101,13 +102,13 @@ start_pass_dpost (j_decompress_ptr cinfo, J_BUF_MODE pass_mode)
     /* First pass of 2-pass quantization */
     if (post->whole_image == NULL)
       ERREXIT(cinfo, JERR_BAD_BUFFER_MODE);
-    post->pub.post_process_data = post_process_prepass;
+    post->pub.post_proc_func = PROC_PREPASS;
     break;
   case JBUF_CRANK_DEST:
     /* Second pass of 2-pass quantization */
     if (post->whole_image == NULL)
       ERREXIT(cinfo, JERR_BAD_BUFFER_MODE);
-    post->pub.post_process_data = post_process_2pass;
+      post->pub.post_proc_func = PROC_TWOPASS;
     break;
 #endif /* QUANT_2PASS_SUPPORTED */
   default:
@@ -123,7 +124,7 @@ start_pass_dpost (j_decompress_ptr cinfo, J_BUF_MODE pass_mode)
  * This is used for color precision reduction as well as one-pass quantization.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 post_process_1pass (j_decompress_ptr cinfo,
 		    JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
 		    JDIMENSION in_row_groups_avail,
@@ -155,7 +156,7 @@ post_process_1pass (j_decompress_ptr cinfo,
  * Process some data in the first pass of 2-pass quantization.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 post_process_prepass (j_decompress_ptr cinfo,
 		      JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
 		      JDIMENSION in_row_groups_avail,
@@ -199,7 +200,7 @@ post_process_prepass (j_decompress_ptr cinfo,
  * Process some data in the second pass of 2-pass quantization.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 post_process_2pass (j_decompress_ptr cinfo,
 		    JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
 		    JDIMENSION in_row_groups_avail,
