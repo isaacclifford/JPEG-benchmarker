@@ -147,7 +147,7 @@ start_pass_merged_upsample (j_decompress_ptr cinfo)
  * The control routine just handles the row buffering considerations.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 merged_2v_upsample (j_decompress_ptr cinfo,
 		    JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
 		    JDIMENSION in_row_groups_avail,
@@ -200,7 +200,7 @@ merged_2v_upsample (j_decompress_ptr cinfo,
 }
 
 
-METHODDEF(void)
+GLOBAL(void)
 merged_1v_upsample (j_decompress_ptr cinfo,
 		    JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
 		    JDIMENSION in_row_groups_avail,
@@ -397,13 +397,13 @@ jinit_merged_upsampler (j_decompress_ptr cinfo)
   upsample->out_row_width = cinfo->output_width * cinfo->out_color_components;
 
   if (cinfo->max_v_samp_factor == 2) {
-    upsample->pub.upsample = merged_2v_upsample;
+    upsample->pub.func_type = MERGED_V2UPSAMPLE;
     upsample->vertical_index = 2;
     /* Allocate a spare row buffer */
     upsample->spare_row = (JSAMPROW) alloc_large ((j_common_ptr) cinfo, JPOOL_IMAGE,
 		(size_t) (upsample->out_row_width * SIZEOF(JSAMPLE)));
   } else {
-    upsample->pub.upsample = merged_1v_upsample;
+    upsample->pub.func_type = MERGED_V1UPSAMPLE;
     upsample->vertical_index = 1;
     /* No spare row needed */
     upsample->spare_row = NULL;

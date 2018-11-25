@@ -93,7 +93,6 @@ start_pass_dpost (j_decompress_ptr cinfo, J_BUF_MODE pass_mode)
       /* For single-pass processing without color quantization,
        * I have no work to do; just call the upsampler directly.
        */
-//      post->pub.post_process_data = cinfo->upsample->upsample;
       post->pub.post_proc_func = PROC_UPSAMPLE;
     }
     break;
@@ -119,6 +118,21 @@ start_pass_dpost (j_decompress_ptr cinfo, J_BUF_MODE pass_mode)
 }
 
 
+GLOBAL(void)
+upsample_master(upsample_func_type type, j_decompress_ptr cinfo,
+                     JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
+                     JDIMENSION in_row_groups_avail,
+                     JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
+                     JDIMENSION out_rows_avail) {
+  if (type == SEP_UPSAMPLE) {
+    sep_upsample(cinfo, input_buf, in_row_group_ctr, in_row_groups_avail, output_buf, out_row_ctr,out_rows_avail);
+  } else if (type == MERGED_V1UPSAMPLE) {
+    merged_1v_upsample(cinfo, input_buf, in_row_group_ctr, in_row_groups_avail, output_buf, out_row_ctr,out_rows_avail);
+  } else if (type == MERGED_V2UPSAMPLE) {
+    merged_2v_upsample(cinfo, input_buf, in_row_group_ctr, in_row_groups_avail, output_buf, out_row_ctr,out_rows_avail);
+  }
+}
+
 /*
  * Process some data in the one-pass (strip buffer) case.
  * This is used for color precision reduction as well as one-pass quantization.
@@ -140,7 +154,7 @@ post_process_1pass (j_decompress_ptr cinfo,
   if (max_rows > post->strip_height)
     max_rows = post->strip_height;
   num_rows = 0;
-  (*cinfo->upsample->upsample) (cinfo,
+  upsample_master(cinfo->upsample->func_type, cinfo,
 		input_buf, in_row_group_ctr, in_row_groups_avail,
 		post->buffer, &num_rows, max_rows);
   /* Quantize and emit data. */
@@ -175,7 +189,7 @@ post_process_prepass (j_decompress_ptr cinfo,
 
   /* Upsample some data (up to a strip height's worth). */
   old_next_row = post->next_row;
-  (*cinfo->upsample->upsample) (cinfo,
+  upsample_master(cinfo->upsample->func_type, cinfo,
 		input_buf, in_row_group_ctr, in_row_groups_avail,
 		post->buffer, &post->next_row, post->strip_height);
 

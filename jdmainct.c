@@ -349,7 +349,7 @@ post_process_master(post_proc_data_func_type func_type, j_decompress_ptr cinfo,
   } else if (func_type == PROC_TWOPASS) {
     post_process_2pass(cinfo, input_buf, in_row_group_ctr, in_row_groups_avail, output_buf, out_row_ctr, out_rows_avail);
   } else if (func_type == PROC_UPSAMPLE) {
-//    post_process_upsample_master(cinfo, input_buf, in_row_group_ctr, in_row_groups_avail, output_buf, out_row_ctr, out_rows_avail);
+    upsample_master(cinfo->upsample->func_type, cinfo, input_buf, in_row_group_ctr, in_row_groups_avail, output_buf, out_row_ctr, out_rows_avail);
   }
 }
 

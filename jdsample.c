@@ -86,7 +86,7 @@ start_pass_upsample (j_decompress_ptr cinfo)
  * color conversion a row at a time.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 sep_upsample (j_decompress_ptr cinfo,
 	      JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
 	      JDIMENSION in_row_groups_avail,
@@ -410,7 +410,7 @@ jinit_upsampler (j_decompress_ptr cinfo)
 				SIZEOF(my_upsampler));
   cinfo->upsample = (struct jpeg_upsampler *) upsample;
   upsample->pub.start_pass = start_pass_upsample;
-  upsample->pub.upsample = sep_upsample;
+  upsample->pub.func_type = SEP_UPSAMPLE;
   upsample->pub.need_context_rows = FALSE; /* until we find out differently */
 
   if (cinfo->CCIR601_sampling)	/* this isn't supported */

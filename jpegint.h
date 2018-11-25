@@ -187,15 +187,48 @@ struct jpeg_inverse_dct {
 };
 
 /* Upsampling (note that upsampler must also call color converter) */
+
+typedef enum {
+  SEP_UPSAMPLE,
+  MERGED_V2UPSAMPLE,
+  MERGED_V1UPSAMPLE
+} upsample_func_type;
+
+void sep_upsample (j_decompress_ptr cinfo,
+JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
+JDIMENSION in_row_groups_avail,
+        JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
+        JDIMENSION out_rows_avail);
+
+void merged_1v_upsample (j_decompress_ptr cinfo,
+JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
+JDIMENSION in_row_groups_avail,
+        JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
+        JDIMENSION out_rows_avail);
+
+void merged_2v_upsample (j_decompress_ptr cinfo,
+JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
+JDIMENSION in_row_groups_avail,
+        JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
+        JDIMENSION out_rows_avail);
+
+void upsample_master(upsample_func_type type, j_decompress_ptr cinfo,
+                     JSAMPIMAGE input_buf, JDIMENSION *in_row_group_ctr,
+                     JDIMENSION in_row_groups_avail,
+                     JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
+                     JDIMENSION out_rows_avail);
+
 struct jpeg_upsampler {
   JMETHOD(void, start_pass, (j_decompress_ptr cinfo));
-  JMETHOD(void, upsample, (j_decompress_ptr cinfo,
-			   JSAMPIMAGE input_buf,
-			   JDIMENSION *in_row_group_ctr,
-			   JDIMENSION in_row_groups_avail,
-			   JSAMPARRAY output_buf,
-			   JDIMENSION *out_row_ctr,
-			   JDIMENSION out_rows_avail));
+//  JMETHOD(void, upsample, (j_decompress_ptr cinfo,
+//			   JSAMPIMAGE input_buf,
+//			   JDIMENSION *in_row_group_ctr,
+//			   JDIMENSION in_row_groups_avail,
+//			   JSAMPARRAY output_buf,
+//			   JDIMENSION *out_row_ctr,
+//			   JDIMENSION out_rows_avail));
+
+  upsample_func_type func_type;
 
   boolean need_context_rows;	/* TRUE if need rows above & below */
 };
