@@ -1237,7 +1237,7 @@ jpeg_resync_to_restart (j_decompress_ptr cinfo, int desired)
  * Reset marker processing state to begin a fresh datastream.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 reset_marker_reader (j_decompress_ptr cinfo)
 {
   my_marker_ptr marker = (my_marker_ptr) cinfo->marker;
@@ -1269,7 +1269,6 @@ jinit_marker_reader (j_decompress_ptr cinfo)
 				SIZEOF(my_marker_reader));
   cinfo->marker = (struct jpeg_marker_reader *) marker;
   /* Initialize public method pointers */
-  marker->pub.reset_marker_reader = reset_marker_reader;
   marker->pub.read_markers = read_markers;
   marker->pub.read_restart_marker = read_restart_marker;
   /* Initialize COM/APPn processing.

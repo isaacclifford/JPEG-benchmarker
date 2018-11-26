@@ -68,7 +68,7 @@ struct jpeg_input_controller {
 /* Main buffer control (downsampled-data buffer) */
 struct jpeg_d_main_controller {
   JMETHOD(void, start_pass, (j_decompress_ptr cinfo, J_BUF_MODE pass_mode));
-  JMETHOD(void, process_data, (j_decompress_ptr cinfo,
+  JMETHOD(void, process_data, (j_decompress_ptr cinfo, //SINGLE
 			       JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
 			       JDIMENSION out_rows_avail));
 };
@@ -94,8 +94,6 @@ int decompress_data_master(decompress_data_type type, j_decompress_ptr cinfo, JS
 
 struct jpeg_d_coef_controller {
 	decompress_data_type d_type;
-//  JMETHOD(int, decompress_data, (j_decompress_ptr cinfo,
-//				 JSAMPIMAGE output_buf));
   /* Pointer to array of coefficient virtual arrays, or NULL if none */
   jvirt_barray_ptr *coef_arrays;
   consume_data_t consume_data_type;
@@ -143,14 +141,15 @@ struct jpeg_d_post_controller {
 	post_proc_data_func_type post_proc_func;
 };
 
+void reset_marker_reader (j_decompress_ptr cinfo);
+
 /* Marker reading & parsing */
 struct jpeg_marker_reader {
-  JMETHOD(void, reset_marker_reader, (j_decompress_ptr cinfo));
   /* Read markers until SOS or EOI.
    * Returns same codes as are defined for jpeg_consume_input:
    * JPEG_SUSPENDED, JPEG_REACHED_SOS, or JPEG_REACHED_EOI.
    */
-  JMETHOD(int, read_markers, (j_decompress_ptr cinfo));
+  JMETHOD(int, read_markers, (j_decompress_ptr cinfo)); //EASY
   /* Read a restart marker --- exported for use by entropy decoder only */
   jpeg_marker_parser_method read_restart_marker;
 
@@ -166,7 +165,7 @@ struct jpeg_marker_reader {
 /* Entropy decoding */
 struct jpeg_entropy_decoder {
   JMETHOD(void, start_pass, (j_decompress_ptr cinfo));
-  JMETHOD(boolean, decode_mcu, (j_decompress_ptr cinfo,
+  JMETHOD(boolean, decode_mcu, (j_decompress_ptr cinfo, //SINGLE
 				JBLOCKROW *MCU_data));
 
   /* This is here to share code between baseline and progressive decoders; */
@@ -220,13 +219,6 @@ void upsample_master(upsample_func_type type, j_decompress_ptr cinfo,
 
 struct jpeg_upsampler {
   JMETHOD(void, start_pass, (j_decompress_ptr cinfo));
-//  JMETHOD(void, upsample, (j_decompress_ptr cinfo,
-//			   JSAMPIMAGE input_buf,
-//			   JDIMENSION *in_row_group_ctr,
-//			   JDIMENSION in_row_groups_avail,
-//			   JSAMPARRAY output_buf,
-//			   JDIMENSION *out_row_ctr,
-//			   JDIMENSION out_rows_avail));
 
   upsample_func_type func_type;
 
@@ -236,7 +228,7 @@ struct jpeg_upsampler {
 /* Colorspace conversion */
 struct jpeg_color_deconverter {
   JMETHOD(void, start_pass, (j_decompress_ptr cinfo));
-  JMETHOD(void, color_convert, (j_decompress_ptr cinfo,
+  JMETHOD(void, color_convert, (j_decompress_ptr cinfo, //SINGLE
 				JSAMPIMAGE input_buf, JDIMENSION input_row,
 				JSAMPARRAY output_buf, int num_rows));
 };
@@ -263,7 +255,6 @@ struct jpeg_color_quantizer {
   JMETHOD(void, color_quantize, (j_decompress_ptr cinfo, //Single
 				 JSAMPARRAY input_buf, JSAMPARRAY output_buf,
 				 int num_rows));
-//  JMETHOD(void, finish_pass, (j_decompress_ptr cinfo)); //Single
 	finish_pass_type fin_pass_type;
 	int new_color_map_quant_index;
 
