@@ -141,17 +141,30 @@ typedef my_main_controller * my_main_ptr;
 
 
 /* Forward declarations */
-METHODDEF(void) process_data_simple_main
+LOCAL(void) process_data_simple_main
 	JPP((j_decompress_ptr cinfo, JSAMPARRAY output_buf,
 	     JDIMENSION *out_row_ctr, JDIMENSION out_rows_avail));
-METHODDEF(void) process_data_context_main
+LOCAL(void) process_data_context_main
 	JPP((j_decompress_ptr cinfo, JSAMPARRAY output_buf,
 	     JDIMENSION *out_row_ctr, JDIMENSION out_rows_avail));
 #ifdef QUANT_2PASS_SUPPORTED
-METHODDEF(void) process_data_crank_post
+LOCAL(void) process_data_crank_post
 	JPP((j_decompress_ptr cinfo, JSAMPARRAY output_buf,
 	     JDIMENSION *out_row_ctr, JDIMENSION out_rows_avail));
 #endif
+
+GLOBAL(void)
+process_data_master(process_data_func_type type, j_decompress_ptr cinfo,
+        JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
+        JDIMENSION out_rows_avail){
+  if (type ==	CONTEXT_MAIN) {
+    process_data_context_main(cinfo, output_buf, out_row_ctr, out_rows_avail);
+  } else if (type == SIMPLE_MAIN) {
+    process_data_simple_main(cinfo, output_buf, out_row_ctr, out_rows_avail);
+  } else if (type == CRANK_POST) {
+    process_data_crank_post(cinfo, output_buf, out_row_ctr, out_rows_avail);
+  }
+}
 
 
 LOCAL(void)
@@ -312,14 +325,14 @@ start_pass_main (j_decompress_ptr cinfo, J_BUF_MODE pass_mode)
   switch (pass_mode) {
   case JBUF_PASS_THRU:
     if (cinfo->upsample->need_context_rows) {
-      main->pub.process_data = process_data_context_main;
+      main->pub.func_type = CONTEXT_MAIN;
       make_funny_pointers(cinfo); /* Create the xbuffer[] lists */
       main->whichptr = 0;	/* Read first iMCU row into xbuffer[0] */
       main->context_state = CTX_PREPARE_FOR_IMCU;
       main->iMCU_row_ctr = 0;
     } else {
       /* Simple case with no context needed */
-      main->pub.process_data = process_data_simple_main;
+      main->pub.func_type = SIMPLE_MAIN;
     }
     main->buffer_full = FALSE;	/* Mark buffer empty */
     main->rowgroup_ctr = 0;
@@ -327,7 +340,7 @@ start_pass_main (j_decompress_ptr cinfo, J_BUF_MODE pass_mode)
 #ifdef QUANT_2PASS_SUPPORTED
   case JBUF_CRANK_DEST:
     /* For last pass of 2-pass quantization, just crank the postprocessor */
-    main->pub.process_data = process_data_crank_post;
+      main->pub.func_type = CRANK_POST;
     break;
 #endif
   default:
@@ -358,7 +371,7 @@ post_process_master(post_proc_data_func_type func_type, j_decompress_ptr cinfo,
  * This handles the simple case where no context is required.
  */
 
-METHODDEF(void)
+LOCAL(void)
 process_data_simple_main (j_decompress_ptr cinfo,
 			  JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
 			  JDIMENSION out_rows_avail)
@@ -398,7 +411,7 @@ process_data_simple_main (j_decompress_ptr cinfo,
  * This handles the case where context rows must be provided.
  */
 
-METHODDEF(void)
+LOCAL(void)
 process_data_context_main (j_decompress_ptr cinfo,
 			   JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
 			   JDIMENSION out_rows_avail)
@@ -472,7 +485,7 @@ process_data_context_main (j_decompress_ptr cinfo,
 
 #ifdef QUANT_2PASS_SUPPORTED
 
-METHODDEF(void)
+LOCAL(void)
 process_data_crank_post (j_decompress_ptr cinfo,
 			 JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
 			 JDIMENSION out_rows_avail)

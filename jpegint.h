@@ -65,12 +65,20 @@ struct jpeg_input_controller {
   boolean consume_using_coefficient;
 };
 
+typedef enum {
+	CONTEXT_MAIN,
+	SIMPLE_MAIN,
+	CRANK_POST
+} process_data_func_type;
+
+void process_data_master(process_data_func_type type, j_decompress_ptr cinfo,
+			       JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
+			       JDIMENSION out_rows_avail);
+
 /* Main buffer control (downsampled-data buffer) */
 struct jpeg_d_main_controller {
   JMETHOD(void, start_pass, (j_decompress_ptr cinfo, J_BUF_MODE pass_mode));
-  JMETHOD(void, process_data, (j_decompress_ptr cinfo, //SINGLE
-			       JSAMPARRAY output_buf, JDIMENSION *out_row_ctr,
-			       JDIMENSION out_rows_avail));
+	process_data_func_type func_type;
 };
 
 /* Coefficient buffer control */
