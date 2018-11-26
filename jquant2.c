@@ -221,7 +221,7 @@ typedef my_cquantizer * my_cquantize_ptr;
  * NULL pointer).
  */
 
-METHODDEF(void)
+GLOBAL(void)
 prescan_quantize (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 		  JSAMPARRAY output_buf, int num_rows)
 {
@@ -912,7 +912,7 @@ fill_inverse_cmap (j_decompress_ptr cinfo, int c0, int c1, int c2)
  * Map some rows of pixels to the output colormapped representation.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 pass2_no_dither (j_decompress_ptr cinfo,
 		 JSAMPARRAY input_buf, JSAMPARRAY output_buf, int num_rows)
 /* This version performs no dithering */
@@ -946,7 +946,7 @@ pass2_no_dither (j_decompress_ptr cinfo,
 }
 
 
-METHODDEF(void)
+GLOBAL(void)
 pass2_fs_dither (j_decompress_ptr cinfo,
 		 JSAMPARRAY input_buf, JSAMPARRAY output_buf, int num_rows)
 /* This version performs Floyd-Steinberg dithering */
@@ -1178,15 +1178,15 @@ start_pass_2_quant (j_decompress_ptr cinfo, boolean is_pre_scan)
 
   if (is_pre_scan) {
     /* Set up method pointers */
-    cquantize->pub.color_quantize = prescan_quantize;
+    cquantize->pub.func_type = PRESCAN_QUANTIZE;
     cquantize->pub.fin_pass_type = DEFAULT_ONE;
     cquantize->needs_zeroed = TRUE; /* Always zero histogram */
   } else {
     /* Set up method pointers */
     if (cinfo->dither_mode == JDITHER_FS)
-      cquantize->pub.color_quantize = pass2_fs_dither;
+      cquantize->pub.func_type = PASS2_FS_DITHER;
     else
-      cquantize->pub.color_quantize = pass2_no_dither;
+      cquantize->pub.func_type = PASS2_NO_DITHER;
     cquantize->pub.fin_pass_type = DEFAULT_TWO;
 
     /* Make sure color count is acceptable */

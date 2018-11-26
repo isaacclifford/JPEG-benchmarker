@@ -21,7 +21,6 @@
 #include "jpeglib.h"
 #include "jmemmgr.h"
 
-
 /* Private buffer controller object */
 
 typedef struct {
@@ -133,6 +132,28 @@ upsample_master(upsample_func_type type, j_decompress_ptr cinfo,
   }
 }
 
+GLOBAL(void)
+color_quantize_master(color_quantize_func_type type, j_decompress_ptr cinfo, JSAMPARRAY input_buf,
+                      JSAMPARRAY output_buf, int num_rows){
+  if (type == PRESCAN_QUANTIZE) {
+    prescan_quantize(cinfo, input_buf, output_buf, num_rows);
+  } else if (type == PASS2_FS_DITHER) {
+    pass2_fs_dither(cinfo, input_buf, output_buf, num_rows);
+  } else if (type == PASS2_NO_DITHER) {
+    pass2_no_dither(cinfo, input_buf, output_buf, num_rows);
+  } else if (type == COLOR_QUANTIZE3) {
+    color_quantize3(cinfo, input_buf, output_buf, num_rows);
+  } else if (type == COLOR_QUANTIZE) {
+    color_quantize(cinfo, input_buf, output_buf, num_rows);
+  } else if (type == QUANTIZE3_ORD_DITHER) {
+    quantize3_ord_dither(cinfo, input_buf, output_buf, num_rows);
+  } else if (type == QUANTIZE_ORD_DITHER) {
+    quantize_ord_dither(cinfo, input_buf, output_buf, num_rows);
+  } else if (type == QUANTIZE_FS_DITHER) {
+    quantize_fs_dither(cinfo, input_buf, output_buf, num_rows);
+  }
+}
+
 /*
  * Process some data in the one-pass (strip buffer) case.
  * This is used for color precision reduction as well as one-pass quantization.
@@ -158,7 +179,7 @@ post_process_1pass (j_decompress_ptr cinfo,
 		input_buf, in_row_group_ctr, in_row_groups_avail,
 		post->buffer, &num_rows, max_rows);
   /* Quantize and emit data. */
-  (*cinfo->cquantize->color_quantize) (cinfo,
+  color_quantize_master(cinfo->cquantize->func_type, cinfo,
 		post->buffer, output_buf + *out_row_ctr, (int) num_rows);
   *out_row_ctr += num_rows;
 }
@@ -197,7 +218,7 @@ post_process_prepass (j_decompress_ptr cinfo,
   /* but we advance out_row_ctr so outer loop can tell when we're done. */
   if (post->next_row > old_next_row) {
     num_rows = post->next_row - old_next_row;
-    (*cinfo->cquantize->color_quantize) (cinfo, post->buffer + old_next_row,
+    color_quantize_master(cinfo->cquantize->func_type,cinfo, post->buffer + old_next_row,
 					 (JSAMPARRAY) NULL, (int) num_rows);
     *out_row_ctr += num_rows;
   }
@@ -242,7 +263,7 @@ post_process_2pass (j_decompress_ptr cinfo,
     num_rows = max_rows;
 
   /* Quantize and emit data. */
-  (*cinfo->cquantize->color_quantize) (cinfo,
+  color_quantize_master(cinfo->cquantize->func_type,cinfo,
 		post->buffer + post->next_row, output_buf + *out_row_ctr,
 		(int) num_rows);
   *out_row_ctr += num_rows;

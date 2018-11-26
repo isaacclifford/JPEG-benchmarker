@@ -246,12 +246,47 @@ void finish_pass1 (j_decompress_ptr cinfo);
 void finish_pass2 (j_decompress_ptr cinfo);
 void finish_pass_1_quant(j_decompress_ptr cinfo);
 
+typedef enum {
+	PRESCAN_QUANTIZE,
+	PASS2_FS_DITHER,
+	PASS2_NO_DITHER,
+	COLOR_QUANTIZE3,
+	COLOR_QUANTIZE,
+	QUANTIZE3_ORD_DITHER,
+	QUANTIZE_ORD_DITHER,
+	QUANTIZE_FS_DITHER
+} color_quantize_func_type;
+
+void prescan_quantize (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
+									JSAMPARRAY output_buf, int num_rows);
+
+void pass2_fs_dither (j_decompress_ptr cinfo,
+								 JSAMPARRAY input_buf, JSAMPARRAY output_buf, int num_rows);
+
+void pass2_no_dither (j_decompress_ptr cinfo,
+								 JSAMPARRAY input_buf, JSAMPARRAY output_buf, int num_rows);
+
+void color_quantize3 (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
+								 JSAMPARRAY output_buf, int num_rows);
+
+void color_quantize (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
+								JSAMPARRAY output_buf, int num_rows);
+
+void quantize3_ord_dither (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
+											JSAMPARRAY output_buf, int num_rows);
+
+void quantize_ord_dither (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
+                     JSAMPARRAY output_buf, int num_rows);
+
+void quantize_fs_dither (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
+										JSAMPARRAY output_buf, int num_rows);
+
+void color_quantize_master(color_quantize_func_type type, j_decompress_ptr cinfo, JSAMPARRAY input_buf,
+				JSAMPARRAY output_buf, int num_rows);
 
 struct jpeg_color_quantizer {
   JMETHOD(void, start_pass, (j_decompress_ptr cinfo, boolean is_pre_scan)); //Multi
-  JMETHOD(void, color_quantize, (j_decompress_ptr cinfo, //Single
-				 JSAMPARRAY input_buf, JSAMPARRAY output_buf,
-				 int num_rows));
+	color_quantize_func_type func_type;
 	finish_pass_type fin_pass_type;
 	int new_color_map_quant_index;
 

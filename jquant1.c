@@ -456,7 +456,7 @@ create_odither_tables (j_decompress_ptr cinfo)
  * Map some rows of pixels to the output colormapped representation.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 color_quantize (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 		JSAMPARRAY output_buf, int num_rows)
 /* General case, no dithering */
@@ -484,7 +484,7 @@ color_quantize (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 }
 
 
-METHODDEF(void)
+GLOBAL(void)
 color_quantize3 (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 		 JSAMPARRAY output_buf, int num_rows)
 /* Fast path for out_color_components==3, no dithering */
@@ -512,7 +512,7 @@ color_quantize3 (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 }
 
 
-METHODDEF(void)
+GLOBAL(void)
 quantize_ord_dither (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 		     JSAMPARRAY output_buf, int num_rows)
 /* General case, with ordered dithering */
@@ -562,7 +562,7 @@ quantize_ord_dither (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 }
 
 
-METHODDEF(void)
+GLOBAL(void)
 quantize3_ord_dither (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 		      JSAMPARRAY output_buf, int num_rows)
 /* Fast path for out_color_components==3, with ordered dithering */
@@ -607,7 +607,7 @@ quantize3_ord_dither (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 }
 
 
-METHODDEF(void)
+GLOBAL(void)
 quantize_fs_dither (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 		    JSAMPARRAY output_buf, int num_rows)
 /* General case, with Floyd-Steinberg dithering */
@@ -752,15 +752,15 @@ start_pass_1_quant (j_decompress_ptr cinfo, boolean is_pre_scan)
   switch (cinfo->dither_mode) {
   case JDITHER_NONE:
     if (cinfo->out_color_components == 3)
-      cquantize->pub.color_quantize = color_quantize3;
+      cquantize->pub.func_type = COLOR_QUANTIZE3;
     else
-      cquantize->pub.color_quantize = color_quantize;
+      cquantize->pub.func_type = COLOR_QUANTIZE;
     break;
   case JDITHER_ORDERED:
     if (cinfo->out_color_components == 3)
-      cquantize->pub.color_quantize = quantize3_ord_dither;
+      cquantize->pub.func_type = QUANTIZE3_ORD_DITHER;
     else
-      cquantize->pub.color_quantize = quantize_ord_dither;
+      cquantize->pub.func_type = QUANTIZE_ORD_DITHER;
     cquantize->row_index = 0;	/* initialize state for ordered dither */
     /* If user changed to ordered dither from another mode,
      * we must recreate the color index table with padding.
@@ -773,7 +773,7 @@ start_pass_1_quant (j_decompress_ptr cinfo, boolean is_pre_scan)
       create_odither_tables(cinfo);
     break;
   case JDITHER_FS:
-    cquantize->pub.color_quantize = quantize_fs_dither;
+    cquantize->pub.func_type = QUANTIZE_FS_DITHER;
     cquantize->on_odd_row = FALSE; /* initialize state for F-S dither */
     /* Allocate Floyd-Steinberg workspace if didn't already. */
     if (cquantize->fserrors[0] == NULL)
