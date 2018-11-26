@@ -167,11 +167,32 @@ struct jpeg_marker_reader {
   unsigned int discarded_bytes;	/* # of bytes skipped looking for a marker */
 };
 
+typedef enum {
+	DC_FIRST,
+	AC_FIRST,
+	DC_REFINE,
+	AC_REFINE,
+	DECODE_MCU_DEFAULT
+} decode_mcu_func_type;
+
+boolean decode_mcu_DC_first(j_decompress_ptr cinfo,
+                            JBLOCKROW *MCU_data);
+boolean decode_mcu_AC_first(j_decompress_ptr cinfo,
+                             JBLOCKROW *MCU_data);
+boolean decode_mcu_DC_refine (j_decompress_ptr cinfo,
+                              JBLOCKROW *MCU_data);
+boolean decode_mcu_AC_refine(j_decompress_ptr cinfo,
+                             JBLOCKROW *MCU_data);
+boolean decode_mcu(j_decompress_ptr cinfo, JBLOCKROW *MCU_data);
+
+boolean decode_mcu_master(decode_mcu_func_type type, j_decompress_ptr cinfo,
+                          JBLOCKROW *MCU_data);
+
+
 /* Entropy decoding */
 struct jpeg_entropy_decoder {
   JMETHOD(void, start_pass, (j_decompress_ptr cinfo));
-  JMETHOD(boolean, decode_mcu, (j_decompress_ptr cinfo, //SINGLE
-				JBLOCKROW *MCU_data));
+	decode_mcu_func_type decode_mcu_type;
 
   /* This is here to share code between baseline and progressive decoders; */
   /* other modules probably should not use it */

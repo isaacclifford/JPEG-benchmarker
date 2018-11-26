@@ -138,6 +138,25 @@ start_output_pass (j_decompress_ptr cinfo)
 }
 
 
+GLOBAL(boolean)decode_mcu_master(decode_mcu_func_type type, j_decompress_ptr cinfo,
+                                 JBLOCKROW *MCU_data){
+  boolean res;
+  if (type == DC_FIRST) {
+    res = decode_mcu_DC_first(cinfo, MCU_data);
+  } else if (type == AC_FIRST) {
+    res = decode_mcu_AC_first(cinfo, MCU_data);
+  } else if (type == DC_REFINE) {
+    res = decode_mcu_DC_refine(cinfo, MCU_data);
+  } else if (type == AC_REFINE) {
+    res = decode_mcu_AC_refine(cinfo, MCU_data);
+  } else if (type == DECODE_MCU_DEFAULT) {
+    res = decode_mcu(cinfo, MCU_data);
+  }
+
+  return res;
+}
+
+
 /*
  * Decompress and return some data in the single-pass case.
  * Always attempts to emit one fully interleaved MCU row ("iMCU" row).
@@ -169,7 +188,7 @@ decompress_onepass (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
       /* Try to fetch an MCU.  Entropy decoder expects buffer to be zeroed. */
       jzero_far((void FAR *) coef->MCU_buffer[0],
 		(size_t) (cinfo->blocks_in_MCU * SIZEOF(JBLOCK)));
-      if (! (*cinfo->entropy->decode_mcu) (cinfo, coef->MCU_buffer)) {
+      if (! decode_mcu_master(cinfo->entropy->decode_mcu_type, cinfo, coef->MCU_buffer)) {
 	/* Suspension forced; update state counters and exit */
 	coef->MCU_vert_offset = yoffset;
 	coef->MCU_ctr = MCU_col_num;
@@ -287,7 +306,7 @@ consume_data (j_decompress_ptr cinfo)
 	}
       }
       /* Try to fetch the MCU. */
-      if (! (*cinfo->entropy->decode_mcu) (cinfo, coef->MCU_buffer)) {
+      if (! decode_mcu_master(cinfo->entropy->decode_mcu_type, cinfo, coef->MCU_buffer)) {
 	/* Suspension forced; update state counters and exit */
 	coef->MCU_vert_offset = yoffset;
 	coef->MCU_ctr = MCU_col_num;

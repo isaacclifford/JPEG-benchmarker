@@ -75,13 +75,13 @@ typedef struct {
 typedef phuff_entropy_decoder * phuff_entropy_ptr;
 
 /* Forward declarations */
-METHODDEF(boolean) decode_mcu_DC_first JPP((j_decompress_ptr cinfo,
+GLOBAL(boolean) decode_mcu_DC_first JPP((j_decompress_ptr cinfo,
 					    JBLOCKROW *MCU_data));
-METHODDEF(boolean) decode_mcu_AC_first JPP((j_decompress_ptr cinfo,
+GLOBAL(boolean) decode_mcu_AC_first JPP((j_decompress_ptr cinfo,
 					    JBLOCKROW *MCU_data));
-METHODDEF(boolean) decode_mcu_DC_refine JPP((j_decompress_ptr cinfo,
+GLOBAL(boolean) decode_mcu_DC_refine JPP((j_decompress_ptr cinfo,
 					     JBLOCKROW *MCU_data));
-METHODDEF(boolean) decode_mcu_AC_refine JPP((j_decompress_ptr cinfo,
+GLOBAL(boolean) decode_mcu_AC_refine JPP((j_decompress_ptr cinfo,
 					     JBLOCKROW *MCU_data));
 
 
@@ -149,14 +149,14 @@ start_pass_phuff_decoder (j_decompress_ptr cinfo)
   /* Select MCU decoding routine */
   if (cinfo->Ah == 0) {
     if (is_DC_band)
-      entropy->pub.decode_mcu = decode_mcu_DC_first;
+      entropy->pub.decode_mcu_type = DC_FIRST;
     else
-      entropy->pub.decode_mcu = decode_mcu_AC_first;
+      entropy->pub.decode_mcu_type = AC_FIRST;
   } else {
     if (is_DC_band)
-      entropy->pub.decode_mcu = decode_mcu_DC_refine;
+      entropy->pub.decode_mcu_type = DC_REFINE;
     else
-      entropy->pub.decode_mcu = decode_mcu_AC_refine;
+      entropy->pub.decode_mcu_type = AC_REFINE;
   }
 
   for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
@@ -283,7 +283,7 @@ process_restart (j_decompress_ptr cinfo)
  * or first pass of successive approximation).
  */
 
-METHODDEF(boolean)
+GLOBAL(boolean)
 decode_mcu_DC_first (j_decompress_ptr cinfo, JBLOCKROW *MCU_data)
 {   
   phuff_entropy_ptr entropy = (phuff_entropy_ptr) cinfo->entropy;
@@ -354,7 +354,7 @@ decode_mcu_DC_first (j_decompress_ptr cinfo, JBLOCKROW *MCU_data)
  * or first pass of successive approximation).
  */
 
-METHODDEF(boolean)
+GLOBAL(boolean)
 decode_mcu_AC_first (j_decompress_ptr cinfo, JBLOCKROW *MCU_data)
 {   
   phuff_entropy_ptr entropy = (phuff_entropy_ptr) cinfo->entropy;
@@ -439,7 +439,7 @@ decode_mcu_AC_first (j_decompress_ptr cinfo, JBLOCKROW *MCU_data)
  * is not very clear on the point.
  */
 
-METHODDEF(boolean)
+GLOBAL(boolean)
 decode_mcu_DC_refine (j_decompress_ptr cinfo, JBLOCKROW *MCU_data)
 {   
   phuff_entropy_ptr entropy = (phuff_entropy_ptr) cinfo->entropy;
@@ -488,7 +488,7 @@ decode_mcu_DC_refine (j_decompress_ptr cinfo, JBLOCKROW *MCU_data)
  * MCU decoding for AC successive approximation refinement scan.
  */
 
-METHODDEF(boolean)
+GLOBAL(boolean)
 decode_mcu_AC_refine (j_decompress_ptr cinfo, JBLOCKROW *MCU_data)
 {   
   phuff_entropy_ptr entropy = (phuff_entropy_ptr) cinfo->entropy;

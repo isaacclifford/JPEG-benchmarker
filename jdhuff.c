@@ -514,7 +514,7 @@ process_restart (j_decompress_ptr cinfo)
  * this module, since we'll just re-assign them on the next call.)
  */
 
-METHODDEF(boolean)
+GLOBAL(boolean)
 decode_mcu (j_decompress_ptr cinfo, JBLOCKROW *MCU_data)
 {
   huff_entropy_ptr entropy = (huff_entropy_ptr) cinfo->entropy;
@@ -643,7 +643,7 @@ jinit_huff_decoder (j_decompress_ptr cinfo)
 				SIZEOF(huff_entropy_decoder));
   cinfo->entropy = (struct jpeg_entropy_decoder *) entropy;
   entropy->pub.start_pass = start_pass_huff_decoder;
-  entropy->pub.decode_mcu = decode_mcu;
+  entropy->pub.decode_mcu_type = DECODE_MCU_DEFAULT;
 
   /* Mark tables unallocated */
   for (i = 0; i < NUM_HUFF_TBLS; i++) {
