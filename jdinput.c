@@ -295,7 +295,7 @@ consume_markers (j_decompress_ptr cinfo)
   if (inputctl->pub.eoi_reached) /* After hitting EOI, read no further */
     return JPEG_REACHED_EOI;
 
-  val = (*cinfo->marker->read_markers) (cinfo);
+  val = read_markers(cinfo);
 
   switch (val) {
   case JPEG_REACHED_SOS:	/* Found SOS */

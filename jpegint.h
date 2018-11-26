@@ -142,14 +142,11 @@ struct jpeg_d_post_controller {
 };
 
 void reset_marker_reader (j_decompress_ptr cinfo);
+int read_markers (j_decompress_ptr cinfo);
 
 /* Marker reading & parsing */
 struct jpeg_marker_reader {
-  /* Read markers until SOS or EOI.
-   * Returns same codes as are defined for jpeg_consume_input:
-   * JPEG_SUSPENDED, JPEG_REACHED_SOS, or JPEG_REACHED_EOI.
-   */
-  JMETHOD(int, read_markers, (j_decompress_ptr cinfo)); //EASY
+
   /* Read a restart marker --- exported for use by entropy decoder only */
   jpeg_marker_parser_method read_restart_marker;
 

@@ -948,7 +948,7 @@ first_marker (j_decompress_ptr cinfo)
  * JPEG_SUSPENDED, JPEG_REACHED_SOS, or JPEG_REACHED_EOI.
  */
 
-METHODDEF(int)
+GLOBAL(int)
 read_markers (j_decompress_ptr cinfo)
 {
   /* Outer loop repeats once for each marker. */
@@ -1269,7 +1269,6 @@ jinit_marker_reader (j_decompress_ptr cinfo)
 				SIZEOF(my_marker_reader));
   cinfo->marker = (struct jpeg_marker_reader *) marker;
   /* Initialize public method pointers */
-  marker->pub.read_markers = read_markers;
   marker->pub.read_restart_marker = read_restart_marker;
   /* Initialize COM/APPn processing.
    * By default, we examine and then discard APP0 and APP14,
