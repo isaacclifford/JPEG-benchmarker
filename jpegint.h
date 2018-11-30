@@ -251,12 +251,22 @@ struct jpeg_upsampler {
   boolean need_context_rows;	/* TRUE if need rows above & below */
 };
 
+typedef enum {
+  GRAYSCALE_CONVERT,
+  YCC_RGB_CONVERT,
+  GRAY_RGB_CONVERT,
+  YCCK_CMYK_CONVERT,
+  NULL_CONVERT
+}color_convert_func_type;
+
+void color_convert_master(color_convert_func_type type, j_decompress_ptr cinfo,
+				JSAMPIMAGE input_buf, JDIMENSION input_row,
+				JSAMPARRAY output_buf, int num_rows);
+
 /* Colorspace conversion */
 struct jpeg_color_deconverter {
   JMETHOD(void, start_pass, (j_decompress_ptr cinfo));
-  JMETHOD(void, color_convert, (j_decompress_ptr cinfo, //SINGLE
-				JSAMPIMAGE input_buf, JDIMENSION input_row,
-				JSAMPARRAY output_buf, int num_rows));
+  color_convert_func_type color_convert_type;
 };
 
 /* Color quantization or color precision reduction */

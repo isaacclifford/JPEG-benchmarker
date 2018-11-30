@@ -117,7 +117,7 @@ build_ycc_rgb_table (j_decompress_ptr cinfo)
  * offset required on that side.
  */
 
-METHODDEF(void)
+LOCAL(void)
 ycc_rgb_convert (j_decompress_ptr cinfo,
 		 JSAMPIMAGE input_buf, JDIMENSION input_row,
 		 JSAMPARRAY output_buf, int num_rows)
@@ -166,7 +166,7 @@ ycc_rgb_convert (j_decompress_ptr cinfo,
  * converting from separate-planes to interleaved representation.
  */
 
-METHODDEF(void)
+LOCAL(void)
 null_convert (j_decompress_ptr cinfo,
 	      JSAMPIMAGE input_buf, JDIMENSION input_row,
 	      JSAMPARRAY output_buf, int num_rows)
@@ -198,7 +198,7 @@ null_convert (j_decompress_ptr cinfo,
  * we just copy the Y (luminance) component and ignore chrominance.
  */
 
-METHODDEF(void)
+LOCAL(void)
 grayscale_convert (j_decompress_ptr cinfo,
 		   JSAMPIMAGE input_buf, JDIMENSION input_row,
 		   JSAMPARRAY output_buf, int num_rows)
@@ -214,7 +214,7 @@ grayscale_convert (j_decompress_ptr cinfo,
  * with grayscale as a separate case.
  */
 
-METHODDEF(void)
+LOCAL(void)
 gray_rgb_convert (j_decompress_ptr cinfo,
 		  JSAMPIMAGE input_buf, JDIMENSION input_row,
 		  JSAMPARRAY output_buf, int num_rows)
@@ -242,7 +242,7 @@ gray_rgb_convert (j_decompress_ptr cinfo,
  * We assume build_ycc_rgb_table has been called.
  */
 
-METHODDEF(void)
+LOCAL(void)
 ycck_cmyk_convert (j_decompress_ptr cinfo,
 		   JSAMPIMAGE input_buf, JDIMENSION input_row,
 		   JSAMPARRAY output_buf, int num_rows)
@@ -350,7 +350,7 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
     cinfo->out_color_components = 1;
     if (cinfo->jpeg_color_space == JCS_GRAYSCALE ||
 	cinfo->jpeg_color_space == JCS_YCbCr) {
-      cconvert->pub.color_convert = grayscale_convert;
+      cconvert->pub.color_convert_type = GRAYSCALE_CONVERT;
       /* For color->grayscale conversion, only the Y (0) component is needed */
       for (ci = 1; ci < cinfo->num_components; ci++) {
         fprintf(stderr, "IS: ci: %d\n", ci);
@@ -363,12 +363,13 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
   case JCS_RGB:
     cinfo->out_color_components = RGB_PIXELSIZE;
     if (cinfo->jpeg_color_space == JCS_YCbCr) {
-      cconvert->pub.color_convert = ycc_rgb_convert;
+      cconvert->pub.color_convert_type = YCC_RGB_CONVERT;
       build_ycc_rgb_table(cinfo);
     } else if (cinfo->jpeg_color_space == JCS_GRAYSCALE) {
-      cconvert->pub.color_convert = gray_rgb_convert;
+      cconvert->pub.color_convert_type = GRAY_RGB_CONVERT;
     } else if (cinfo->jpeg_color_space == JCS_RGB && RGB_PIXELSIZE == 3) {
-      cconvert->pub.color_convert = null_convert;
+      cconvert->pub.color_convert_type = NULL_CONVERT;
+
     } else
       ERREXIT(cinfo, JERR_CONVERSION_NOTIMPL);
     break;
@@ -376,10 +377,10 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
   case JCS_CMYK:
     cinfo->out_color_components = 4;
     if (cinfo->jpeg_color_space == JCS_YCCK) {
-      cconvert->pub.color_convert = ycck_cmyk_convert;
+      cconvert->pub.color_convert_type = YCCK_CMYK_CONVERT;
       build_ycc_rgb_table(cinfo);
     } else if (cinfo->jpeg_color_space == JCS_CMYK) {
-      cconvert->pub.color_convert = null_convert;
+      cconvert->pub.color_convert_type = NULL_CONVERT;
     } else
       ERREXIT(cinfo, JERR_CONVERSION_NOTIMPL);
     break;
@@ -388,7 +389,7 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
     /* Permit null conversion to same output space */
     if (cinfo->out_color_space == cinfo->jpeg_color_space) {
       cinfo->out_color_components = cinfo->num_components;
-      cconvert->pub.color_convert = null_convert;
+      cconvert->pub.color_convert_type = NULL_CONVERT;
     } else			/* unsupported non-null conversion */
       ERREXIT(cinfo, JERR_CONVERSION_NOTIMPL);
     break;
@@ -401,5 +402,21 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
   else {
     fprintf(stderr, "IS:%s else.\n", __func__);
     cinfo->output_components = cinfo->out_color_components;
+  }
+}
+
+GLOBAL(void)color_convert_master(color_convert_func_type type, j_decompress_ptr cinfo,
+                                JSAMPIMAGE input_buf, JDIMENSION input_row,
+                                JSAMPARRAY output_buf, int num_rows) {
+  if (type == GRAYSCALE_CONVERT) {
+    grayscale_convert(cinfo, input_buf, input_row, output_buf, num_rows);
+  } else if (type == YCC_RGB_CONVERT) {
+    ycc_rgb_convert(cinfo, input_buf, input_row, output_buf, num_rows);
+  } else if (type == GRAY_RGB_CONVERT) {
+    gray_rgb_convert(cinfo, input_buf, input_row, output_buf, num_rows);
+  } else if (type == NULL_CONVERT) {
+    null_convert(cinfo, input_buf, input_row, output_buf, num_rows);
+  } else if (type == YCCK_CMYK_CONVERT) {
+    ycck_cmyk_convert(cinfo, input_buf, input_row, output_buf, num_rows);
   }
 }
