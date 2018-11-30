@@ -317,7 +317,7 @@ set_bottom_pointers (j_decompress_ptr cinfo)
  * Initialize for a processing pass.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_pass_main (j_decompress_ptr cinfo, J_BUF_MODE pass_mode)
 {
   my_main_ptr main = (my_main_ptr) cinfo->main;
@@ -513,7 +513,7 @@ jinit_d_main_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
     alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_main_controller));
   cinfo->main = (struct jpeg_d_main_controller *) main;
-  main->pub.start_pass = start_pass_main;
+  main->pub.start_pass_type = START_PASS_MAIN;
 
   if (need_full_buffer)		/* shouldn't happen */
     ERREXIT(cinfo, JERR_BAD_BUFFER_MODE);

@@ -89,7 +89,7 @@ GLOBAL(boolean) decode_mcu_AC_refine JPP((j_decompress_ptr cinfo,
  * Initialize for a Huffman-compressed scan.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_pass_phuff_decoder (j_decompress_ptr cinfo)
 {
   phuff_entropy_ptr entropy = (phuff_entropy_ptr) cinfo->entropy;
@@ -649,7 +649,7 @@ jinit_phuff_decoder (j_decompress_ptr cinfo)
     alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(phuff_entropy_decoder));
   cinfo->entropy = (struct jpeg_entropy_decoder *) entropy;
-  entropy->pub.start_pass = start_pass_phuff_decoder;
+  entropy->pub.start_pass_type = START_PASS_PHUFF_DECODER;
 
   /* Mark derived tables unallocated */
   for (i = 0; i < NUM_HUFF_TBLS; i++) {

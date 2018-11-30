@@ -69,7 +69,7 @@ GLOBAL(void) post_process_2pass
  * Initialize for a processing pass.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_pass_dpost (j_decompress_ptr cinfo, J_BUF_MODE pass_mode)
 {
   my_post_ptr post = (my_post_ptr) cinfo->post;
@@ -292,7 +292,7 @@ jinit_d_post_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
     alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_post_controller));
   cinfo->post = (struct jpeg_d_post_controller *) post;
-  post->pub.start_pass = start_pass_dpost;
+  post->pub.start_pass_type = START_PASS_DPOST;
   post->whole_image = NULL;	/* flag for no virtual arrays */
   post->buffer = NULL;		/* flag for no strip buffer */
 

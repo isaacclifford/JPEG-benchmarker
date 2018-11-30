@@ -737,7 +737,7 @@ alloc_fs_workspace (j_decompress_ptr cinfo)
  * Initialize for one-pass color quantization.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_pass_1_quant (j_decompress_ptr cinfo, boolean is_pre_scan)
 {
   my_cquantize_ptr cquantize = (my_cquantize_ptr) cinfo->cquantize;
@@ -826,7 +826,7 @@ jinit_1pass_quantizer (j_decompress_ptr cinfo)
     alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_cquantizer));
   cinfo->cquantize = (struct jpeg_color_quantizer *) cquantize;
-  cquantize->pub.start_pass = start_pass_1_quant;
+  cquantize->pub.start_pass_type = START_PASS_1_QUANT;
   cquantize->pub.fin_pass_type = QUANT_ONE;
   cquantize->pub.new_color_map_quant_index = 1;
   cquantize->fserrors[0] = NULL; /* Flag FS workspace not allocated */

@@ -290,7 +290,7 @@ ycck_cmyk_convert (j_decompress_ptr cinfo,
  * Empty method for start_pass.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_pass_dcolor (j_decompress_ptr cinfo)
 {
   /* no work needed */
@@ -313,7 +313,7 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
     alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_color_deconverter));
   cinfo->cconvert = (struct jpeg_color_deconverter *) cconvert;
-  cconvert->pub.start_pass = start_pass_dcolor;
+  cconvert->pub.start_pass_type = START_PASS_DCOLOR;
 
   /* Make sure num_components agrees with jpeg_color_space */
   switch (cinfo->jpeg_color_space) {

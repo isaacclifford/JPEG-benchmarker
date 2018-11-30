@@ -256,7 +256,7 @@ start_input_pass_input (j_decompress_ptr cinfo)
 {
   per_scan_setup(cinfo);
   latch_quant_tables(cinfo);
-  (*cinfo->entropy->start_pass) (cinfo);
+  start_pass_master(cinfo->entropy->start_pass_type, cinfo, NULL);
   start_input_pass_coef (cinfo);
 //  cinfo->inputctl->consume_input = cinfo->coef->consume_data;
   cinfo->inputctl->consume_using_coefficient = TRUE;

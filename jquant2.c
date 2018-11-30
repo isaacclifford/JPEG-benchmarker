@@ -1164,7 +1164,7 @@ finish_pass2 (j_decompress_ptr cinfo)
  * Initialize for each processing pass.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_pass_2_quant (j_decompress_ptr cinfo, boolean is_pre_scan)
 {
   my_cquantize_ptr cquantize = (my_cquantize_ptr) cinfo->cquantize;
@@ -1251,7 +1251,7 @@ jinit_2pass_quantizer (j_decompress_ptr cinfo)
     alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_cquantizer));
   cinfo->cquantize = (struct jpeg_color_quantizer *) cquantize;
-  cquantize->pub.start_pass = start_pass_2_quant;
+  cquantize->pub.start_pass_type = START_PASS_2_QUANT;
   cquantize->pub.new_color_map_quant_index = 2;
   cquantize->fserrors = NULL;	/* flag optional arrays not allocated */
   cquantize->error_limiter = NULL;

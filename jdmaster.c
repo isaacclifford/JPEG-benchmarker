@@ -446,9 +446,10 @@ prepare_for_output_pass (j_decompress_ptr cinfo)
 #ifdef QUANT_2PASS_SUPPORTED
     /* Final pass of 2-pass quantization */
     master->pub.is_dummy_pass = FALSE;
-    (*cinfo->cquantize->start_pass) (cinfo, FALSE);
-    (*cinfo->post->start_pass) (cinfo, JBUF_CRANK_DEST);
-    (*cinfo->main->start_pass) (cinfo, JBUF_CRANK_DEST);
+    J_BUF_MODE buf_mode = JBUF_CRANK_DEST;
+    start_pass_master(cinfo->cquantize->start_pass_type, cinfo, &master->pub.is_dummy_pass);
+    start_pass_master(cinfo->post->start_pass_type, cinfo, &buf_mode);
+    start_pass_master(cinfo->main->start_pass_type, cinfo, &buf_mode);
 #else
     ERREXIT(cinfo, JERR_NOT_COMPILED);
 #endif /* QUANT_2PASS_SUPPORTED */
@@ -464,17 +465,18 @@ prepare_for_output_pass (j_decompress_ptr cinfo)
 	ERREXIT(cinfo, JERR_MODE_CHANGE);
       }
     }
-    (*cinfo->idct->start_pass) (cinfo);
+    start_pass_master(cinfo->idct->start_pass_type, cinfo, NULL);
     start_output_pass(cinfo);
     if (! cinfo->raw_data_out) {
       if (! master->using_merged_upsample)
-	(*cinfo->cconvert->start_pass) (cinfo);
-      (*cinfo->upsample->start_pass) (cinfo);
+        start_pass_master(cinfo->cconvert->start_pass_type, cinfo, NULL);
+      start_pass_master(cinfo->upsample->start_pass_type, cinfo, NULL);
       if (cinfo->quantize_colors)
-	(*cinfo->cquantize->start_pass) (cinfo, master->pub.is_dummy_pass);
-      (*cinfo->post->start_pass) (cinfo,
-	    (master->pub.is_dummy_pass ? JBUF_SAVE_AND_PASS : JBUF_PASS_THRU));
-      (*cinfo->main->start_pass) (cinfo, JBUF_PASS_THRU);
+        start_pass_master(cinfo->cquantize->start_pass_type, cinfo, &master->pub.is_dummy_pass);
+      boolean jbuf_mode =  (master->pub.is_dummy_pass ? JBUF_SAVE_AND_PASS : JBUF_PASS_THRU);
+      start_pass_master(cinfo->post->start_pass_type, cinfo, &jbuf_mode);
+      boolean jbuf_mode_main = JBUF_PASS_THRU;
+      start_pass_master(cinfo->main->start_pass_type, cinfo, &jbuf_mode_main);
     }
   }
 
@@ -574,3 +576,30 @@ jinit_master_decompress (j_decompress_ptr cinfo)
 
   master_selection(cinfo);
 }
+
+GLOBAL(void) start_pass_master(start_pass_func_type type, j_decompress_ptr cinfo, void *pass_mode){
+   fprintf(stderr, "--%s------------------\n", __func__);
+   if (type == START_PASS_PHUFF_DECODER) {
+    start_pass_phuff_decoder (cinfo);
+  } else if (type == START_PASS_MAIN) {
+    start_pass_main (cinfo, *((J_BUF_MODE*)pass_mode));
+  } else if (type == START_PASS_DPOST) {
+    start_pass_dpost (cinfo, *((J_BUF_MODE*)pass_mode));
+  } else if (type == START_PASS_2_QUANT) {
+    start_pass_2_quant (cinfo, *((boolean*)pass_mode));
+  } else if (type ==START_PASS_MERGED_UPSAMPLE) {
+    start_pass_merged_upsample (cinfo);
+  } else if (type == START_PASS_UPSAMPLE) {
+    start_pass_upsample (cinfo);
+  } else if (type == START_PASS) {
+    start_pass (cinfo);
+  } else if (type == START_PASS_DCOLOR) {
+    start_pass_dcolor (cinfo);
+  } else if (type == START_PASS_1_QUANT) {
+    start_pass_1_quant(cinfo, *((boolean*)pass_mode));
+  } else if (type == START_PASS_HUFF_DECODER) {
+    start_pass_huff_decoder (cinfo);
+  }
+
+}
+

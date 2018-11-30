@@ -86,7 +86,7 @@ typedef union {
  * a matching multiplier table.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_pass (j_decompress_ptr cinfo)
 {
   my_idct_ptr idct = (my_idct_ptr) cinfo->idct;
@@ -258,7 +258,7 @@ jinit_inverse_dct (j_decompress_ptr cinfo)
     alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_idct_controller));
   cinfo->idct = (struct jpeg_inverse_dct *) idct;
-  idct->pub.start_pass = start_pass;
+  idct->pub.start_pass_type = START_PASS;
 
   for (ci = 0, compptr = cinfo->comp_info; ci < cinfo->num_components;
        ci++, compptr++) {

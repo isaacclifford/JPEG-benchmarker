@@ -129,7 +129,7 @@ build_ycc_rgb_table (j_decompress_ptr cinfo)
  * Initialize for an upsampling pass.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_pass_merged_upsample (j_decompress_ptr cinfo)
 {
   my_upsample_ptr upsample = (my_upsample_ptr) cinfo->upsample;
@@ -391,7 +391,7 @@ jinit_merged_upsampler (j_decompress_ptr cinfo)
     alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_upsampler));
   cinfo->upsample = (struct jpeg_upsampler *) upsample;
-  upsample->pub.start_pass = start_pass_merged_upsample;
+  upsample->pub.start_pass_type = START_PASS_MERGED_UPSAMPLE;
   upsample->pub.need_context_rows = FALSE;
 
   upsample->out_row_width = cinfo->output_width * cinfo->out_color_components;

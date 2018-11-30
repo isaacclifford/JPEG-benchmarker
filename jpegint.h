@@ -66,6 +66,40 @@ struct jpeg_input_controller {
 };
 
 typedef enum {
+	START_PASS_PHUFF_DECODER,
+	START_PASS_MAIN,
+	START_PASS_DPOST,
+	START_PASS_2_QUANT,
+	START_PASS_MERGED_UPSAMPLE,
+	START_PASS_UPSAMPLE,
+	START_PASS,
+	START_PASS_DCOLOR,
+	START_PASS_1_QUANT,
+	START_PASS_HUFF_DECODER,
+} start_pass_func_type;
+
+void start_pass_phuff_decoder (j_decompress_ptr cinfo);
+
+void start_pass_main (j_decompress_ptr cinfo, J_BUF_MODE pass_mode);
+
+void start_pass_dpost (j_decompress_ptr cinfo, J_BUF_MODE pass_mode);
+
+void start_pass_2_quant (j_decompress_ptr cinfo, boolean is_pre_scan);
+
+void start_pass_merged_upsample (j_decompress_ptr cinfo);
+
+void start_pass_upsample (j_decompress_ptr cinfo);
+
+
+void start_pass (j_decompress_ptr cinfo);
+
+void start_pass_dcolor (j_decompress_ptr cinfo);
+
+void start_pass_1_quant (j_decompress_ptr cinfo, boolean is_pre_scan);
+
+void start_pass_huff_decoder (j_decompress_ptr cinfo);
+
+typedef enum {
 	CONTEXT_MAIN,
 	SIMPLE_MAIN,
 	CRANK_POST
@@ -77,7 +111,7 @@ void process_data_master(process_data_func_type type, j_decompress_ptr cinfo,
 
 /* Main buffer control (downsampled-data buffer) */
 struct jpeg_d_main_controller {
-  JMETHOD(void, start_pass, (j_decompress_ptr cinfo, J_BUF_MODE pass_mode));
+	start_pass_func_type start_pass_type;
 	process_data_func_type func_type;
 };
 
@@ -144,7 +178,7 @@ void post_process_master(post_proc_data_func_type func_type, j_decompress_ptr ci
 
 /* Decompression postprocessing (color quantization buffer control) */
 struct jpeg_d_post_controller {
-  JMETHOD(void, start_pass, (j_decompress_ptr cinfo, J_BUF_MODE pass_mode));
+	start_pass_func_type start_pass_type;
 
 	post_proc_data_func_type post_proc_func;
 };
@@ -191,8 +225,8 @@ boolean decode_mcu_master(decode_mcu_func_type type, j_decompress_ptr cinfo,
 
 /* Entropy decoding */
 struct jpeg_entropy_decoder {
-  JMETHOD(void, start_pass, (j_decompress_ptr cinfo));
 	decode_mcu_func_type decode_mcu_type;
+	start_pass_func_type start_pass_type;
 
   /* This is here to share code between baseline and progressive decoders; */
   /* other modules probably should not use it */
@@ -206,7 +240,7 @@ typedef JMETHOD(void, inverse_DCT_method_ptr,
 		 JSAMPARRAY output_buf, JDIMENSION output_col));
 
 struct jpeg_inverse_dct {
-  JMETHOD(void, start_pass, (j_decompress_ptr cinfo));
+	start_pass_func_type start_pass_type;
   /* It is useful to allow each component to have a separate IDCT method. */
   inverse_DCT_method_ptr inverse_DCT[MAX_COMPONENTS];
 };
@@ -244,8 +278,7 @@ void upsample_master(upsample_func_type type, j_decompress_ptr cinfo,
                      JDIMENSION out_rows_avail);
 
 struct jpeg_upsampler {
-  JMETHOD(void, start_pass, (j_decompress_ptr cinfo));
-
+	start_pass_func_type start_pass_type;
   upsample_func_type func_type;
 
   boolean need_context_rows;	/* TRUE if need rows above & below */
@@ -265,7 +298,7 @@ void color_convert_master(color_convert_func_type type, j_decompress_ptr cinfo,
 
 /* Colorspace conversion */
 struct jpeg_color_deconverter {
-  JMETHOD(void, start_pass, (j_decompress_ptr cinfo));
+  start_pass_func_type start_pass_type;
   color_convert_func_type color_convert_type;
 };
 
@@ -324,12 +357,14 @@ void color_quantize_master(color_quantize_func_type type, j_decompress_ptr cinfo
 				JSAMPARRAY output_buf, int num_rows);
 
 struct jpeg_color_quantizer {
-  JMETHOD(void, start_pass, (j_decompress_ptr cinfo, boolean is_pre_scan)); //Multi
-	color_quantize_func_type func_type;
-	finish_pass_type fin_pass_type;
-	int new_color_map_quant_index;
+  start_pass_func_type start_pass_type;
+  color_quantize_func_type func_type;
+  finish_pass_type fin_pass_type;
+  int new_color_map_quant_index;
 
 };
+
+void start_pass_master(start_pass_func_type type, j_decompress_ptr cinfo, void* pass_mode);
 
 
 /* Miscellaneous useful macros */

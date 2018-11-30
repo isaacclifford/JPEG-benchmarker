@@ -66,7 +66,7 @@ typedef my_upsampler * my_upsample_ptr;
  * Initialize for an upsampling pass.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_pass_upsample (j_decompress_ptr cinfo)
 {
   my_upsample_ptr upsample = (my_upsample_ptr) cinfo->upsample;
@@ -409,7 +409,7 @@ jinit_upsampler (j_decompress_ptr cinfo)
     alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_upsampler));
   cinfo->upsample = (struct jpeg_upsampler *) upsample;
-  upsample->pub.start_pass = start_pass_upsample;
+  upsample->pub.start_pass_type = START_PASS_UPSAMPLE;
   upsample->pub.func_type = SEP_UPSAMPLE;
   upsample->pub.need_context_rows = FALSE; /* until we find out differently */
 

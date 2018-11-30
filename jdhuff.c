@@ -83,7 +83,7 @@ typedef huff_entropy_decoder * huff_entropy_ptr;
  * Initialize for a Huffman-compressed scan.
  */
 
-METHODDEF(void)
+GLOBAL(void)
 start_pass_huff_decoder (j_decompress_ptr cinfo)
 {
   huff_entropy_ptr entropy = (huff_entropy_ptr) cinfo->entropy;
@@ -642,7 +642,7 @@ jinit_huff_decoder (j_decompress_ptr cinfo)
     alloc_small ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(huff_entropy_decoder));
   cinfo->entropy = (struct jpeg_entropy_decoder *) entropy;
-  entropy->pub.start_pass = start_pass_huff_decoder;
+  entropy->pub.start_pass_type = START_PASS_HUFF_DECODER;
   entropy->pub.decode_mcu_type = DECODE_MCU_DEFAULT;
 
   /* Mark tables unallocated */
