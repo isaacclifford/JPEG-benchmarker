@@ -20,6 +20,9 @@
 
 #include "jmemmgr.h"
 
+#include "jdct.h"
+
+
 /* Block smoothing is only applicable for progressive JPEG, so: */
 #ifndef D_PROGRESSIVE_SUPPORTED
 #undef BLOCK_SMOOTHING_SUPPORTED
@@ -156,6 +159,26 @@ GLOBAL(boolean)decode_mcu_master(decode_mcu_func_type type, j_decompress_ptr cin
   return res;
 }
 
+GLOBAL (void) inverse_DCT_master(  inverse_DCT_method_func_type type, j_decompress_ptr cinfo, jpeg_component_info * compptr,
+                                      JCOEFPTR coef_block,
+                                      JSAMPARRAY output_buf, JDIMENSION output_col) {
+  if (type == JPEG_IDCT_1x1) {
+    jpeg_idct_1x1(cinfo, compptr, coef_block, output_buf, output_col);
+  } else if (type == JPEG_IDCT_2x2) {
+    jpeg_idct_2x2(cinfo, compptr, coef_block, output_buf, output_col);
+  } else if (type == JPEG_IDCT_4x4) {
+    jpeg_idct_4x4(cinfo, compptr, coef_block, output_buf, output_col);
+  } else if (type == JPEG_IDCT_ISLOW) {
+    jpeg_idct_islow(cinfo, compptr, coef_block, output_buf, output_col);
+  } else if (type == JPEG_IDCT_IFAST) {
+    jpeg_idct_ifast(cinfo, compptr, coef_block, output_buf, output_col);
+  } else if (type == JPEG_IDCT_FLOAT) {
+    jpeg_idct_float(cinfo, compptr, coef_block, output_buf, output_col);
+  } else if (type == DEFAULT_NULL) {
+    //error
+  }
+}
+
 
 /*
  * Decompress and return some data in the single-pass case.
@@ -178,7 +201,7 @@ decompress_onepass (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
   JSAMPARRAY output_ptr;
   JDIMENSION start_col, output_col;
   jpeg_component_info *compptr;
-  inverse_DCT_method_ptr inverse_DCT;
+  inverse_DCT_method_func_type inverse_DCT;
 
   /* Loop to process as much as one whole iMCU row */
   for (yoffset = coef->MCU_vert_offset; yoffset < coef->MCU_rows_per_iMCU_row;
@@ -218,7 +241,7 @@ decompress_onepass (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
 	      yoffset+yindex < compptr->last_row_height) {
 	    output_col = start_col;
 	    for (xindex = 0; xindex < useful_width; xindex++) {
-	      (*inverse_DCT) (cinfo, compptr,
+	      inverse_DCT_master(inverse_DCT, cinfo, compptr,
 			      (JCOEFPTR) coef->MCU_buffer[blkn+xindex],
 			      output_ptr, output_col);
 	      output_col += compptr->DCT_scaled_size;
@@ -355,7 +378,7 @@ decompress_data (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
   JSAMPARRAY output_ptr;
   JDIMENSION output_col;
   jpeg_component_info *compptr;
-  inverse_DCT_method_ptr inverse_DCT;
+  inverse_DCT_method_func_type inverse_DCT;
 
   /* Force some input to be done if we are getting ahead of the input. */
   while (cinfo->input_scan_number < cinfo->output_scan_number ||
@@ -391,7 +414,7 @@ decompress_data (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
       buffer_ptr = buffer[block_row];
       output_col = 0;
       for (block_num = 0; block_num < compptr->width_in_blocks; block_num++) {
-	(*inverse_DCT) (cinfo, compptr, (JCOEFPTR) buffer_ptr,
+	inverse_DCT_master(inverse_DCT, cinfo, compptr, (JCOEFPTR) buffer_ptr,
 			output_ptr, output_col);
 	buffer_ptr++;
 	output_col += compptr->DCT_scaled_size;
@@ -501,7 +524,7 @@ decompress_smooth_data (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
   JSAMPARRAY output_ptr;
   JDIMENSION output_col;
   jpeg_component_info *compptr;
-  inverse_DCT_method_ptr inverse_DCT;
+  inverse_DCT_method_func_type inverse_DCT;
   boolean first_row, last_row;
   JBLOCK workspace;
   int *coef_bits;
@@ -679,7 +702,7 @@ decompress_smooth_data (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
 	  workspace[2] = (JCOEF) pred;
 	}
 	/* OK, do the IDCT */
-	(*inverse_DCT) (cinfo, compptr, (JCOEFPTR) workspace,
+	inverse_DCT_master(inverse_DCT, cinfo, compptr, (JCOEFPTR) workspace,
 			output_ptr, output_col);
 	/* Advance for next column */
 	DC1 = DC2; DC2 = DC3;

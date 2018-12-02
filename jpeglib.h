@@ -730,7 +730,7 @@ struct jpeg_memory_mgr {
 /* Routine signature for application-supplied marker processing methods.
  * Need not pass marker code since it is stored in cinfo->unread_marker.
  */
-typedef JMETHOD(boolean, jpeg_marker_parser_method, (j_decompress_ptr cinfo));
+typedef JMETHOD(boolean, jpeg_marker_parser_method, (j_decompress_ptr cinfo)); //Complex
 
 
 /* Declarations for routines called by application.

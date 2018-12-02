@@ -234,15 +234,24 @@ struct jpeg_entropy_decoder {
 };
 
 /* Inverse DCT (also performs dequantization) */
-typedef JMETHOD(void, inverse_DCT_method_ptr,
-		(j_decompress_ptr cinfo, jpeg_component_info * compptr,
+typedef enum {
+	JPEG_IDCT_1x1,
+	JPEG_IDCT_2x2,
+	JPEG_IDCT_4x4,
+	JPEG_IDCT_ISLOW,
+	JPEG_IDCT_IFAST,
+	JPEG_IDCT_FLOAT,
+	DEFAULT_NULL
+}inverse_DCT_method_func_type;
+
+void inverse_DCT_master(inverse_DCT_method_func_type type, j_decompress_ptr cinfo, jpeg_component_info * compptr,
 		 JCOEFPTR coef_block,
-		 JSAMPARRAY output_buf, JDIMENSION output_col));
+		 JSAMPARRAY output_buf, JDIMENSION output_col);
 
 struct jpeg_inverse_dct {
 	start_pass_func_type start_pass_type;
   /* It is useful to allow each component to have a separate IDCT method. */
-  inverse_DCT_method_ptr inverse_DCT[MAX_COMPONENTS];
+  inverse_DCT_method_func_type inverse_DCT[MAX_COMPONENTS];
 };
 
 /* Upsampling (note that upsampler must also call color converter) */

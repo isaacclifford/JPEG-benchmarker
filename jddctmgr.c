@@ -93,7 +93,7 @@ start_pass (j_decompress_ptr cinfo)
   int ci, i;
   jpeg_component_info *compptr;
   int method = 0;
-  inverse_DCT_method_ptr method_ptr = NULL;
+  inverse_DCT_method_func_type method_type = DEFAULT_NULL;
   JQUANT_TBL * qtbl;
 
   for (ci = 0, compptr = cinfo->comp_info; ci < cinfo->num_components;
@@ -102,15 +102,15 @@ start_pass (j_decompress_ptr cinfo)
     switch (compptr->DCT_scaled_size) {
 #ifdef IDCT_SCALING_SUPPORTED
     case 1:
-      method_ptr = jpeg_idct_1x1;
+      method_type = JPEG_IDCT_1x1;
       method = JDCT_ISLOW;	/* jidctred uses islow-style table */
       break;
     case 2:
-      method_ptr = jpeg_idct_2x2;
+      method_type = JPEG_IDCT_2x2;
       method = JDCT_ISLOW;	/* jidctred uses islow-style table */
       break;
     case 4:
-      method_ptr = jpeg_idct_4x4;
+      method_type = JPEG_IDCT_4x4;
       method = JDCT_ISLOW;	/* jidctred uses islow-style table */
       break;
 #endif
@@ -118,19 +118,19 @@ start_pass (j_decompress_ptr cinfo)
       switch (cinfo->dct_method) {
 #ifdef DCT_ISLOW_SUPPORTED
       case JDCT_ISLOW:
-	method_ptr = jpeg_idct_islow;
+  method_type = JPEG_IDCT_ISLOW;
 	method = JDCT_ISLOW;
 	break;
 #endif
 #ifdef DCT_IFAST_SUPPORTED
       case JDCT_IFAST:
-	method_ptr = jpeg_idct_ifast;
+  method_type = JPEG_IDCT_IFAST;
 	method = JDCT_IFAST;
 	break;
 #endif
 #ifdef DCT_FLOAT_SUPPORTED
       case JDCT_FLOAT:
-	method_ptr = jpeg_idct_float;
+  method_type = JPEG_IDCT_FLOAT;
 	method = JDCT_FLOAT;
 	break;
 #endif
@@ -143,7 +143,7 @@ start_pass (j_decompress_ptr cinfo)
       ERREXIT1(cinfo, JERR_BAD_DCTSIZE, compptr->DCT_scaled_size);
       break;
     }
-    idct->pub.inverse_DCT[ci] = method_ptr;
+    idct->pub.inverse_DCT[ci] = method_type;
     /* Create multiplier table from quant table.
      * However, we can skip this if the component is uninteresting
      * or if we already built the table.  Also, if no quant table

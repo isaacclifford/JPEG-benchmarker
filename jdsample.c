@@ -25,7 +25,7 @@
 
 
 /* Pointer to routine to upsample a single component */
-typedef JMETHOD(void, upsample1_ptr,
+typedef JMETHOD(void, upsample1_ptr, //complex
 		(j_decompress_ptr cinfo, jpeg_component_info * compptr,
 		 JSAMPARRAY input_data, JSAMPARRAY * output_data_ptr));
 
@@ -44,7 +44,7 @@ typedef struct {
   JSAMPARRAY color_buf[MAX_COMPONENTS];
 
   /* Per-component upsampling method pointers */
-  upsample1_ptr methods[MAX_COMPONENTS];
+  upsample1_ptr methods[MAX_COMPONENTS]; // all in this function
 
   int next_row_out;		/* counts rows emitted from color_buf */
   JDIMENSION rows_to_go;	/* counts rows remaining in image */
@@ -105,7 +105,7 @@ sep_upsample (j_decompress_ptr cinfo,
       /* Invoke per-component upsample method.  Notice we pass a POINTER
        * to color_buf[ci], so that fullsize_upsample can change it.
        */
-      (*upsample->methods[ci]) (cinfo, compptr,
+      (*upsample->methods[ci]) (cinfo, compptr, //usage
 	input_buf[ci] + (*in_row_group_ctr * upsample->rowgroup_height[ci]),
 	upsample->color_buf + ci);
     }
