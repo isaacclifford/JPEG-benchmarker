@@ -190,7 +190,7 @@ int read_markers (j_decompress_ptr cinfo);
 struct jpeg_marker_reader {
 
   /* Read a restart marker --- exported for use by entropy decoder only */
-  jpeg_marker_parser_method read_restart_marker;
+  jpeg_marker_parser_method_func_type read_restart_marker;
 
   /* State of marker reader --- nominally internal, but applications
    * supplying COM or APPn handlers might like to know the state.

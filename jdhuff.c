@@ -477,7 +477,7 @@ process_restart (j_decompress_ptr cinfo)
   entropy->bitstate.bits_left = 0;
 
   /* Advance past the RSTn marker */
-  if (! (*cinfo->marker->read_restart_marker) (cinfo))
+  if (! jpeg_marker_parser_method_master(cinfo->marker->read_restart_marker,cinfo))
     return FALSE;
 
   /* Re-initialize DC predictions to 0 */

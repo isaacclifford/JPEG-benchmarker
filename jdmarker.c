@@ -17,6 +17,8 @@
 #include "jpeglib.h"
 #include "jmemmgr.h"
 
+#include <ctype.h>		/* to declare isprint() */
+
 
 typedef enum {			/* JPEG marker codes */
   M_SOF0  = 0xc0,
@@ -92,8 +94,8 @@ typedef struct {
   struct jpeg_marker_reader pub; /* public fields */
 
   /* Application-overridable marker processing methods */
-  jpeg_marker_parser_method process_COM;
-  jpeg_marker_parser_method process_APPn[16];
+  jpeg_marker_parser_method_func_type process_COM;
+  jpeg_marker_parser_method_func_type process_APPn[16];
 
   /* Limit on marker data length to save for each marker type */
   unsigned int length_limit_COM;
@@ -688,7 +690,7 @@ examine_app14 (j_decompress_ptr cinfo, JOCTET FAR * data,
 }
 
 
-METHODDEF(boolean)
+LOCAL(boolean)
 get_interesting_appn (j_decompress_ptr cinfo)
 /* Process an APP0 or APP14 marker without saving it */
 {
@@ -736,7 +738,7 @@ get_interesting_appn (j_decompress_ptr cinfo)
 
 #ifdef SAVE_MARKERS_SUPPORTED
 
-METHODDEF(boolean)
+LOCAL(boolean)
 save_marker (j_decompress_ptr cinfo)
 /* Save an APPn or COM marker into the marker list */
 {
@@ -841,7 +843,7 @@ save_marker (j_decompress_ptr cinfo)
 #endif /* SAVE_MARKERS_SUPPORTED */
 
 
-METHODDEF(boolean)
+LOCAL(boolean)
 skip_variable (j_decompress_ptr cinfo)
 /* Skip over an unknown or uninteresting variable-length marker */
 {
@@ -1055,13 +1057,13 @@ read_markers (j_decompress_ptr cinfo)
     case M_APP13:
     case M_APP14:
     case M_APP15:
-      if (! (*((my_marker_ptr) cinfo->marker)->process_APPn[
-		cinfo->unread_marker - (int) M_APP0]) (cinfo))
+      if (! jpeg_marker_parser_method_master(
+        ((my_marker_ptr) cinfo->marker)->process_APPn[cinfo->unread_marker - (int) M_APP0], cinfo))
 	return JPEG_SUSPENDED;
       break;
       
     case M_COM:
-      if (! (*((my_marker_ptr) cinfo->marker)->process_COM) (cinfo))
+      if (! jpeg_marker_parser_method_master(((my_marker_ptr) cinfo->marker)->process_COM, cinfo))
 	return JPEG_SUSPENDED;
       break;
 
@@ -1109,7 +1111,7 @@ read_markers (j_decompress_ptr cinfo)
  * it holds a marker which the decoder will be unable to read past.
  */
 
-METHODDEF(boolean)
+LOCAL(boolean)
 read_restart_marker (j_decompress_ptr cinfo)
 {
   /* Obtain a marker unless we already did. */
@@ -1269,19 +1271,19 @@ jinit_marker_reader (j_decompress_ptr cinfo)
 				SIZEOF(my_marker_reader));
   cinfo->marker = (struct jpeg_marker_reader *) marker;
   /* Initialize public method pointers */
-  marker->pub.read_restart_marker = read_restart_marker;
+  marker->pub.read_restart_marker = READ_RESTART_MARKER;
   /* Initialize COM/APPn processing.
    * By default, we examine and then discard APP0 and APP14,
    * but simply discard COM and all other APPn.
    */
-  marker->process_COM = skip_variable;
+  marker->process_COM = SKIP_VARIABLE;
   marker->length_limit_COM = 0;
   for (i = 0; i < 16; i++) {
-    marker->process_APPn[i] = skip_variable;
+    marker->process_APPn[i] = SKIP_VARIABLE;
     marker->length_limit_APPn[i] = 0;
   }
-  marker->process_APPn[0] = get_interesting_appn;
-  marker->process_APPn[14] = get_interesting_appn;
+  marker->process_APPn[0] = GET_INTERESTING_APPN;
+  marker->process_APPn[14] = GET_INTERESTING_APPN;
   /* Reset marker processing state */
   reset_marker_reader(cinfo);
 }
@@ -1299,7 +1301,7 @@ jpeg_save_markers (j_decompress_ptr cinfo, int marker_code,
 {
   my_marker_ptr marker = (my_marker_ptr) cinfo->marker;
   long maxlength;
-  jpeg_marker_parser_method processor;
+  jpeg_marker_parser_method_func_type processor;
 
   /* Length limit mustn't be larger than what we can allocate
    * (should only be a concern in a 16-bit environment).
@@ -1312,17 +1314,17 @@ jpeg_save_markers (j_decompress_ptr cinfo, int marker_code,
    * APP0/APP14 have special requirements.
    */
   if (length_limit) {
-    processor = save_marker;
+    processor = SAVE_MARKER;
     /* If saving APP0/APP14, save at least enough for our internal use. */
     if (marker_code == (int) M_APP0 && length_limit < APP0_DATA_LEN)
       length_limit = APP0_DATA_LEN;
     else if (marker_code == (int) M_APP14 && length_limit < APP14_DATA_LEN)
       length_limit = APP14_DATA_LEN;
   } else {
-    processor = skip_variable;
+    processor = SKIP_VARIABLE;
     /* If discarding APP0/APP14, use our regular on-the-fly processor. */
     if (marker_code == (int) M_APP0 || marker_code == (int) M_APP14)
-      processor = get_interesting_appn;
+      processor = GET_INTERESTING_APPN;
   }
 
   if (marker_code == (int) M_COM) {
@@ -1344,7 +1346,7 @@ jpeg_save_markers (j_decompress_ptr cinfo, int marker_code,
 
 GLOBAL(void)
 jpeg_set_marker_processor (j_decompress_ptr cinfo, int marker_code,
-			   jpeg_marker_parser_method routine)
+			   jpeg_marker_parser_method_func_type routine)
 {
   my_marker_ptr marker = (my_marker_ptr) cinfo->marker;
 
@@ -1354,4 +1356,92 @@ jpeg_set_marker_processor (j_decompress_ptr cinfo, int marker_code,
     marker->process_APPn[marker_code - (int) M_APP0] = routine;
   else
     ERREXIT1(cinfo, JERR_UNKNOWN_MARKER, marker_code);
+}
+
+/*
+ * Marker processor for COM and interesting APPn markers.
+ * This replaces the library's built-in processor, which just skips the marker.
+ * We want to print out the marker as text, to the extent possible.
+ * Note this code relies on a non-suspending data source.
+ */
+
+LOCAL(unsigned int)
+jpeg_getc (j_decompress_ptr cinfo)
+/* Read next byte */
+{
+  struct jpeg_source_mgr * datasrc = cinfo->src;
+
+  if (datasrc->bytes_in_buffer == 0) {
+    if (!fill_input_buffer(cinfo))
+      ERREXIT(cinfo, JERR_CANT_SUSPEND);
+  }
+  datasrc->bytes_in_buffer--;
+  return GETJOCTET(*datasrc->next_input_byte++);
+}
+
+
+GLOBAL(boolean)
+print_text_marker (j_decompress_ptr cinfo)
+{
+  boolean traceit = (cinfo->err->trace_level >= 1);
+  INT32 length;
+  unsigned int ch;
+  unsigned int lastch = 0;
+
+  length = jpeg_getc(cinfo) << 8;
+  length += jpeg_getc(cinfo);
+  length -= 2;			/* discount the length word itself */
+
+  if (traceit) {
+    if (cinfo->unread_marker == JPEG_COM)
+      fprintf(stderr, "Comment, length %ld:\n", (long) length);
+    else			/* assume it is an APPn otherwise */
+      fprintf(stderr, "APP%d, length %ld:\n",
+              cinfo->unread_marker - JPEG_APP0, (long) length);
+  }
+
+  while (--length >= 0) {
+    ch = jpeg_getc(cinfo);
+    if (traceit) {
+      /* Emit the character in a readable form.
+       * Nonprintables are converted to \nnn form,
+       * while \ is converted to \\.
+       * Newlines in CR, CR/LF, or LF form will be printed as one newline.
+       */
+      if (ch == '\r') {
+        fprintf(stderr, "\n");
+      } else if (ch == '\n') {
+        if (lastch != '\r')
+          fprintf(stderr, "\n");
+      } else if (ch == '\\') {
+        fprintf(stderr, "\\\\");
+      } else if (isprint(ch)) {
+        putc(ch, stderr);
+      } else {
+        fprintf(stderr, "\\%03o", ch);
+      }
+      lastch = ch;
+    }
+  }
+
+  if (traceit)
+    fprintf(stderr, "\n");
+
+  return TRUE;
+}
+
+GLOBAL(boolean) jpeg_marker_parser_method_master(jpeg_marker_parser_method_func_type type, j_decompress_ptr cinfo){
+  boolean res;
+  if (type == SKIP_VARIABLE) {
+    res = skip_variable(cinfo);
+  } else if (type == GET_INTERESTING_APPN) {
+    res = get_interesting_appn(cinfo);
+  } else if (type == READ_RESTART_MARKER) {
+    res = read_restart_marker(cinfo);
+  } else if (type == SAVE_MARKER) {
+    res = save_marker(cinfo);
+  } else if (type == PRINT_TEXT_MARKER) {
+    res = print_text_marker(cinfo);
+  }
+  return res;
 }

@@ -730,7 +730,18 @@ struct jpeg_memory_mgr {
 /* Routine signature for application-supplied marker processing methods.
  * Need not pass marker code since it is stored in cinfo->unread_marker.
  */
-typedef JMETHOD(boolean, jpeg_marker_parser_method, (j_decompress_ptr cinfo)); //Complex
+
+typedef enum {
+  SKIP_VARIABLE,
+  GET_INTERESTING_APPN,
+  READ_RESTART_MARKER,
+  SAVE_MARKER,
+  PRINT_TEXT_MARKER
+}jpeg_marker_parser_method_func_type;
+
+GLOBAL(boolean) jpeg_marker_parser_method_master(jpeg_marker_parser_method_func_type type, j_decompress_ptr cinfo);
+//typedef JMETHOD(boolean, jpeg_marker_parser_method, (j_decompress_ptr cinfo)); //Complex
+
 
 
 /* Declarations for routines called by application.
@@ -881,7 +892,7 @@ EXTERN(void) jpeg_save_markers
 /* Install a special processing method for COM or APPn markers. */
 EXTERN(void) jpeg_set_marker_processor
 	JPP((j_decompress_ptr cinfo, int marker_code,
-	     jpeg_marker_parser_method routine));
+	     jpeg_marker_parser_method_func_type routine));
 
 /* Read or write raw DCT coefficients --- useful for lossless transcoding. */
 EXTERN(jvirt_barray_ptr *) jpeg_read_coefficients JPP((j_decompress_ptr cinfo));
