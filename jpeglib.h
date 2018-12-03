@@ -740,9 +740,6 @@ typedef enum {
 }jpeg_marker_parser_method_func_type;
 
 GLOBAL(boolean) jpeg_marker_parser_method_master(jpeg_marker_parser_method_func_type type, j_decompress_ptr cinfo);
-//typedef JMETHOD(boolean, jpeg_marker_parser_method, (j_decompress_ptr cinfo)); //Complex
-
-
 
 /* Declarations for routines called by application.
  * The JPP macro hides prototype parameters from compilers that can't cope.

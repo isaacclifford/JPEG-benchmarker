@@ -23,11 +23,18 @@
 #include "jpeglib.h"
 #include "jmemmgr.h"
 
+typedef enum {
+  NOOP_UPSAMPLE,
+  FULLSIZE_UPSAMPLE,
+  H2V1_FANCY_UPSAMPLE,
+  H2V1_UPSAMPLE,
+  H2V2_FANCY_UPSAMPLE,
+  H2V2_UPSAMPLE,
+  INT_UPSAMPLE
+}upsample1_func_type;
 
-/* Pointer to routine to upsample a single component */
-typedef JMETHOD(void, upsample1_ptr, //complex
-		(j_decompress_ptr cinfo, jpeg_component_info * compptr,
-		 JSAMPARRAY input_data, JSAMPARRAY * output_data_ptr));
+void upsample1_method_master(upsample1_func_type type, j_decompress_ptr cinfo, jpeg_component_info * compptr,
+                                     JSAMPARRAY input_data, JSAMPARRAY * output_data_ptr);
 
 /* Private subobject */
 
@@ -44,7 +51,7 @@ typedef struct {
   JSAMPARRAY color_buf[MAX_COMPONENTS];
 
   /* Per-component upsampling method pointers */
-  upsample1_ptr methods[MAX_COMPONENTS]; // all in this function
+  upsample1_func_type methods[MAX_COMPONENTS]; // all in this function
 
   int next_row_out;		/* counts rows emitted from color_buf */
   JDIMENSION rows_to_go;	/* counts rows remaining in image */
@@ -105,7 +112,7 @@ sep_upsample (j_decompress_ptr cinfo,
       /* Invoke per-component upsample method.  Notice we pass a POINTER
        * to color_buf[ci], so that fullsize_upsample can change it.
        */
-      (*upsample->methods[ci]) (cinfo, compptr, //usage
+      upsample1_method_master(upsample->methods[ci], cinfo, compptr,
 	input_buf[ci] + (*in_row_group_ctr * upsample->rowgroup_height[ci]),
 	upsample->color_buf + ci);
     }
@@ -154,7 +161,7 @@ sep_upsample (j_decompress_ptr cinfo,
  * "consumed" until we are done color converting and emitting it.
  */
 
-METHODDEF(void)
+LOCAL(void)
 fullsize_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 		   JSAMPARRAY input_data, JSAMPARRAY * output_data_ptr)
 {
@@ -167,7 +174,7 @@ fullsize_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  * These components will not be referenced by color conversion.
  */
 
-METHODDEF(void)
+LOCAL(void)
 noop_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 	       JSAMPARRAY input_data, JSAMPARRAY * output_data_ptr)
 {
@@ -186,7 +193,7 @@ noop_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  * you would be well advised to improve this code.
  */
 
-METHODDEF(void)
+LOCAL(void)
 int_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 	      JSAMPARRAY input_data, JSAMPARRAY * output_data_ptr)
 {
@@ -230,7 +237,7 @@ int_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  * It's still a box filter.
  */
 
-METHODDEF(void)
+LOCAL(void)
 h2v1_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 	       JSAMPARRAY input_data, JSAMPARRAY * output_data_ptr)
 {
@@ -258,7 +265,7 @@ h2v1_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  * It's still a box filter.
  */
 
-METHODDEF(void)
+LOCAL(void)
 h2v2_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 	       JSAMPARRAY input_data, JSAMPARRAY * output_data_ptr)
 {
@@ -301,7 +308,7 @@ h2v2_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  * alternate pixel locations (a simple ordered dither pattern).
  */
 
-METHODDEF(void)
+LOCAL(void)
 h2v1_fancy_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 		     JSAMPARRAY input_data, JSAMPARRAY * output_data_ptr)
 {
@@ -342,7 +349,7 @@ h2v1_fancy_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  * context from the main buffer controller (see initialization code).
  */
 
-METHODDEF(void)
+LOCAL(void)
 h2v2_fancy_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 		     JSAMPARRAY input_data, JSAMPARRAY * output_data_ptr)
 {
@@ -439,31 +446,31 @@ jinit_upsampler (j_decompress_ptr cinfo)
     need_buffer = TRUE;
     if (! compptr->component_needed) {
       /* Don't bother to upsample an uninteresting component. */
-      upsample->methods[ci] = noop_upsample;
+      upsample->methods[ci] = NOOP_UPSAMPLE;
       need_buffer = FALSE;
     } else if (h_in_group == h_out_group && v_in_group == v_out_group) {
       /* Fullsize components can be processed without any work. */
-      upsample->methods[ci] = fullsize_upsample;
+      upsample->methods[ci] = FULLSIZE_UPSAMPLE;
       need_buffer = FALSE;
     } else if (h_in_group * 2 == h_out_group &&
 	       v_in_group == v_out_group) {
       /* Special cases for 2h1v upsampling */
       if (do_fancy && compptr->downsampled_width > 2)
-	upsample->methods[ci] = h2v1_fancy_upsample;
+	upsample->methods[ci] = H2V1_FANCY_UPSAMPLE;
       else
-	upsample->methods[ci] = h2v1_upsample;
+	upsample->methods[ci] = H2V1_UPSAMPLE;
     } else if (h_in_group * 2 == h_out_group &&
 	       v_in_group * 2 == v_out_group) {
       /* Special cases for 2h2v upsampling */
       if (do_fancy && compptr->downsampled_width > 2) {
-	upsample->methods[ci] = h2v2_fancy_upsample;
+	upsample->methods[ci] = H2V2_FANCY_UPSAMPLE;
 	upsample->pub.need_context_rows = TRUE;
       } else
-	upsample->methods[ci] = h2v2_upsample;
+	upsample->methods[ci] = H2V2_UPSAMPLE;
     } else if ((h_out_group % h_in_group) == 0 &&
 	       (v_out_group % v_in_group) == 0) {
       /* Generic integral-factors upsampling method */
-      upsample->methods[ci] = int_upsample;
+      upsample->methods[ci] = INT_UPSAMPLE;
       upsample->h_expand[ci] = (UINT8) (h_out_group / h_in_group);
       upsample->v_expand[ci] = (UINT8) (v_out_group / v_in_group);
     } else
@@ -475,5 +482,24 @@ jinit_upsampler (j_decompress_ptr cinfo)
 				(long) cinfo->max_h_samp_factor),
 	 (JDIMENSION) cinfo->max_v_samp_factor);
     }
+  }
+}
+
+GLOBAL(void) upsample1_method_master(upsample1_func_type type, j_decompress_ptr cinfo, jpeg_component_info * compptr,
+		 JSAMPARRAY input_data, JSAMPARRAY * output_data_ptr ) {
+  if(type == NOOP_UPSAMPLE) {
+    noop_upsample(cinfo, compptr, input_data, output_data_ptr);
+  } else if (type == FULLSIZE_UPSAMPLE) {
+    fullsize_upsample(cinfo, compptr, input_data, output_data_ptr);
+  } else if (type == H2V1_FANCY_UPSAMPLE) {
+    h2v1_fancy_upsample(cinfo, compptr, input_data, output_data_ptr);
+  } else if (type == H2V1_UPSAMPLE ) {
+    h2v1_upsample(cinfo, compptr, input_data, output_data_ptr);
+  } else if (type == H2V2_FANCY_UPSAMPLE) {
+    h2v2_fancy_upsample(cinfo, compptr, input_data, output_data_ptr);
+  } else if (type == H2V2_UPSAMPLE) {
+    h2v2_upsample(cinfo, compptr, input_data, output_data_ptr);
+  } else if (type == INT_UPSAMPLE) {
+    int_upsample(cinfo, compptr, input_data, output_data_ptr);
   }
 }
