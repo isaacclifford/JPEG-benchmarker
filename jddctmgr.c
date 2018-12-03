@@ -247,9 +247,6 @@ start_pass (j_decompress_ptr cinfo)
 GLOBAL(void)
 jinit_inverse_dct (j_decompress_ptr cinfo)
 {
-
-  fprintf(stderr, "IS: %s\n", __func__);
-
   my_idct_ptr idct;
   int ci;
   jpeg_component_info *compptr;

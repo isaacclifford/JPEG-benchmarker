@@ -180,28 +180,12 @@ typedef unsigned int JDIMENSION;
  * or code profilers that require it.
  */
 
-/* a function called through method pointers: */
-#define METHODDEF(type)		static type
 /* a function used only in its module: */
 #define LOCAL(type)		static type
 /* a function referenced thru EXTERNs: */
 #define GLOBAL(type)		type
 /* a reference to a GLOBAL function: */
 #define EXTERN(type)		extern type
-
-
-/* This macro is used to declare a "method", that is, a function pointer.
- * We want to supply prototype parameters if the compiler can cope.
- * Note that the arglist parameter must be parenthesized!
- * Again, you can customize this if you need special linkage keywords.
- */
-
-#ifdef HAVE_PROTOTYPES
-#define JMETHOD(type,methodname,arglist)  type (*methodname) arglist
-#else
-#define JMETHOD(type,methodname,arglist)  type (*methodname) ()
-#endif
-
 
 /* Here is the pseudo-keyword for declaring pointers that must be "far"
  * on 80x86 machines.  Most of the specialized coding for 80x86 is handled

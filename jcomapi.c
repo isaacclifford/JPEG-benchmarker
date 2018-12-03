@@ -41,7 +41,6 @@ jpeg_abort (j_common_ptr cinfo)
    * with some (brain-damaged) malloc libraries.
    */
   for (pool = JPOOL_NUMPOOLS-1; pool > JPOOL_PERMANENT; pool--) {
-    fprintf(stderr, "IS: %s. Pool\n", __func__);
     free_pool(cinfo, pool);
   }
 

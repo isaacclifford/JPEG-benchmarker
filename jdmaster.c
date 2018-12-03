@@ -288,8 +288,6 @@ prepare_range_limit_table (j_decompress_ptr cinfo)
 LOCAL(void)
 master_selection (j_decompress_ptr cinfo)
 {
-
-  fprintf(stderr, "IS: %s\n",__func__);
   my_master_ptr master = (my_master_ptr) cinfo->master;
   boolean use_c_buffer;
   long samplesperrow;
@@ -564,7 +562,6 @@ jpeg_new_colormap (j_decompress_ptr cinfo)
 GLOBAL(void)
 jinit_master_decompress (j_decompress_ptr cinfo)
 {
-  fprintf(stderr, "IS: %s\n", __func__);
   my_master_ptr master;
 
   master = (my_master_ptr)
@@ -578,7 +575,6 @@ jinit_master_decompress (j_decompress_ptr cinfo)
 }
 
 GLOBAL(void) start_pass_master(start_pass_func_type type, j_decompress_ptr cinfo, void *pass_mode){
-   fprintf(stderr, "--%s------------------\n", __func__);
    if (type == START_PASS_PHUFF_DECODER) {
     start_pass_phuff_decoder (cinfo);
   } else if (type == START_PASS_MAIN) {

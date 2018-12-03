@@ -347,8 +347,6 @@ parse_switches (j_decompress_ptr cinfo, int argc, char **argv,
 int
 main (int argc, char **argv)
 {
-  fprintf(stderr, "IS: %s\n", __func__);
-
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr jerr;
 #ifdef PROGRESS_REPORT
@@ -502,14 +500,12 @@ main (int argc, char **argv)
   (void) jpeg_start_decompress(&cinfo);
 
   /* Write output file header */
-  //IS: Function Pointer
   start_output_master(&cinfo, dest_mgr);
 
   /* Process data */
   while (cinfo.output_scanline < cinfo.output_height) {
     num_scanlines = jpeg_read_scanlines(&cinfo, dest_mgr->buffer,
 					dest_mgr->buffer_height);
-    //IS: Function Pointer
     put_pixel_rows_master (&cinfo, dest_mgr, num_scanlines);
   }
 

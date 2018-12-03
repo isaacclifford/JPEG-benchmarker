@@ -304,8 +304,6 @@ start_pass_dcolor (j_decompress_ptr cinfo)
 GLOBAL(void)
 jinit_color_deconverter (j_decompress_ptr cinfo)
 {
-
-  fprintf(stderr, "IS: %s\n", __func__);
   my_cconvert_ptr cconvert;
   int ci;
 
@@ -353,7 +351,6 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
       cconvert->pub.color_convert_type = GRAYSCALE_CONVERT;
       /* For color->grayscale conversion, only the Y (0) component is needed */
       for (ci = 1; ci < cinfo->num_components; ci++) {
-        fprintf(stderr, "IS: ci: %d\n", ci);
         cinfo->comp_info[ci].component_needed = FALSE;
       }
     } else
@@ -396,11 +393,9 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
   }
 
   if (cinfo->quantize_colors) {
-    fprintf(stderr, "IS: cinfo->quantize_color\n");
     cinfo->output_components = 1; /* single colormapped output component */
   }
   else {
-    fprintf(stderr, "IS:%s else.\n", __func__);
     cinfo->output_components = cinfo->out_color_components;
   }
 }
